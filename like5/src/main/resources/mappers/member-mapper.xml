@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="memberMapper">
+	
+	<resultMap id="memberResult" type="Member">
+		<result column="mem_no" property="memNo"/>
+		<result column="email" property="email"/>
+		<result column="mem_pwd" property="memPwd"/>
+		<result column="mem_name" property="memName"/>
+		<result column="nickname" property="nickName"/>
+		<result column="mem_profile" property="memProfile"/>
+		<result column="mem_check" property="memCheck"/>
+		<result column="bank" property="bank"/>
+		<result column="account_num" property="accountNum"/>
+		<result column="enr_date" property="enrDate"/>
+		<result column="user_status" property="userStatus"/>
+		<result column="ent_yn" property="entYN"/>
+	</resultMap>
+	
+	<select id="loginMember" resultMap="memberResult">
+	
+		select
+		        mem_no
+		      , email
+		      , mem_pwd
+		      , mem_name
+		      , nickname
+		      , mem_profile
+		      , mem_check
+		      , bank
+		      , account_num
+		      , enr_date
+		      , user_status
+		      , ent_yn
+		   from member
+		  where ent_yn = 'N'
+          and email = #{email}
+          and mem_pwd = #{memPwd}
+				
+	</select>
+	<select id="selectMemCount" resultType="_int">
+		select 
+			count(*)
+		from member
+		where user_status='N'
+	</select>
+	
+	<select id="selectMemList" resultMap="memberResult">
+		select
+		      mem_no
+		    , email
+		    , mem_name
+		    , nickname
+		    , mem_check
+		    , bank
+		    , account_num
+		    , enr_date
+		    , ent_yn
+		from member
+		where user_status ='N'
+		order 
+			by mem_no
+	</select>
+	
+	<select id="selectSearchMemCount" resultType="_int">
+		select
+		       count(*)
+		  from member
+		 where user_status ='N'
+	 	<choose>
+	 		<when test="condition == 'memName'">
+	 			and mem_name
+	 		</when>
+	 		<when test="condition == 'nickName'">
+	 			and nickName
+	 		</when>
+	 		<otherwise>
+	 			and mem_name like '%' || #{keyword} || '%'
+	 			or nickName
+	 		</otherwise>
+	 	</choose>
+	 	like '%' || #{keyword} || '%'
+	</select>
+	
+	<select id="selectSearchMemList" resultMap="memberResult">
+		select
+			      mem_no
+			    , email
+			    , mem_name
+			    , nickname
+			    , mem_check
+			    , bank
+			    , account_num
+			    , enr_date
+			    , ent_yn
+			from member
+			where user_status ='N'
+			<choose>
+	 		<when test="condition == 'memName'">
+	 			and mem_name
+	 		</when>
+	 		<when test="condition == 'nickName'">
+	 			and nickName
+	 		</when>
+	 		<otherwise>
+	 			and mem_name like '%' || #{keyword} || '%'
+	 			or nickName
+	 		</otherwise>
+		 	</choose>
+		 	like '%' || #{keyword} || '%'
+			
+	</select>
+	
+	
+</mapper>

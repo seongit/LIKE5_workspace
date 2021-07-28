@@ -7,11 +7,16 @@
 	</settings>
 	
 	<typeAliases>
-
+		<typeAlias type="com.kh.like5.member.model.vo.Member" alias="Member"/>
+		<typeAlias type="com.kh.like5.booking.model.vo.Booking" alias="Booking"/>
+		<typeAlias type="com.kh.like5.booking.model.vo.Office" alias="Office" />
+		<typeAlias type="com.kh.like5.common.model.vo.Attachment" alias="Attachment" />
+		
 	</typeAliases>
 	
 	<mappers>
-			
+			<mapper resource="/mappers/booking-mapper.xml"/>
+			<mapper resource="/mappers/member-mapper.xml"/>
+			<mapper resource="/mappers/admin-mapper.xml"/>
 	</mappers>
-
 </configuration>

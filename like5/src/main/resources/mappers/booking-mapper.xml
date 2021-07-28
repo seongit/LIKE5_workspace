@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+ <mapper namespace="bookingMapper">
+  
+  <resultMap type="Booking" id="bookingResultSet">
+  	<id property="bookingNo" column="booking_no"/>
+  	<result property="officeNo" column="office_no"/>
+  	<result property="memNo" column="mem_no"/>
+  	<result property="startDate" column="start_date"/>
+  	<result property="endDate" column="end_date"/>
+  	<result property="requestDate" column="request_date"/>
+  	<result property="modifyDate" column="modify_date"/>
+  	<result property="status" column="status"/>
+  	<result property="person" column="person"/>
+  	<result property="phone" column="phone"/>
+  	<result property="bAsk" column="b_ask"/>
+  	<result property="total" column="total"/>
+  </resultMap>
+  
+  <resultMap type="Office" id="officeResultSet">
+  	<id property="officeNo" column="office_no"/>
+  	<result property="branch" column="branch"/>
+  	<result property="address" column="address"/>
+  	<result property="manager" column="manager"/>
+  	<result property="facility" column="facility"/>
+  	<result property="typeName" column="type_name"/>
+  	<result property="person" column="person"/>
+  	<result property="price" column="price"/>
+  	<result property="offImgPath" column="off_img_path"/>
+  </resultMap>
+  
+  <resultMap type="Attachment" id="attachmentResultSet">
+  	<id property="fileNo" column="file_no"/>
+  	<result property="refBno" column="ref_bno"/>
+  	<result property="refFno" column="ref_fno"/>
+  	<result property="uploadDate" column="upload_date"/>
+  	<result property="status" column="status"/>
+  	<result property="filePath" column="file_path"/>
+  </resultMap>
+  <select id="selectList" parameterType="Office" resultMap="officeResultSet">
+  select
+		 o.office_no
+	   , branch
+	   , address
+	   , manager
+	   , facility
+	   , type_name
+	   , o.person
+	   , price
+	   , off_img_path
+	from office o
+	join booking b on(o.office_no = b.office_no)
+   where b.start_date  not in #{startDate}
+	 and b.end_date not in #{endDate}
+	 and branch like '%'||#{branch}||'%'
+	 or address like '%'||#{branch}||'%'
+  </select>
+  
+  <select id="selectListCount" resultType="_int">
+	select
+		   count(*)
+	 from  office
+  </select>
+  
+  <select id="selectListAll" parameterType="Office" resultMap="officeResultSet">
+  select
+		 o.office_no
+	   , branch
+	   , address
+	   , manager
+	   , facility
+	   , type_name
+	   , o.person
+	   , price
+	   , off_img_path
+	from office o
+   order
+   	  by office_no desc
+  </select>
+  
+  <select id="selectOffice" parameterType="Office" resultMap="officeResultSet">
+   select
+		 o.office_no
+	   , branch
+	   , address
+	   , manager
+	   , facility
+	   , type_name
+	   , o.person
+	   , price
+	   , off_img_path
+	from office o
+   where office_no = #{officeNo}
+  </select>
+  
+  <select id="selectOfficeAtt" parameterType="Attachment" resultMap="attachmentResultSet">
+  	select
+  		   file_no
+	  	 , ref_bno
+	  	 , ref_fno
+	  	 , upload_date
+	  	 , status
+	  	 , file_path
+	 from  attachment
+    where  ref_bno = 9
+      and  ref_fno = #{officeNo}
+  
+  </select>
+  <insert id="insertOffice" parameterType="Office">
+ 	insert
+ 	  into office
+ 	  (
+ 	  	   office_no
+ 	  	 , branch
+ 	  	 , address
+ 	  	 , manager
+ 	  	 , facility
+ 	  	 , type_name
+ 	  	 , person
+ 	  	 , price
+ 	  	 , off_img_path
+ 	  )
+ 	values
+ 	  (
+ 	  	   SEQ_FNO.nextval
+ 	  	 , #{branch}
+ 	  	 , #{address}
+ 	  	 , #{manager}
+ 	  	 , #{facility}
+ 	  	 , #{typeName}
+ 	  	 , #{person}
+ 	  	 , #{price}
+ 	  	 , #{offImgPath}
+ 	  )
+  </insert>
+  
+  <insert id="insertOfficeAtt" parameterType="Attachment">
+	insert
+	  into attachment
+	  (
+	  	   file_no
+	  	 , ref_bno
+	  	 , ref_fno
+	  	 , upload_date
+	  	 , status
+	  	 , file_path
+	  )
+	values
+	(
+		   seq_ano.nextval
+		 , 9
+		 , seq_fno.currval
+		 , default
+		 , default
+		 , #{filePath}
+	)
+  </insert>
+  
+  <insert id="insertOfficeReAtt" parameterType="Attachment">
+	insert
+	  into attachment
+	  (
+	  	   file_no
+	  	 , ref_bno
+	  	 , ref_fno
+	  	 , upload_date
+	  	 , status
+	  	 , file_path
+	  )
+	values
+	(
+		   seq_ano.nextval
+		 , 9
+		 , #{refFno}
+		 , default
+		 , default
+		 , #{filePath}
+	)
+  </insert>
+  
+  <update id="updateOffice" parameterType="Office">
+  	update
+  		   office
+  	  set  branch = #{branch}
+  	  	 , address = #{address}
+  	  	 , manager = #{manager}
+  	  	 , facility = #{facility}
+  	  	 , type_name = #{typeName}
+  	  	 , person = #{person}
+  	  	 , price = #{price}
+  	  	 , off_img_path = #{offImgPath}
+  	 where office_no = #{officeNo}
+  </update>
+  
+  <update id="updateOfficeAtt" parameterType="Attachment">
+	update
+		   attachment
+	  set  file_path = #{filePath}
+	where  file_no = #{fileNo}
+	  and  ref_fno = #{refFno}
+	  and  ref_bno = 9
+	  and  status = 'Y' 
+  </update>
+  
+  <select id="selectAtList" resultMap="attachmentResultSet">
+  		select
+		       file_no
+		     , file_path
+		  from attachment
+		 where ref_bno = 9
+		   and ref_fno = #{refFno}
+		   and status = 'Y'
+  </select>
+  
+  
+</mapper>
