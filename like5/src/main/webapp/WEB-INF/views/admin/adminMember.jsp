@@ -7,10 +7,6 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <style>
-    .outer{
-        width: 1200px;
-        margin: auto;
-    }
     aside{
         float: left;
         margin-right: 50px;
@@ -95,7 +91,7 @@
 	
 	<br>
 	<!-- 해당 페이지는 관리자로 로그인 한 경우만 보여지고  -->
-    <div class="outer">
+    <div class="innerOuter">
 	
 		<c:if test="${ !empty loginUser && (loginUser.userStatus == 'Y') }">
 	        <div class="aside-title">
@@ -118,7 +114,7 @@
 	                    <a href="customer.ad">고객센터</a>
 	                </li>
 	                <li>
-	                    <a href="dona.ad">후원관리</a>
+	                    <a href="donation.ad">후원관리</a>
 	                </li>
 	                <li>
 	                    <a href="booking.ad">공간대여관리</a>
@@ -127,8 +123,8 @@
 	        </aside>
 	
 	        <article>
-	        	<!-- 검색창 -->
-	            <form id="searchBar" action="searchMem.ad" method="Get">
+	        	<!-- 검색창 **********이거 get방식으로 안하면 나중에 검색 페이지에 정보가 많아서 페이지 바뀔 때 keyword랑 condition이 바껴서 안되남? -->
+	            <form id="searchBar" action="searchMem.ad" method="POST">
 	                <select class="selectpicker" name="condition">
 	                    <option value="all" name="all">전체</option>
 	                    <option value="memName" name="memName">회원명</option>
@@ -156,7 +152,10 @@
 	                <tbody>
 	                	<c:forEach var="m" items="${list}">
 		                    <tr>
-		                        <td class="mno">${m.memNo }</td>
+		                        <td class="mno" id="mno">
+		                        ${m.memNo }
+		                        	<input type="hidden" value="${m.memNo }" name="mno">
+		                        </td>
 		                        <td>${m.memName }</td>
 		                        <td>${m.nickName }</td>
 		                        <td>${m.email }</td>
@@ -165,10 +164,10 @@
 		                        <td>${m.entYN }</td>
 		                        <c:choose>
 		                        	<c:when test="${m.entYN == 'N'}">
-			                        	<td><button id="delBtn" onclick="deleteMem();" class="delbtn">삭제</button></td>
+			                        	<td><button id="delBtn" class="delbtn" onclick="deleteMem('${m.memNo }')">삭제</button></td>
 			                   		</c:when>
 			                   		<c:when test="${m.entYN == 'Y'}">
-			                        	<td><button id="alreadyDelBtn" class="delbtn" disabled>삭제</button></td>
+			                        	<td><button id="alreadyDelBtn"  class=" delbtn" disabled>삭제</button></td>
 			                   		</c:when>
 		                   		</c:choose>
 		                    </tr>
@@ -226,10 +225,11 @@
 		                    </c:otherwise>
 	                    </c:choose>
 	                </ul>
-	            <!-- </nav> -->
-	
+	            
+		
 	            <br><br>
 	        </article>
+	        
 	        
 	        <script>
 	        	$(function(){
@@ -239,18 +239,24 @@
 	        	})
 	        </script>
 	        <script>
-	            function deleteMem(){
-	                // 여기에 모달 창 띄워서 ok누르며는 회원상태 N으로 변경되도록 할거임
-	                if(!confirm("해당 회원을 정말로 삭제 및 탈퇴 처리 하시겠습니까?")){
-	                    // 그냥 해당 페이지가 보여지도록
-	                    // 그럼 아무것도 안해두 되낭? 아니면 새로고침되게라도 해줘야 하남
-	
-	                }else{
-	                    // 진짜 확인하는 process진행
-	                }
-	            }
+	        	var memNo="";
+	        	$(document).ready(function(){
+	        		
+	        	})
+	        	
+	        	function deleteMem(memNo){
+	        		
+	        		if(!confirm("해당 회원을 정말로 탈퇴처리 하시겠습니까?")){
+	        			alert("취소하셨습니다.")
+	        		}else{
+	        			location.href="deleteMem.ad?memNo="+memNo;
+	        			// 이렇게 넘겨준 다음에 원래 페이지로 돌아가게 해줘야함
+	        		}
+	        		//location.href="deleteMem.ad?mno="+memNo;
+	        	}
 	        </script>
-	        <
+	        
+	        
 		</c:if>
     </div>
 </body>

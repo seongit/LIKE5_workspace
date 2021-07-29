@@ -8,53 +8,17 @@
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <title>Column</title>
-   <link href="../../resources/css/styles.css" rel="stylesheet">
-   
-    <!-- jQuery 라이브러리 -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
+	<!-- colEonrollForm.css -->
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/colEnrollForm.css" />  
+	
     <!--토스트 UI-->
     <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.css" />
     <!--플러그인-->
     <link rel="stylesheet" href="https://uicdn.toast.com/tui-color-picker/latest/tui-color-picker.min.css" />
     <link rel="stylesheet"href="https://uicdn.toast.com/editor-plugin-color-syntax/latest/toastui-editor-plugin-color-syntax.min.css"/>
 
-    <!-- 부트스트랩 -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-    <!-- W3.CSS -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-
-    <!-- 폰트어썸 -->
-    <script src="https://kit.fontawesome.com/1e56433357.js" crossorigin="anonymous"></script>
-
-    <!-- 공통 폰트 -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
-
-    <!-- 메인페이지 폰트 -->
-    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
     
-    
-    <style>
-        a { text-decoration:none !important } a:hover { text-decoration:none !important }
-        textarea.form-control:focus, input:focus, input[type]:focus, .uneditable-input:focus {
-            border-color: rgba(224, 224, 224, 0.3);
-            box-shadow: 0 1px 1px rgba(229, 103, 23, 0.075) inset, 0 0 8px rgba(224, 224, 224, 0.3);
-            outline: 0 none;
-        }
-
-        .submit-btn>button{margin-left: 10px;}
-
-        .innerOuter>*{margin-top: 30px;}
-
-        
-    </style>
  
 </head>
 
@@ -64,55 +28,12 @@
     <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 
 
-    <div class="header">
-        <!-- 로고 -->
-        <div id="header_logo" align=center>
-            <a href="">
-                <img src="https://i.imgur.com/5WiLp9Y.jpg" style="width:85px; height:50px;">
-            </a>
-        </div>
-
-        <!-- 메뉴 -->
-        <div id="header_navi">
-            <ul id="menu">
-                <li><a href="">LIKE5?</a></li>
-                <li><a href="">QnA</a></li>
-                <li><a href="">공간대여</a></li>
-                <li><a href="">커뮤니티</a></li>
-                <li><a href="">칼럼</a></li>
-                <li><a href="">IT뉴스</a></li>
-            </ul>
-        </div>
-
-        <!-- 로그인 -->
-        <div id="header_user" style="text-align:center;">
-            <!-- 로그인 전
-            <div id="before_login">
-                <a href="">로그인&nbsp;</a> | <a href="">&nbsp;회원가입</a>
-            </div> -->
-
-            <!-- 로그인 후 -->
-            <div id="after_login">
-                <div class="w3-dropdown-hover w3-center">
-                    <!-- 사용자 닉네임 한글 기준 11자까지 배열에 딱 맞음 -->
-                    <button class="w3-button w3-white">사용자 닉네임</button>
-                    <div class="w3-dropdown-content w3-bar-block w3-border" style="right:0">
-                    <a href="" class="w3-bar-item w3-button">마이페이지</a>
-                    <a href="" class="w3-bar-item w3-button">내 프로필 보기</a>
-                    <a href="" class="w3-bar-item w3-button">1:1문의</a>
-                    <a href="" class="w3-bar-item w3-button">로그아웃</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- 메뉴바 아래 회색 밑줄 -->
-        <div class="underline"></div>
-    </div>
-    
+   <!--메뉴바-->
+    <jsp:include page="../../common/header.jsp" />   
+ 
 
 
-
-    <div class="innerOuter">
+    <div class="innerOuter" style="margin-top:50px; padding-left:50px">
         <div class="flex-box">
             <h2><b>칼럼</b></h2>
             <hr>
@@ -152,7 +73,7 @@
 
             <br><br>
 
-            <div style="display: flex; justify-content: space-between;">
+            <div style="display: flex; justify-content: space-between;  margin-bottom:50px;margin-bottom:50px">
                 <div>
                     <button type="reset" class="btn btn-outline-danger">취소</button>
                 </div>
@@ -168,7 +89,7 @@
 
             <!--썸네일 insert 모달창-->
             <!-- The Modal -->
-            <div class="modal fade" id="thumbnail-modal">
+            <div class="modal fade" id="thumbnail-modal" >
                 <div class="modal-dialog modal-dialog-centered modal-sm">
                 <div class="modal-content">
             
@@ -190,7 +111,7 @@
 
                         <p style="font-size: 12px; margin-top: 15px; font-weight: bold;">
                             <!--🔥 사용자가 입력한 제목 보여지게끔 출력할 것 🔥-->
-                            🔥 제목입니다 🔥
+                      			      🔥 제목입니다 🔥
                         </p>
                     </div>
 
@@ -273,15 +194,19 @@
                 $('#counting-title').html("49 / 49");
             }
         });
+        
         /*임시저장 alert*/
         function temSave(){
             alert("성공적으로 임시저장 되었습니다👍");
             /*커뮤니티-전체보기 페이지로 이동*/
-            location.href="";
+            location.href="colList.bo";
         }
 
 
     </script>
+    
+   	<!--푸터바-->
+	<jsp:include page="../../common/footer.jsp" />
 
 </body>
 </html>

@@ -1,5 +1,6 @@
 package com.kh.like5.member.model.service;
 
+import com.kh.like5.member.model.vo.Customer;
 import com.kh.like5.member.model.vo.Member;
 
 public interface MemberService {
@@ -18,5 +19,8 @@ public interface MemberService {
 	
 	// 아이디 중복 체크용 서비스
 	int emailCheck(String Email);
+	
+	// 1:1 문의 작성하기 서비스
+	int insertInquiry(Customer c);
 	
 }

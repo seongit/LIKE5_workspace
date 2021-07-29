@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+ <mapper namespace="sponsorshipMapper">
+ 
+ 	<resultMap id="sponResult" type="Sponsorship">
+		<result column="spon_no" property="sponNo"/>
+		<result column="mem_no" property="memNo"/>
+		<result column="smem_no" property="smemNo"/>
+		<result column="spon_fee" property="sponFee"/>
+		<result column="spon_date" property="sponDate"/>
+		<result column="spon_category" property="sponCategory"/>
+		<result column="ref_boa_no" property="refBoaNo"/>
+	</resultMap>
+  
+  
+  
+  
+  
+  
+  
+  
+</mapper>

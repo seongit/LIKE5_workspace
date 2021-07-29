@@ -26,16 +26,27 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
 
+<!-- JavaScript -->
+<script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+<!-- CSS -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
+<!-- Default theme -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>
+<!-- Semantic UI theme -->
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/semantic.min.css"/>
+
+
+
 <style>
 /* 세부 페이지마다 공통적으로 유지할 스타일 */
-.innerOuter{width: 70%; margin: auto;}
+.innerOuter{width:70%; margin:auto;}
 
 /* 공통 폰트 */
-*{font-family: 'Noto Sans KR', sans-serif; color: #424242;}
-div{box-sizing: border-box; /*border:1px solid black;*/}
+*{font-family:'Noto Sans KR', sans-serif; color:#424242;}
+div{box-sizing:border-box;}
 
 /* 헤더 배열 */
-.header{width:70%; height:100%; margin:auto; display:flex; border-bottom:2px solid #DEDEDE;}
+.header{width:70%; margin:auto; display:flex; border-bottom:2px solid #DEDEDE;}
 .header>div{width:100%; float:left; margin-bottom:-2px;}
 #header_logo{width:10%;}
 #header_navi{width:75%;}
@@ -71,27 +82,34 @@ div{box-sizing: border-box; /*border:1px solid black;*/}
 #explanation{margin:7% 0% 10% 0%;}
 
 /* to the top */
-#toTheTop {display:scroll; position:fixed; bottom:1.5rem; right:2rem; color:grey;}
+#toTheTop{display:scroll; position:fixed; bottom:1.5rem; right:2rem; color:grey;}
 </style>
 </head>
 
 <body>
 
+	<c:if test="${ !empty alertMsg }">
+		<script>
+			alertify.alert("${alertMsg}");
+		</script>
+		<c:remove var="alertMsg" scope="session"/>
+	</c:if>
+	
 	<!-- [한솔] 메뉴바 : 헤더 스타일 및 배열 초기버전에서 일부 수정 -->
 	<div class="header" id="header">
 		<!-- 로고 -->
 		<div id="header_logo" align=center>
-			<br><a href=""> <img src="https://i.imgur.com/vhEZ5DJ.png" class="headerImg"></a>
+			<br><a href=""><img src="https://i.imgur.com/vhEZ5DJ.png" class="headerImg"></a>
 		</div>
 
 		<!-- 메뉴 -->
 		<div id="header_navi">
 			<br><ul id="menu">
-				<li><a href="">LIKE5?</a></li>
+				<li><a href="about.ad">LIKE5?</a></li>
 				<li><a href="qList.bo">QnA</a></li>
 				<li><a href="bMain.bk">공간대여</a></li>
 				<li><a href="comList.bo">커뮤니티</a></li>
-				<li><a href="">칼럼</a></li>
+				<li><a href="colList.bo">칼럼</a></li>
 				<li><a href="">IT뉴스</a></li>
 			</ul>
 		</div>
@@ -113,9 +131,9 @@ div{box-sizing: border-box; /*border:1px solid black;*/}
 								<div class="w3-dropdown-hover w3-center">
 									<button class="w3-button w3-white">${ loginUser.memName }</button>
 									<div class="w3-dropdown-content w3-bar-block w3-border">
-										<a href="" class="w3-bar-item w3-button">마이페이지</a>
+										<a href="myPage.me?memNo=${ loginUser.memNo }" class="w3-bar-item w3-button">마이페이지</a>
 										<a href="" class="w3-bar-item w3-button">내 프로필 보기</a>
-										<a href="" class="w3-bar-item w3-button">1:1문의</a>
+										<a href="inqEnrollForm.me" class="w3-bar-item w3-button">1:1문의</a>
 										<a href="logout.me" class="w3-bar-item w3-button">로그아웃</a>
 									</div>
 								</div>
@@ -136,7 +154,6 @@ div{box-sizing: border-box; /*border:1px solid black;*/}
 					</c:choose>
 				</c:otherwise>
 			</c:choose>
-
 		</div>
 	</div>
 	<!-- 메뉴바 끝 -->
@@ -148,8 +165,7 @@ div{box-sizing: border-box; /*border:1px solid black;*/}
 			<div class="modal-content">
 				<!-- Modal Header -->
 				<div class="modal-header">
-					<img style="width: 138px; height: 70px;"
-						src="https://i.imgur.com/5WiLp9Y.jpg" alt="">
+					<img style="width: 138px; height: 70px;" src="https://i.imgur.com/5WiLp9Y.jpg" alt="">
 					<button type="button" class="close" data-dismiss="modal">&times;</button>
 				</div>
 
@@ -157,16 +173,12 @@ div{box-sizing: border-box; /*border:1px solid black;*/}
 					<!-- Modal body -->
 					<div class="modal-body">
 						<div style="margin-left: 80px;">
-							이메일 : <input type="email" id="email" name="email"
-								style="margin-left: 17px;"><br> 비밀번호 : <input
-								type="password" id="memPwd" name="memPwd"
-								style="margin-left: 3px;">
-							<button type="button"
-								style="border: 0px solid white; background-color: white;">
+							이메일 : <input type="email" id="email" name="email" style="margin-left: 17px;"><br>
+							비밀번호 : <input type="password" id="memPwd" name="memPwd" style="margin-left: 3px;">
+							<button type="button" style="border: 0px solid white; background-color: white;">
 								<img src="https://i.imgur.com/CsKaQmk.png" alt="">
 							</button>
-							<button type="button"
-								style="border: 0px solid white; background-color: white;">
+							<button type="button" style="border: 0px solid white; background-color: white;">
 								<img src="https://i.imgur.com/X4fyiID.png" alt="">
 							</button>
 						</div>
@@ -174,8 +186,7 @@ div{box-sizing: border-box; /*border:1px solid black;*/}
 
 					<!-- Modal footer -->
 					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary"
-							data-dismiss="modal"
+						<button type="button" class="btn btn-secondary" data-dismiss="modal"
 							style="border: 2px solid rgb(220, 53, 69); background-color: white; color: rgb(220, 53, 69);">취소</button>
 						<button type="submit" class="btn btn-secondary"
 							style="background-color: rgb(220, 53, 69); color: white; margin-right: 170px;">로그인</button>

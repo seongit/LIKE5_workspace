@@ -7,13 +7,14 @@
 	<name>like5</name>
 	<packaging>war</packaging>
 	<version>1.0.0-BUILD-SNAPSHOT</version>
+	
+	<!-- properties를 이용해서 변수를 선언하여 다른 소스에 참조하도록 함 -->
 	<properties>
 		<java-version>1.8</java-version>
 		<org.springframework-version>5.2.9.RELEASE</org.springframework-version>
 		<org.aspectj-version>1.6.10</org.aspectj-version>
 		<org.slf4j-version>1.6.6</org.slf4j-version>
 	</properties>
-	
 	
 	<!-- 기본저장소에서 다운 받지 못하는 경우 직접 다운받고자 하는 사설 저장소를 등록 -->
 	<repositories>
@@ -23,6 +24,7 @@
 		</repository>
 	</repositories>
 	
+	<!-- 다운로드 받고자 하는 라이브러리들 -->
 	<dependencies>
 		<!-- Spring -->
 		<dependency>
@@ -125,8 +127,7 @@
 			<artifactId>junit</artifactId>
 			<version>4.7</version>
 			<scope>test</scope>
-		</dependency>    
-		
+		</dependency>   
 		
 		<!-- 1. DB관련 (오라클, 마이바티스 등) 라이브러리들 -->
 		<!-- 1_1. ojdbc6 라이브러리  -->
@@ -149,7 +150,7 @@
 		    <artifactId>mybatis</artifactId>
 		    <version>3.5.7</version>
 		</dependency>
-		
+				
 		<!-- 1_4. 스프링에서 마이바티스를 사용하기 위한 라이브러리 -->
 		<dependency>
 		    <groupId>org.mybatis</groupId>
@@ -163,7 +164,7 @@
 		    <artifactId>commons-dbcp</artifactId>
 		    <version>1.4</version>
 		</dependency>
-		
+				
 		<!-- * 추가적인 라이브러리 (롬복) -->
 		<dependency>
 		    <groupId>org.projectlombok</groupId>
@@ -212,7 +213,8 @@
 		    <artifactId>gson</artifactId>
 		    <version>2.8.5</version>
 		</dependency>
-		    
+								
+		     
 	</dependencies>
     <build>
         <plugins>
@@ -253,3 +255,4 @@
         </plugins>
     </build>
 </project>
+	

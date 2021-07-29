@@ -9,152 +9,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Community</title>
     
-    <style>
-
-        a { text-decoration:none !important } a:hover { text-decoration:none !important }
-        .sidebar-item-wrapper {width: 13%;}
-        .selectpicker {width: 100%;}
-        .radius {border-radius: 3px;}
-        
-        .content-header .content-body .content-footer .flex-box {margin-bottom: 10px; } 
-        
-        .content-footer>div{width: 100%; padding: 10px;font-size: 18px; font-weight: 300;} 
-
-        .file-upload {
-        background-color: #ffffff;
-        width: 100%;
-        margin: 0 auto;
-        padding: 20px;
-        margin-top: 50px;
-        margin-bottom: 50px;
-        }
-
-        .file-upload-btn {
-        width: 100%;
-        margin: 0;
-        color: #fff;
-        background: rgb(220, 53, 69);
-        border: none;
-        padding: 10px;
-        border-radius: 4px;
-        transition: all .2s ease;
-        outline: none;
-        text-transform: uppercase;
-        font-weight: 700;
-        }
-
-        .file-upload-btn:hover {
-        background:white;
-        color: rgb(220, 53, 69);
-        transition: all .2s ease;
-        cursor: pointer;
-        }
-
-        .file-upload-btn:active {
-        border: 0;
-        transition: all .2s ease;
-        }
-
-        .file-upload-content {
-        display: none;
-        text-align: center;
-        }
-
-        .file-upload-input {
-        position: absolute;
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        outline: none;
-        opacity: 0;
-        cursor: pointer;
-        }
-
-        .image-upload-wrap {
-        margin-top: 20px;
-        border: 4px dashed rgb(220, 53, 69);
-        position: relative;
-        }
-
-        .image-dropping,
-        .image-upload-wrap:hover {
-        border: 4px dashed #ffffff;
-        }
-
-        .image-title-wrap {
-        padding: 0 15px 15px 15px;
-        color: #222;
-        }
-
-        .drag-text {
-        text-align: center;
-        }
-
-        .drag-text p {
-        font-weight: 100;
-        text-transform: uppercase;
-        color: black;
-        padding: 60px 0;
-        }
-
-        .file-upload-image {
-        max-height: 200px;
-        max-width: 200px;
-        margin: auto;
-        padding: 20px;
-        }
-
-        .remove-image {
-        width: 100%;
-        margin: 0;
-        color: rgb(220, 53, 69);
-        border: none;
-        padding: 10px;
-        border-radius: 4px;
-        transition: all .2s ease;
-        outline: none;
-        text-transform: uppercase;
-        font-weight: 700;
-        }
-
-        .remove-image:hover {
-        background: rgb(220, 53, 69);
-        color: white;
-        transition: all .2s ease;
-        cursor: pointer;
-        }
-
-        .remove-image:active {
-        border: 0;
-        transition: all .2s ease;
-        }
-
-        .container-fluid {
-            width: 500px;
-        }
-
-        textarea.form-control:focus, input:focus, input[type]:focus, .uneditable-input:focus {
-            border-color: rgba(224, 224, 224, 0.3);
-            box-shadow: 0 1px 1px rgba(229, 103, 23, 0.075) inset, 0 0 8px rgba(224, 224, 224, 0.3);
-            outline: 0 none;
-        }
-
-        .underline {
-        text-decoration: underline;
-        text-decoration-color: rgb(220, 53, 69);
-        }
-
-
-    </style>
+<!-- comEnrollForm.css -->
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/comEnrollForm.css" />  
 
 </head>
 <body>
 
+  	<!--메뉴바-->
     <jsp:include page="../../common/header.jsp" /> 
 
 
-    <div class="innerOuter">
+    <div class="innerOuter"style="margin-top:50px;padding-left:50px">
         <div class="flex-box">
             <h2><b>커뮤니티</b></h2>
             <h6><b>질문은 QnA게시판을 이용해주세요.</b> </h6>
@@ -193,6 +58,7 @@
                 </div>
             </div>
             <div class="file-upload" style="padding: 0px;">
+              
                 <!--<button class="file-upload-btn" type="button" onclick="$('.file-upload-input').trigger( 'click' )">첨부파일 등록하기</button>-->
             
                 <div class="image-upload-wrap">
@@ -214,13 +80,13 @@
             <div class="content-footer">
                 <div class="container-fluid" style="background-color: rgba(224, 224, 224, 0.3);">
                         Like5에 멋진 글을 작성해주셔서 감사드립니다 🧡<br>
-                        청결한 게시판을 위해 
-                        욕설이나 비방, 모욕, 선정성이 존재하는 사진이나 게시글은 업로드하지 말아주세요.
+				                        청결한 게시판을 위해 
+				                        욕설이나 비방, 모욕, 선정성이 존재하는 사진이나 게시글은 업로드하지 말아주세요.
                 </div>
             </div>
             <br><br>
 
-            <div style="display: flex; justify-content: space-between;">
+            <div style="display: flex;  justify-content: space-between; margin-bottom:50px;"  >
                 <button type="reset" class="btn btn-outline-danger">취소</button>
                 <button type="submit" class="btn btn-danger">등록</button>
             </div>
@@ -284,11 +150,12 @@
             });
 
 
-
-
         </script>
 
     </div>
+    
+    <!--푸터바-->
+	<jsp:include page="../../common/footer.jsp" />
 
 </body>
 </html>

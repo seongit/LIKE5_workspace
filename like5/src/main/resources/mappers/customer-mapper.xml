@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+ <mapper namespace="customerMapper">
+  
+  <resultMap id="customerResult" type="Customer">
+		<result column="cs_no" property="csNo"/>
+		<result column="mem_no" property="memNo"/>
+		<result column="cs_title" property="csTitle"/>
+		<result column="cs_content" property="csContent"/>
+		<result column="reg_date" property="regDate"/>
+		<result column="status" property="status"/>
+		<result column="ans_content" property="ansContent"/>
+		<result column="ans_date" property="ansDate"/>
+		<result column="mem_Name" property="memName"/>
+		<result column="nickname" property="nickname"/>
+	</resultMap>
+  
+  	<select id="selectCsTwoCount" resultType="_int">
+  		select 
+  				count(*)
+  		from customer
+  	</select>
+  
+  	<select id="selectCsTwoList" resultMap="customerResult">
+  		select 
+		        cs_no
+		      , mem_name
+		      , nickname
+		      , cs_title
+		      , to_char(reg_date, 'YYYY-MM-DD') as reg_date
+		      , status
+		from customer
+		join member using (mem_no)
+		order 
+		    by cs_no desc
+  	</select>
+  
+  
+  
+  
+  
+</mapper>

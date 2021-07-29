@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kh.like5.member.model.service.MemberService;
+import com.kh.like5.member.model.vo.Customer;
 import com.kh.like5.member.model.vo.Member;
 
 @Controller
@@ -65,5 +66,37 @@ public class MemberController {
 		return "member/donate";
 		
 	}
+	
+	
+	//---------------------------------성은------------------------------------
+	
+	/**
+	 * [1:1문의] - 작성 Form
+	 * @author seong
+	 */
+
+	@RequestMapping("inqEnrollForm.me")
+	public String inqEnrollForm() {
+		return "member/memInquiry";
+	}
+	
+	@RequestMapping("insertInquiry.me")
+	public ModelAndView insertInquiry(ModelAndView mv,Customer c,HttpSession session) {
+		
+		int result = mService.insertInquiry(c);
+		
+		
+		if(result>0) {
+			session.setAttribute("alertMsg", "게시글 작성 성공!");
+			mv.setViewName("common/main");
+		}else {
+			mv.addObject("errorPage", "게시글 작성 실패!");
+			mv.setViewName("common/errorPage");
+		}
+		
+		return mv;
+	}
+	
+	
 	
 }

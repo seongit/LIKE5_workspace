@@ -8,109 +8,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Column</title>
-    <link href="../../resources/css/styles.css" rel="stylesheet">
     
-    <!-- jQuery 라이브러리 -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-
-    <!-- 부트스트랩 -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-    <!-- W3.CSS -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-
-    <!-- 폰트어썸 -->
-    <script src="https://kit.fontawesome.com/1e56433357.js" crossorigin="anonymous"></script>
-
-    <!-- 공통 폰트 -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
-
-    <!-- 메인페이지 폰트 -->
-    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
-
-    
-    <style>
-     a { text-decoration:none !important } a:hover { text-decoration:none !important }
-    .like-scrap-sponsorship>div{font-size: 11px; text-align:center; margin: 10px 10px}
-    .user-img>*{
-          height: 50px;
-          width:50px;
-          border-radius: 50px;
-          margin-right: 10px;
-          background-color:rgb(224, 224, 224) ;
-          text-align: center;
-          padding-top: 10px;
-      }
-
-    .columnWriter>* {line-height: 50%;}
-    
-    .like-scrap-sponsorship>*:hover{cursor: pointer; opacity: 10%;}
-    .columnWriter>*:hover{cursor: pointer;}
-    .thumbnail{display: inline-block; margin: 14px;}
-
-    .thumbnail:hover{
-        cursor: pointer;
-        opacity:0.7;
-    }
-    </style>
+  	<!-- colDetailView.css -->
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/colDetailView.css" />   
+  
 </head>
 <body>
 
      <!--메뉴바-->
-        
-     <div class="header">
-        <!-- 로고 -->
-        <div id="header_logo" align=center>
-            <a href="">
-                <img src="https://i.imgur.com/5WiLp9Y.jpg" style="width:85px; height:50px;">
-            </a>
-        </div>
-
-        <!-- 메뉴 -->
-        <div id="header_navi">
-            <ul id="menu">
-                <li><a href="">LIKE5?</a></li>
-                <li><a href="">QnA</a></li>
-                <li><a href="">공간대여</a></li>
-                <li><a href="">커뮤니티</a></li>
-                <li><a href="">칼럼</a></li>
-                <li><a href="">IT뉴스</a></li>
-            </ul>
-        </div>
-
-        <!-- 로그인 -->
-        <div id="header_user" style="text-align:center;">
-            <!-- 로그인 전
-            <div id="before_login">
-                <a href="">로그인&nbsp;</a> | <a href="">&nbsp;회원가입</a>
-            </div> -->
-
-            <!-- 로그인 후 -->
-            <div id="after_login">
-                <div class="w3-dropdown-hover w3-center">
-                    <!-- 사용자 닉네임 한글 기준 11자까지 배열에 딱 맞음 -->
-                    <button class="w3-button w3-white">사용자 닉네임</button>
-                    <div class="w3-dropdown-content w3-bar-block w3-border" style="right:0">
-                    <a href="" class="w3-bar-item w3-button">마이페이지</a>
-                    <a href="" class="w3-bar-item w3-button">내 프로필 보기</a>
-                    <a href="" class="w3-bar-item w3-button">1:1문의</a>
-                    <a href="" class="w3-bar-item w3-button">로그아웃</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- 메뉴바 아래 회색 밑줄 -->
-        <div class="underline"></div>
-    </div>
-
-
-    <div class="innerOuter" style="padding:5% 10%;">
+     <jsp:include page="../../common/header.jsp" />   
+    
+    <div class="innerOuter" style="margin-top:50px; padding-left:50px">
         <!--칼럼, 제목, 작성자 닉네임, 작성일, 조회수-->
         <div class="column-header">
             <div class="content-header">
@@ -132,18 +40,18 @@
         <div class="column-conetent"  style="width: 900px; height: 800px; ">
             <div style="height: 100%;width: 100%;">
                 <div>
-                    두 차례의 인터뷰가 모두 성공적이지 못해서 속으로 떨어졌구나 싶은 마음이 있었다. 근데 또 구글 코리아 면접에서는 피드백이 나쁘지 않은것같아서 나름 기대도 하고 있었다.<br>
+                    두 차례의 인터뷰가 모두 성공적이지 못해서 속으로 떨어졌구나 싶은 마음이 있었다. 근데 또 구글 코리아 면접에서는 피드백이 나쁘지 않은것같아서 나름 기대도 하고 있었다.
 
-                    인터뷰가 끝나고 3주정도 있다가 결과를 메일로 받게되었다.<br>
+                    인터뷰가 끝나고 3주정도 있다가 결과를 메일로 받게되었다
 
-                    메일 제목부터가 저희와 인터뷰를 진행해주셔서 감사합니다였다. 이런건 보통 감사합니다가 먼저나오면 불합격이고, 축하합니다가 먼저 나오면 합격인데 ㅠㅠ<br>
+                    메일 제목부터가 저희와 인터뷰를 진행해주셔서 감사합니다였다. 이런건 보통 감사합니다가 먼저나오면 불합격이고, 축하합니다가 먼저 나오면 합격인데 ㅠㅠ
 
 
                     아무래도 구글의 bar를 넘기에는 내가 부족했던것같다... 인터뷰까지 간것만으로도 운이 좋았다고 생각한다.<br>
 
-                    이후에 진행한 다른회사 인터뷰는 하나도 떨어지진게 없는걸 보면, 구글 인터뷰를 준비하면서 인터뷰를 바라보는 방식이 바뀌게 되고 성장한것 같다.<br>
+                    이후에 진행한 다른회사 인터뷰는 하나도 떨어지진게 없는걸 보면, 구글 인터뷰를 준비하면서 인터뷰를 바라보는 방식이 바뀌게 되고 성장한것 같다
 
-                    구글은 탈락했지만 다행히도 동시에 진행하고 있던 우아한 형제들(배민)의 채용연계형 교육과정에 합격해서 이번 여름 방학동안 참여하게 되었다 🎉     <br>          
+                    구글은 탈락했지만 다행히도 동시에 진행하고 있던 우아한 형제들(배민)의 채용연계형 교육과정에 합격해서 이번 여름 방학동안 참여하게 되었다 🎉             
                 </div>
             </div>
             <!--좋아요 스크랩 후원하기-->
@@ -172,7 +80,7 @@
             <!-- The Modal -->
             <form  id="" action="" method="post" style="margin-top: 0px;" >
                 <input type="hidden" id="" name="" value="${loginUser.userId}" >
-                <input type="hidden" id="" name="" value="${}" >
+                <input type="hidden" id="" name="" value="${loginUser.userId}" >
                         
                 <div class="modal fade" id="sponsorship-modal">
                     <div class="modal-dialog modal-dialog-centered modal-sm">
@@ -321,7 +229,7 @@
 
 
         <!--관심 있을 만한 컬럼-->
-        <div class="column-footer" style="margin-top: 300px;">
+        <div class="column-footer" style="margin-top: 300px; margin-bottom:50px">
             <div style="margin-left: 10px; margin-bottom: 30px;">
                 <h4><b>관심 있을 만한 칼럼</b></h4>
             </div>
@@ -359,7 +267,8 @@
         </div>   
     </div>
 
-
+	<!--푸터바-->
+	<jsp:include page="../../common/footer.jsp" />
 
 
     

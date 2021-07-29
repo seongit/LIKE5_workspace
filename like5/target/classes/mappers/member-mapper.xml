@@ -38,6 +38,7 @@
           and mem_pwd = #{memPwd}
 				
 	</select>
+	<!-- [지현]회원관리 맴버 전체 조회 -->
 	<select id="selectMemCount" resultType="_int">
 		select 
 			count(*)
@@ -62,6 +63,7 @@
 			by mem_no
 	</select>
 	
+	<!-- [지현]회원관리 맴버 키워드 조회-->
 	<select id="selectSearchMemCount" resultType="_int">
 		select
 		       count(*)
@@ -80,6 +82,7 @@
 	 		</otherwise>
 	 	</choose>
 	 	like '%' || #{keyword} || '%'
+	 	order by mem_no
 	</select>
 	
 	<select id="selectSearchMemList" resultMap="memberResult">
@@ -108,8 +111,38 @@
 	 		</otherwise>
 		 	</choose>
 		 	like '%' || #{keyword} || '%'
+		 	order by mem_no
 			
 	</select>
+	<update id="deleteMem">
+		update 
+				member
+		   set ent_yn ='Y'
+		   where mem_no = #{memNo}
+	</update>
+	
+	
+	
+	
+	
+	<!--                   성은                              -->
+	<!-- [1:1문의] 작성 - Author Seong  -->
+	
+	<insert id="insertInquiry" >
+		insert into 
+				customer 
+				(cs_no
+				,mem_no
+				,cs_title
+				,cs_content)
+			values
+				(seq_cus.nextval
+				,#{memNo}
+				,#{csTitle}
+				,#{csContent})
+	</insert>
+	
+	
 	
 	
 </mapper>

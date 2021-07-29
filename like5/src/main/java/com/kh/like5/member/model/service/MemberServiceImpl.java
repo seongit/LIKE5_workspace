@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.kh.like5.member.model.dao.MemberDao;
+import com.kh.like5.member.model.vo.Customer;
 import com.kh.like5.member.model.vo.Member;
 
 @Service
@@ -44,5 +45,18 @@ public class MemberServiceImpl implements MemberService {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+	/**
+	 * [1:1문의] 작성
+	 * @author seong
+	 */
+	@Override
+	public int insertInquiry(Customer c) {
+		return mDao.insertInquiry(sqlSession, c);
+	}
+	
+	
+	
+	
 
 }

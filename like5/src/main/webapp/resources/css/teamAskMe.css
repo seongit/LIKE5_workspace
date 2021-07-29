@@ -1,0 +1,52 @@
+@charset "UTF-8";
+
+/* [한솔] footer.jsp에서 넘어오는 페이지 전체 통합 css */
+
+/*
+	<공통>
+*/
+
+/* 본문 스타일 */
+.aboutMain{height:100%; margin:0% 4% 7% 4%;}
+.pageTop{width:100%; margin:auto; padding:5% 2% 1% 2%; text-align:center;
+  border-bottom:2px solid lightgray;}
+.pageBottom{width:100%; display:flex;}
+.pageLeft{width:20%; padding:0; display:left;}
+.pageRight{width:80%; padding:1.5% 2.5% 0% 3.5%;}
+
+/* 사이드바 스타일 */
+.sideBar{height:100%; padding:20px 0px 20px 20px;background-color:lightgray;}
+.barName{font-weight:bold;}
+ul{padding-left:10px;}
+li{list-style-type:none; padding-top:5px;}
+
+/* hr 스타일 */
+.divider{height:0.5px; width:170px; margin:30px 5px; background-color: darkgrey; border:0;}
+
+/* a태그 스타일 */
+a{text-decoration:none !important;}
+a>h4 a:hover, li a:hover{color:grey !important; cursor:pointer;}
+
+/* ********************************************************* */
+
+/*
+	<약관 3종>
+*/
+
+/* 약관 내용 스타일  */
+#content_bottom{background-color:#F8F9FA;}
+
+/* 약관 제목 배열 */
+.mainContent>div{float:left;}
+#content_top{width:100%; display:flex;}
+#content_top1{width:10%; text-align:center;}
+#content_top2{width:90%; margin-top:18px; font-size:12px; color:darkgray;}
+#content_top3{width:19%; text-align:center;}
+#content_top4{width:81%; margin-top:18px; font-size:12px; color:darkgray;}
+#content_bottom{padding:4%; text-align:justify;}
+
+/* ********************************************************* */
+
+/*
+	<팀 소개>
+*/

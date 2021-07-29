@@ -1,5 +1,202 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="boardMapper">
-  
+
+    <resultMap id="board" type="Board">
+        <result column="boa_no" property="bno" />
+        <result column="mem_no" property="mno" />
+        <result column="boa_category" property="category" />
+        <result column="boa_status" property="status" />
+        <result column="boa_title" property="title" />
+        <result column="boa_content" property="content" />
+        <result column="boa_enroll_date" property="enrollDate" />
+        <result column="boa_update_date" property="updateDate" />
+        <result column="boa_count" property="count" />
+        <result column="boa_like" property="like" />
+        <result column="boa_scrap" property="scrap" />
+        <result column="tag_name" property="tag" />
+        <result column="boa_img_path" property="imgPath" />
+        <result column="nickname" property="nickname" />
+    </resultMap>
+    
+    <resultMap id="report" type="Report">
+        <result column="report_unique" property="rno" />
+        <result column="mem_no" property="mno" />
+        <result column="category" property="category" />
+        <result column="ref_no" property="refNo" />
+        <result column="report_date" property="reportDate" />
+        <result column="report_reason" property="reason" />
+        <result column="nickname" property="nickname" />
+        <result column="boa_title" property="title" />
+    </resultMap>
+
+    <!-- [재환] 관리자단 게시글 개수 조회 -->
+    <select id="getBoardCount" resultType="_int">
+        select count(*) from board where boa_status = 'Y'
+    </select>
+
+    <!-- [재환] 관리자단 게시글 리스트 조회 -->
+    <select id="getBoardList" resultMap="board">
+        select BOA_NO
+             , BOA_CATEGORY
+             , BOA_TITLE
+             , NICKNAME
+             , BOA_ENROLL_DATE
+        from board
+        join member using(mem_no)
+        where boa_status = 'Y'
+        order by boa_no desc
+    </select>
+
+    <!-- [재환] 관리자단 검색된 게시글 개수 조회 -->
+    <select id="getSearchBoardCount" resultType="_int">
+        select count(*)
+        from board
+        join member using(mem_no)
+        where boa_status = 'Y'
+        <choose>
+            <when test="condition == 'title'">
+                and boa_title
+            </when>
+            <when test="condition == 'category'">
+                and boa_category
+            </when>
+            <otherwise>
+                and nickname
+            </otherwise>
+        </choose>
+        like '%' || #{keyword} || '%'
+    </select>
+
+    <!-- [재환] 관리자단 검색된 게시글 리스트 조회 -->
+    <select id="getSearchBoardList" resultMap="board">
+        select BOA_NO
+             , BOA_CATEGORY
+             , BOA_TITLE
+             , NICKNAME
+             , BOA_ENROLL_DATE
+        from board
+        join member using(mem_no)
+        where boa_status = 'Y'
+        <choose>
+            <when test="condition == 'title'">
+                and boa_title
+            </when>
+            <when test="condition == 'category'">
+                and boa_category
+            </when>
+            <otherwise>
+                and nickname
+            </otherwise>
+        </choose>
+        like '%' || #{keyword} || '%'
+        order
+        by boa_no desc
+    </select>
+
+    <!-- [재환] 관리자단 게시글 삭제 -->
+    <update id="deleteBoard">
+        update board
+           set boa_status = 'N'
+         where boa_no = #{bno}
+    </update>
+
+    <!-- [재환] 관리자단 신고내역 개수 조회 -->
+    <select id="getReportCount" resultType="_int">
+        select count(*) from report
+    </select>
+
+    <!-- [재환] 관리자단 신고내역 리스트 조회 -->
+    <select id="getReportList" resultMap="report">
+        select REPORT_UNIQUE
+             , NICKNAME
+             , BOA_TITLE
+             , CATEGORY
+             , REPORT_REASON
+             , REPORT_DATE
+          from report
+          join member using(MEM_NO)
+          join board on(REF_NO = BOA_NO)
+         order by REPORT_UNIQUE desc
+    </select>
+
+    <!-- [재환] 관리자단 검색된 신고내역 개수 조회 -->
+    <select id="getSearchReportCount" resultType="_int">
+        select count(*)
+        from report
+        join member using(MEM_NO)
+        join board on(REF_NO = BOA_NO)
+        where
+        <choose>
+            <when test="condition == 'title'">
+                boa_title
+            </when>
+            <when test="condition == 'category'">
+                category
+            </when>
+            <otherwise>
+                nickname
+            </otherwise>
+        </choose>
+        like '%' || #{keyword} || '%'
+    </select>
+
+    <!-- [재환] 관리자단 검색된 신고내역 리스트 조회 -->
+    <select id="getSearchReportList" resultMap="report">
+        select REPORT_UNIQUE
+             , NICKNAME
+             , BOA_TITLE
+             , CATEGORY
+             , REPORT_REASON
+             , REPORT_DATE
+        from report
+        join member using(MEM_NO)
+        join board on(REF_NO = BOA_NO)
+        where
+        <choose>
+            <when test="condition == 'title'">
+                boa_title
+            </when>
+            <when test="condition == 'category'">
+                category
+            </when>
+            <otherwise>
+                nickname
+            </otherwise>
+        </choose>
+        like '%' || #{keyword} || '%'
+        order
+        by REPORT_UNIQUE desc
+    </select>
+
+    <!--                    성은                           -->
+
+    <!-- [커뮤니티] - 전체 목록 리스트 페이징 처리시 필요한 게시글 전체 count-->
+    <select id="comListCount" resultType="_int">
+        select
+            count(*) count
+        from
+            board
+        where
+            regexp_like (boa_category,'일상|스터디모집')
+    </select>
+
+    <!-- [커뮤니티] - 전체 목록 리스트 조회  -->
+    <select id="comList" resultMap="board">
+        select
+            boa_no
+             ,nickname
+             ,boa_category
+             ,boa_title
+             ,boa_content
+             ,boa_enroll_date
+             ,boa_img_path
+        from board
+                 join member using (mem_no)
+        where 1=1
+          and regexp_like (boa_category,'일상|스터디모집')
+        order by boa_enroll_date desc
+    </select>
+
+
 </mapper>

@@ -8,131 +8,17 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Community</title>
-  <link href="../../resources/css/styles.css" rel="stylesheet">
   
-  <!-- 부트스트랩 -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-  <!-- W3.CSS -->
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-
-  <!-- 폰트어썸 -->
-  <script src="https://kit.fontawesome.com/1e56433357.js" crossorigin="anonymous"></script>
-
-  <!-- 공통 폰트 -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
-  
-    <style>
-    a { text-decoration:none !important } a:hover { text-decoration:none !important }
-
-      .content-header-bottom {
-          padding-top:7px;
-          padding-bottom: 8px;
-          display: flex;
-          justify-content: space-between;
-      }
-  
-      .TalkContentHeaderModule{
-          float: left;
-          height: 100%;
-          width:100%;
-      }
-  
-      .talk-comment-count-box{
-          font-size: 1.2rem;
-          padding-top:10px;
-          padding-bottom: 10px;
-      }
-  
-      .TalkCommentModule .comment-info .user-img>*{
-          height: 50px;
-          width:50px;
-          border-radius: 50px;
-          margin-right: 10px;
-          background-color:rgb(224, 224, 224) ;
-          text-align: center;
-          padding-top: 10px;
-      }
-
-      .TalkCommentModule{padding: 15px;}
-      .TalkCommentModuleTemplate>* .TalkCommentModule>*{margin-top:30PX;}
-      .talk-comment-lists{margin-top: 50px;}
-      .user-info{display: flex;font-size: 12px;}
-      .comment-content{
-          margin-top: 10px;
-          padding-left: 50px;
-          height: 50px;
-      }
-  
-      .comments-wrapper_value{
-          background-color: ghostwhite;
-          margin-left: 30px;
-          margin-bottom: 15px;
-          padding-left: 10px;
-          padding-top: 30px;
-      }
-  
-      .modal-body span{font-size: 9px;} 
-      .modal-body {font-size: 12px;}
-      .modal-content{padding: 5px;margin-top: 5px;}
-  
-    </style>
+<!-- comDetailView.css -->
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/comDetailView.css" />   
+ 
 </head>
 <body>
 
+    <!--메뉴바-->
+    <jsp:include page="../../common/header.jsp" />
     
-    <div class="header">
-        <!-- 로고 -->
-        <div id="header_logo" align=center>
-            <a href="">
-                <img src="https://i.imgur.com/5WiLp9Y.jpg" style="width:85px; height:50px;">
-            </a>
-        </div>
-
-        <!-- 메뉴 -->
-        <div id="header_navi">
-            <ul id="menu">
-                <li><a href="">LIKE5?</a></li>
-                <li><a href="">QnA</a></li>
-                <li><a href="">공간대여</a></li>
-                <li><a href="">커뮤니티</a></li>
-                <li><a href="">칼럼</a></li>
-                <li><a href="">IT뉴스</a></li>
-            </ul>
-        </div>
-
-        <!-- 로그인 -->
-        <div id="header_user" style="text-align:center;">
-            <!-- 로그인 전
-            <div id="before_login">
-                <a href="">로그인&nbsp;</a> | <a href="">&nbsp;회원가입</a>
-            </div> -->
-
-            <!-- 로그인 후 -->
-            <div id="after_login">
-                <div class="w3-dropdown-hover w3-center">
-                    <!-- 사용자 닉네임 한글 기준 11자까지 배열에 딱 맞음 -->
-                    <button class="w3-button w3-white">사용자 닉네임</button>
-                    <div class="w3-dropdown-content w3-bar-block w3-border" style="right:0">
-                    <a href="" class="w3-bar-item w3-button">마이페이지</a>
-                    <a href="" class="w3-bar-item w3-button">내 프로필 보기</a>
-                    <a href="" class="w3-bar-item w3-button">1:1문의</a>
-                    <a href="" class="w3-bar-item w3-button">로그아웃</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- 메뉴바 아래 회색 밑줄 -->
-        <div class="underline"></div>
-    </div>
-    
-    <div class="innerOuter" style="padding: 5% 10%;">
+    <div class="innerOuter" style="margin-top:50px;padding-left:50px">
         <!--댓글창까지 전체 감싸는 div-->
         <div class="talk-main-col">
             
@@ -140,7 +26,7 @@
                 <div class="TalkContentHeaderModule">
                     <div>
 
-                        <!--🔥조건식으로 신고된 게시글은 아래의 이미지 보여지게끔 구현하기🔥
+                        <!--조건식으로 신고된 게시글은 아래의 이미지 보여지게끔 구현하기🔥
                         <div>
                             <img src="블라인드 게시글.jpg" style="width: 100%; height: 100%;"><img> 
                         </div>
@@ -160,7 +46,7 @@
                                 
                                 <div class="rigth-items">
                                     <span>조회 6 | </span>
-                                    <span><a href="" class="aTags" data-toggle="modal" data-target="#report-modal"><img src="">🚨신고</a></span>
+                                    <span><a href="" class="aTags" data-toggle="modal" data-target="#report-modal">🚨신고</a></span>
                                 </div>
                             </div>
                             <hr>
@@ -170,13 +56,29 @@
                             <div>내용이 보여지는 영역</div>
                           
                         </div>
-                        <!--글작성자에게만 보여지는 버튼
-                        <div class="content-footer" align="center">
-                            <button type="button" class="btn btn-outline-danger btn-sm">수정</button>
-                            <button type="button" class="btn btn-danger btn-sm">삭제</button>
-                           
-                        </div>
-                        -->
+                        <!--글작성자에게만 보여지는 버튼-->
+                        <%-- <c:if test="${loginUser.userId != null}"></c:if>--%>
+	                        <div class="content-footer" align="center">
+	                            <button type="button" class="btn btn-outline-danger btn-sm" onclick="postFormSubmit(1)">수정</button>
+	                            <button type="button" class="btn btn-danger btn-sm" onclick="postFormSubmit(2)">삭제</button>
+	                        </div>
+	                        
+	                        <form id="postForm" action="" method="post">
+								<input type="hidden" name="bno" value="${b.boardNo}">
+								<input type="hidden" name="filePath" value="${b.changeName}">
+							</form>
+							
+							<script>
+								function postFormSubmit(num){
+									if(num==1){ // 수정하기
+										$("#postForm").attr("action","comUpdateForm.bo").submit();
+									 	// 선택된 요소에 액션값 부여하고, 바로 submit 시키기 == 메소드 체이닝
+									}else{ // 삭제하기
+										$("#postForm").attr("action","comDelete.bo").submit();
+									}
+								}
+							</script>
+                        
                         <hr>
                     </div>
                 </div>
@@ -250,7 +152,7 @@
             </form>    
             <!--댓글 전체 감싸는 영역-->
             
-            <div class="talk-commentbox-wrapper">
+            <div class="talk-commentbox-wrapper" style="margin-bottom:50px">
                 <div class="talk-comment-count-box">3개의 댓글</div>
                 <div class="talk-newcomment-box">
                     <div class="auto-heigth" style="box-sizing: border-box; height: auto;">
@@ -354,8 +256,8 @@
 
     </script>
 
-     <!--푸터바 들어올 자리 -->
-
+	<!--푸터바-->
+	<jsp:include page="../../common/footer.jsp" />
 
 </body>
 </html>
