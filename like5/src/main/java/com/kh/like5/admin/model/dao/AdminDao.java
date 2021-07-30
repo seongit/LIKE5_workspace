@@ -62,6 +62,20 @@ public class AdminDao {
 		return (ArrayList)sqlSession.selectList("customerMapper.selectCsTwoList",null, rowBounds);
 	}
 	
+	// 1:1 문의 검색 기능
+	public int searchCsMemCount(SqlSessionTemplate sqlSession, HashMap<String,String>map) {
+		return sqlSession.selectOne("customerMapper.searchCsMemCount", map);
+	}
+	public ArrayList<Customer> searchCsMemList(SqlSessionTemplate sqlSession, PageInfo pi, HashMap<String, String>map){
+		int offset = (pi.getCurrentPage() - 1) * pi.getBoardLimit();
+		RowBounds rowBounds = new RowBounds(offset, pi.getBoardLimit());
+		
+		return (ArrayList)sqlSession.selectList("customerMapper.searchCsMemList", map, rowBounds);
+	}
+	
+	
+	
+	
 	
 
 	// ============================= [재환] =============================

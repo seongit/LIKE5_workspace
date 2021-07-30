@@ -13,7 +13,7 @@
     <style>
         .title{
             float: left;
-            margin-right: 58px;
+            margin-right: 74px;
         }
         aside{
             float: left;

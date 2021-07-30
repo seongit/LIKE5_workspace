@@ -35,7 +35,54 @@
 		    by cs_no desc
   	</select>
   
-  
+  	<select id="searchCsMemCount" resultType="_int">
+  		select 
+  				count(*)
+  		from customer
+        join member using (mem_no)
+        where   
+	    <choose>
+	 		<when test="condition == 'memName'">
+	 			mem_name
+	 		</when>
+	 		<when test="condition == 'nickName'">
+	 			 nickName
+	 		</when>
+	 		<otherwise>
+	 			mem_name like '%' || #{keyword} || '%'
+	 			or nickName
+	 		</otherwise>
+	 	</choose>
+	 	like '%' || #{keyword} || '%'
+	 	order by cs_no desc
+  	</select>
+  	
+  	<select id="searchCsMemList" resultMap="customerResult">
+  		select 
+		        cs_no
+		      , mem_name
+		      , nickname
+		      , cs_title
+		      , to_char(reg_date, 'YYYY-MM-DD') as reg_date
+		      , status
+		from customer
+		join member using (mem_no)
+		where
+		<choose>
+	 		<when test="condition == 'memName'">
+	 			mem_name
+	 		</when>
+	 		<when test="condition == 'nickName'">
+	 			nickName
+	 		</when>
+	 		<otherwise>
+	 			mem_name like '%' || #{keyword} || '%'
+	 			or nickName
+	 		</otherwise>
+	 	</choose>
+	 	like '%' || #{keyword} || '%'
+	 	order by cs_no desc
+  	</select>
   
   
   

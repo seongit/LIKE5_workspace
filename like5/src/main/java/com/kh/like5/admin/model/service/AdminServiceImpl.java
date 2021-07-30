@@ -83,6 +83,16 @@ public class AdminServiceImpl implements AdminService{
 	public ArrayList<Customer> selectCsTwoList(PageInfo pi) {
 		return adDao.selectCsTwoList(sqlSession, pi);
 	}
+	// 1:1문의 게시글 - 검색(페이징)
+	@Override
+	public int searchCsMemCount(HashMap<String, String> map) {
+		return adDao.searchCsMemCount(sqlSession, map);
+	}
+	// 1:1문의 게시글 - 검색(게시글조회)
+	@Override
+	public ArrayList<Customer> searchCsMemList(PageInfo pi, HashMap<String, String> map) {
+		return adDao.searchCsMemList(sqlSession, pi, map);
+	}
 
 	@Override
 	public int getReportCount() {

@@ -9,7 +9,7 @@
 <style>
 		.title{
             float: left;
-            margin-right: 58px;
+            margin-right: 74px;
         }
         aside{
             float: left;
@@ -86,6 +86,7 @@
         #inProgress{
             color: lightslategray;
         }
+        
 </style>
 </head>
 <body>
@@ -106,13 +107,13 @@
 	    <aside>
 	        <ul>
 	            <li>
-	                <a class="active" href="member.ad">회원관리</a>
+	                <a  href="member.ad">회원관리</a>
 	            </li>
 	            <li>
 	                <a href="board.ad">게시글관리</a>
 	            </li>
 	            <li>
-	                <a href="customer.ad">고객센터</a>
+	                <a class="active" href="customer.ad">고객센터</a>
 	            </li>
 	            <li>
 	                <a href="donation.ad">후원관리</a>
@@ -125,7 +126,7 @@
 	
 	    <article>
 	        <!-- 검색기능 그냥 가져다가 써도 되려나...? 요건 해보면 알겠지 뭐 ㅎㅎ -->
-	        <form action="id="searchBar" action="searchMem.ad" method="POST"">
+	        <form action="searchCs.ad" method="POST"">
 	            <select class="selectpicker" name="condition">
 	                    <option value="all" name="all">전체</option>
 	                    <option value="memName" name="memName">회원명</option>
@@ -183,7 +184,7 @@
                     <c:otherwise>
                     	<c:choose>
                     		<c:when test="${!empty condition }">
-                    			<li class="page-item"><a class="page-link" href="searchMem.ad?currentPage=${pi.currentPage-1 }&condition=${condition}&keyword=${keyword}">&laquo;</a></li>
+                    			<li class="page-item"><a class="page-link" href="searchCs.ad?currentPage=${pi.currentPage-1 }&condition=${condition}&keyword=${keyword}">&laquo;</a></li>
                    			</c:when>
                     		<c:otherwise>
                     			<li class="page-item"><a class="page-link" href="csTwo.ad?currentPage=${pi.currentPage -1 }">&laquo;</a></li>
@@ -196,7 +197,7 @@
                 <c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage }">
                 	<c:choose>
                 		<c:when test="${!empty condition }">
-                			<li class="page-item"><a class="page-link" href="searchMem.ad?currentPage=${ p }&condition=${condition}&keyword=${keyword}">${ p }</a></li>
+                			<li class="page-item"><a class="page-link" href="searchCs.ad?currentPage=${ p }&condition=${condition}&keyword=${keyword}">${ p }</a></li>
                 		</c:when>
                 		<c:otherwise>
                 			<li class="page-item"><a class="page-link" href="csTwo.ad?currentPage=${ p }">${ p }</a></li>
@@ -212,7 +213,7 @@
                     <c:otherwise>
                     	<c:choose>
                     		<c:when test="${ !empty condition }">
-	                    		<li class="page-item"><a class="page-link" href="searchMem.ad?currentPage=${ pi.currentPage+1 }&condition=${condition}&keyword=${keyword}">&raquo;</a></li>
+	                    		<li class="page-item"><a class="page-link" href="searchCs.ad?currentPage=${ pi.currentPage+1 }&condition=${condition}&keyword=${keyword}">&raquo;</a></li>
 	                    	</c:when>
 	                    	<c:otherwise>
 	                    		<li class="page-item"><a class="page-link" href="csTwo.ad?currentPage=${ pi.currentPage+1 }">&raquo;</a></li>
@@ -231,6 +232,12 @@
 	</c:if>
 	</div>
 	
-	
+	<script>
+    	$(function(){
+    		if("$(condition)" != ""){
+    			$("option[value=${condition}]").attr("selected", true);
+    		}
+    	})
+    </script>
 </body>
 </html>

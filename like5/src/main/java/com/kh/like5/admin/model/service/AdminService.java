@@ -22,13 +22,12 @@ public interface AdminService {
 	// 회원관리-회원삭제기능(update혹은 delete구문)
 	int deleteMem(int memNo);
 	
-	
-	
-	
 	// 1:1문의 메인페이지 select문
 	int selectCsTwoCount();
 	ArrayList<Customer> selectCsTwoList(PageInfo pi);
-	
+	 // 1:1문의 검색 기능 select문
+	public int searchCsMemCount(HashMap<String,String> map);
+	public ArrayList<Customer> searchCsMemList(PageInfo pi, HashMap<String, String> map);
 	
 	// 1:1문의 상세페이지 select문
 	

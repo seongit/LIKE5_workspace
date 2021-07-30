@@ -110,7 +110,7 @@ public class AdminController {
 	@RequestMapping("csTwo.ad")
 	public ModelAndView csTwoList(ModelAndView mv, @RequestParam(value="currentPage", defaultValue="1") int currentPage) {
 		
-		int listCount = adService.selectMemCount();
+		int listCount = adService.selectCsTwoCount();
     	
     	PageInfo pi = Pagination.getPageInfo(listCount, currentPage, 5, 10);
     	ArrayList<Customer> list = adService.selectCsTwoList(pi);
@@ -123,7 +123,25 @@ public class AdminController {
 	}
 	
 	// 1:1문의 관리 검색기능
-	
+	@RequestMapping("searchCs.ad")
+	public ModelAndView searchCsMemList(ModelAndView mv, @RequestParam(value="currentPage", defaultValue="1") int currentPage, String condition , String keyword) {
+		HashMap<String,String> map = new HashMap<>();
+    	map.put("condition", condition);
+    	map.put("keyword", keyword);
+    	
+    	int listCount = adService.searchCsMemCount(map);
+    	
+    	PageInfo pi = Pagination.getPageInfo(listCount, currentPage, 5, 10);
+    	ArrayList<Customer> list = adService.searchCsMemList(pi,map);
+    	
+    	mv.addObject("pi",pi)
+    	  .addObject("list",list)
+    	  .addObject("condition", condition)
+    	  .addObject("keyword", keyword)
+    	  .setViewName("admin/csMainTwo");
+    	
+    	return mv;
+	}
 	
 	
 	// 후원관리 - 메인페이지 불러오기 & 리스트 조회

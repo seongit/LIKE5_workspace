@@ -20,8 +20,8 @@
 ul{padding-left:10px;}
 li{list-style-type:none; padding-top:5px;}
 
-/* hr 스타일 */
-.divider{height:0.5px; width:170px; margin:30px 5px; background-color: darkgrey; border:0;}
+/* 구분선 스타일 */
+.divider{border-bottom:1px solid darkgrey; width:80%; margin:30px 0px;}
 
 /* a태그 스타일 */
 a{text-decoration:none !important;}
@@ -33,9 +33,6 @@ a>h4 a:hover, li a:hover{color:grey !important; cursor:pointer;}
 	<약관 3종>
 */
 
-/* 약관 내용 스타일  */
-#content_bottom{background-color:#F8F9FA;}
-
 /* 약관 제목 배열 */
 .mainContent>div{float:left;}
 #content_top{width:100%; display:flex;}
@@ -43,10 +40,34 @@ a>h4 a:hover, li a:hover{color:grey !important; cursor:pointer;}
 #content_top2{width:90%; margin-top:18px; font-size:12px; color:darkgray;}
 #content_top3{width:19%; text-align:center;}
 #content_top4{width:81%; margin-top:18px; font-size:12px; color:darkgray;}
-#content_bottom{padding:4%; text-align:justify;}
+
+/* 약관 내용 스타일 */
+#content_bottom{padding:4%; text-align:justify; background-color:#F8F9FA;}
 
 /* ********************************************************* */
 
 /*
 	<팀 소개>
 */
+
+/* 팀 소개 배열 */
+#teamContent{width:100%; margin:5% 0% 6% 0%;}
+
+/* 본문 소개 배열 및 스타일 */
+.booking, .community, .admin{
+  font-family: 'Work Sans', sans-serif; color:#c9cacb81;
+  position:relative; z-index:1; width:827px; height:200px; 
+  padding-top:15px; margin-bottom:2%;
+  text-align:center; font-weight:bold; font-size:120px;
+}   /* z-index로 레이어 순번 정하고 그 위에 쌓기 */
+
+table[class$="Table"]{
+  position:absolute; z-index:2; width:100%; height:100%;
+  font-size:15px; margin:0; top:0;
+}
+
+.nullCell1{width:100px;}
+.between{width:20px;}
+.imageCell{width:200px; height:80%;}
+.w3-round{width:150px; height:150px; padding:0px;}
+.memName{font-size:16px;}
