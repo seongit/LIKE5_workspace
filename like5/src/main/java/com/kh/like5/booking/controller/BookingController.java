@@ -90,6 +90,7 @@ public class BookingController {
 	public String enrollForm() {
 		return "booking/aOfficeInsertForm";
 	}
+	
 	@RequestMapping("insertOf.bk")
 	public String insertOffice(Office o, HttpServletRequest request, MultipartFile[] file, HttpSession session, Model model) {
 		String[] facilityArr = request.getParameterValues("facility");
@@ -209,6 +210,7 @@ public class BookingController {
 		}
 	}
 	
+
 	/**
 	 * 추가부분 - 상세조회 클릭시 연동 페이지(officeDetail)
 	 */
@@ -219,10 +221,23 @@ public class BookingController {
 		ArrayList<Attachment> at = bService.selectList(ono);
 		model.addAttribute("at", at);
 		model.addAttribute("ono", ono);
-		System.out.println(at);
+		/*System.out.println(at);*/
+		
+		Office o = bService.selectOffice(ono);
+		model.addAttribute("o", o);
+		model.addAttribute("ono", ono);
 		
         return "booking/officeDetail";
     }
 	
 	
+
+	@RequestMapping("paymentForm.bk")
+	public String paymentForm() {
+		/*
+		 * 상세정보페이지에서 오피스 번호로 오피스조회랑 예약테이블의 시작일, 끝일 list가져와서 뿌리기
+		 * 예약신청시 정보를 booking테이블로 insert 성공시 성공 페이지로 redirect*/
+		return "booking/bPayment";
+	}
+
 }

@@ -1,6 +1,7 @@
 package com.kh.like5.board.model.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,27 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public ArrayList<Board> comList(PageInfo pi) {
 		return bDao.comList(sqlSession, pi);
+	}
+	
+	/**
+	 * [커뮤니티] - 키워드 검색 결과 list count
+	 * @author seong
+	 */
+	
+	@Override
+	public int comSearchListCount(HashMap<String, String> map) {
+		return bDao.comSearchListCount(sqlSession, map);
+	}
+
+	
+	/**
+	 * [커뮤니티] - 키워드 검색 결과 조회 
+	 * @author seong
+	 */
+	
+	@Override
+	public ArrayList<Board> comSearchList(PageInfo pi, HashMap<String, String> map) {
+		return bDao.comSearchList(sqlSession, pi, map);
 	}
 
 	/**
@@ -83,6 +105,9 @@ public class BoardServiceImpl implements BoardService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
+
 
 
 

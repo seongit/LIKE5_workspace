@@ -1,6 +1,7 @@
 package com.kh.like5.board.model.dao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.apache.ibatis.session.RowBounds;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -38,6 +39,27 @@ public class BoardDao {
 		RowBounds  rowBounds = new RowBounds(offset, limit);
 		return (ArrayList)sqlSession.selectList("boardMapper.comList",null,rowBounds);
 	}
-
+	
+	
+	/**
+	 * [커뮤니티] - 키워드 검색 결과 list count
+	 * @author seong
+	 */
+	
+	public int comSearchListCount(SqlSessionTemplate sqlSession,HashMap<String,String>map) {
+		return sqlSession.selectOne("boardMapper.comSearchListCount",map);
+	}
+	
+	/**
+	 * [커뮤니티] - 키워드 검색 결과 조회 
+	 * @author seong
+	 */
+	
+	public ArrayList<Board> comSearchList(SqlSessionTemplate sqlSession,PageInfo pi,HashMap<String,String>map){
+		int offset = (pi.getCurrentPage()-1)*pi.getBoardLimit();
+		RowBounds rowBounds = new RowBounds(offset,pi.getBoardLimit());
+		return (ArrayList)sqlSession.selectList("boardMapper.comSearchList",map,rowBounds);
+	}
+	
 
 }

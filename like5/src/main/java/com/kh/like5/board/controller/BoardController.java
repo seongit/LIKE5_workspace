@@ -1,6 +1,7 @@
 package com.kh.like5.board.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -98,6 +99,35 @@ public class BoardController {
 		
 		return mv;
 	}
+	
+	/**
+	 * [커뮤니티] - 키워드 검색 결과
+	 * @author seong
+	 */
+	
+	@RequestMapping("comSearch.bo")
+	public ModelAndView comSearchList(ModelAndView mv,@RequestParam(value="currentPage",defaultValue="1")
+										int currentPage	,String condition,String keyword) {
+		
+		HashMap<String,String>map = new HashMap<>();
+		map.put("condition", condition);
+		map.put("keyword", keyword);
+		
+		int listCount = bService.comSearchListCount(map);
+		
+		PageInfo pi = Pagination.getPageInfo(listCount, currentPage, 5, 5);
+		ArrayList<Board>comList = bService.comSearchList(pi,map);
+		
+		
+		mv.addObject("pi",pi)
+		  .addObject("comList",comList)
+		  .addObject("condition",condition)
+		  .addObject("keyword",keyword)
+		  .setViewName("board/community/comListView");
+
+		return mv;
+	}
+	
 	
 	/**
 	 * [커뮤니티] - 글 작성 Form

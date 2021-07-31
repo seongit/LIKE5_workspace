@@ -4,7 +4,6 @@
     a { text-decoration:none !important } a:hover { text-decoration:none !important }
 
     .main{
-        height: 60em;
         margin-top: 100px;;
     }
     
@@ -39,11 +38,9 @@
         width:100%;
     }
 	
-
     .TalkBoxItem .talk-box-col__thumbnail>img{
         margin-left: 5px;
         width : 100px;
-        height:100px;
         overflow: hidden;
     }
     

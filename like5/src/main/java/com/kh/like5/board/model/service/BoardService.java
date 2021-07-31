@@ -1,6 +1,7 @@
 package com.kh.like5.board.model.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import com.kh.like5.board.model.vo.Board;
 import com.kh.like5.common.model.vo.PageInfo;
@@ -24,6 +25,12 @@ public interface BoardService {
 	int comListCount();
 	// 전체 목록 리스트 조회
 	ArrayList<Board>comList(PageInfo pi);
+	
+	// 키워드 검색 결과 list count
+	int comSearchListCount(HashMap<String,String>map);
+	
+	// 키워드 검색 결과 조회
+	ArrayList<Board>comSearchList(PageInfo pi,HashMap<String,String>map);
 	
 	// 커뮤니티 게시글 상세보기시 조회수 증가
 	int increaseCount(int bno);

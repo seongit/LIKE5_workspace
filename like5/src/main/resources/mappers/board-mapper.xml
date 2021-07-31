@@ -195,8 +195,58 @@
                  join member using (mem_no)
         where 1=1
           and regexp_like (boa_category,'일상|스터디모집')
+          and boa_status='Y'
         order by boa_enroll_date desc
     </select>
+
+	<!-- [커뮤니티] - 키워드 검색 결과 list count -->
+	<select id="comSearchListCount" resultType="_int">
+		select count(*)
+			from board
+			join member using(mem_no)
+			where boa_status = 'Y'
+			<choose>
+				<when test="condition=='titleAndcontent'">
+					and boa_title like '%'||#{keyword}||'%' or boa_content 
+				</when>
+				<when test="condition=='title'">
+					and boa_title 
+				</when>
+				<otherwise>
+					and nickname 
+				</otherwise>
+			</choose>
+			like '%'||#{keyword}||'%'
+			order by boa_enroll_date desc
+	</select>
+	
+	<!-- [커뮤니티] - 키워드 검색 결과 조회 -->
+	<select id="comSearchList" resultMap="board">
+	    select
+            boa_no
+             ,nickname
+             ,boa_category
+             ,boa_title
+             ,boa_content
+             ,boa_enroll_date
+             ,boa_img_path
+        from board
+	     join member using(mem_no)
+	    where boa_status = 'Y'
+	    <choose>
+		    <when test="condition=='titleAndcontent'">
+		    	and boa_title like '%'||#{keyword}||'%' or boa_content 
+		    </when>
+		    <when test="condition=='title'">
+		    	and boa_title 
+		    </when>
+		    <otherwise>
+		    	and nickname 
+	    	</otherwise>
+	    </choose>
+	    like '%'||#{keyword}||'%'
+	    order by boa_enroll_date desc
+	</select>
 
 
 </mapper>

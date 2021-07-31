@@ -7,7 +7,8 @@
 <head>
 <meta charset="UTF-8">
 <title>공간 리스트 상세페이지</title>
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<!-- 카카오 api 지도 key 입력부분-->
+<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=010c7b5cd71c4c45be3b01ae1329b4b5&libraries=services,clusterer,drawing"></script>
 <style>
 	/*여기부터 메인 css*/
 
@@ -43,28 +44,28 @@
     .print2{margin-left:172px;}
 
     /*주차*/
-    .car{margin-left:310px; margin-top:-100px;}
+    .car{margin-left:310px; margin-top:-95px;}
     .car2{margin-left:325px; margin-top:12px;}
 
     /*컴퓨터/pc*/
-    .com{margin-left:450px; margin-top:-95px;}
+    .com{margin-left:450px; margin-top:-90px;}
     .com2{margin-left:445px; margin-top:13px;}
 
     /*bar*/
-    .bar{padding:5px; margin-left:20px;}
+    .bar{padding:5px; margin-left:20px; margin-top:20px;}
     .bar2{margin-left:43px;}
 
     /*회의실*/
-    .meeting{margin-left:170px; margin-top:-90px;}
+    .meeting{margin-left:175px; margin-top:-80px;}
     .meeting2{margin-left:170px; margin-top:10px;}
 
     /*냉/난방시설*/
-    .wind{margin-left:310px; margin-top:-90px;}
+    .wind{margin-left:310px; margin-top:-85px;}
     .wind2{margin-left:300px; margin-top:9px;}
 
     /*매니저*/
-    .people{margin-left:450px; margin-top:-90px;}
-    .people2{margin-left:459px; margin-top:2px;}
+    .people{margin-left:459px; margin-top:-80px;}
+    .people2{margin-left:460px; margin-top:10px;}
 
     /* 세부 공간 선택*/
     .space{margin-left:650px; margin-top:30px;}
@@ -84,6 +85,7 @@
         padding:15px;
         background-color: white;
     }
+    .fas{color:lightgrey}
 </style>
 </head>
 <body>
@@ -95,7 +97,7 @@
 
         <!--공간 제목,별점-->
         <div class="wrap1">
-            <h1><b>공간 A</b></h1>
+            <h1><b>${o.branch}</b></h1>
             <h4>★ 3.5</h4>
             <h4>후기(10)</h4>
         </div>
@@ -105,7 +107,7 @@
         <!--메인 사진-->
         
         <div class="reserveImg">
-        <div id="demo" class="carousel slide" data-ride="carousel">
+        	<div id="demo" class="carousel slide" data-ride="carousel">
 
 			  <!-- Indicators -->
 			  <ul class="carousel-indicators">
@@ -117,7 +119,7 @@
 			  <div class="carousel-inner">
 			  
 			    <div class="carousel-item active">
-			    	<img src="${at.get(0).filePath}">
+			    	<img src="${o.offImgPath}">
 			    </div>
 			    <c:forEach var="i" begin="1" end="${ fn:length(at)-1 }">
 				    <div class="carousel-item">
@@ -143,55 +145,55 @@
         <br><br>
         
         <!-- 세부 공간 선택-->
-        <div class="space"><h3><b>세부 공간 선택</b></h3></div> <br>
-        <div class="space2">
-            <div class="space3">
-                <b>호스트의 승인을 기다릴 필요 없이 <br>
-                    지금 바로 예약하세요!</b><br><br>
-                <b>공간 A</b> &nbsp;&nbsp;&nbsp;<b>￦50,000 / 1일 </b></b> <br><br><br>
-                <b>체크인</b> <br>
-                <input type="text" placeholder="2021년 07월 12일(목)"> <br><br>
-                <b>체크아웃</b> <br>
-                <input type="text" placeholder="2021년 07월 13일(금)"> <br><br><br><br>
-                <button type="button" class="btn btn-danger btn-block">예약 하기</button>
-            </div>
-        </div>
-
+	        <div class="space"><h3><b>세부 공간 선택</b></h3></div> <br>
+	        <div class="space2">
+	            <div class="space3">
+	                <b>호스트의 승인을 기다릴 필요 없이 <br>
+	                    지금 바로 예약하세요!</b><br><br>
+	                <b>${o.branch}</b> &nbsp;&nbsp;&nbsp;<b>${o.price} 원 / 1일 </b></b> <br><br><br>
+	                <b>체크인</b> <br>
+	                <input type="text" placeholder="2021년 07월 12일(목)"> <br><br>
+	                <b>체크아웃</b> <br>
+	                <input type="text" placeholder="2021년 07월 13일(금)"> <br><br><br><br>
+	                <button type="button" class="btn btn-danger btn-block">예약 하기</button>
+	            </div>
+	        </div> 
         <!--시설 안내-->
-        <div class="fa1"><h3><b>시설 안내</b></h3></div> <br>
-        <div class="facility">
-            <div class="wifi"><i class='fas fa-wifi' style='font-size:48px;color:red'></i></div> <br>
+   <div class="fa1"><h3><b>시설 안내</b></h3></div> <br>
+   <div class="facility">
+
+            <div class="wifi"><i id="wifiIcon" class='fas fa-wifi' style='font-size:48px;'></i></div> <br>
             <div class="wifi2"><b>인터넷/wifi</b></div>
 
-            <div class="print"><i class='fas fa-print' style='font-size:48px'></i></div> <br>
+            <div class="print"><i id="printcon" class='fas fa-print' style='font-size:48px'></i></div> <br>
             <div class="print2"><b>프린트</b></div>
         
-            <div class="car"><i class="material-icons" style="font-size:60px">directions_car</i></div>  
+            <div class="car"><i id="carcon" class="fas fa-car" style='font-size:60px'></i></div>  
             <div class="car2"><b>주차</b></div>
             
-            <div class="com"><i class="material-icons" style="font-size:55px">computer</i></div>
+            <div class="com"><i id="comcon" class="fas fa-laptop" style='font-size:48px'></i></div>
             <div class="com2"><b>PC/노트북</b></div> <br>
 
-            <div class="bar"><i class="material-icons" style="font-size:60px">local_bar</i></div>
+            <div class="bar"><i id="barcon" class="fas fa-coffee" style='font-size:48px'></i></div>
             <div class="bar2"><b>bar</b></div>
 
-            <div class="meeting"><i class="fa fa-microphone" style="font-size:60px"></i></div>
+            <div class="meeting"><i id="meetcon" class="fas fa-microphone" style="font-size:48px"></i></div>
             <div class="meeting2"><b>회의실</b></div>
 
-            <div class="wind"><i class='fas fa-wind' style='font-size:60px'></i></div>
+            <div class="wind"><i id="windcon" class='fas fa-wind' style='font-size:48px'></i></div>
             <div class="wind2"><b>냉/난방시설</b></div>
 
-            <div class="people"><i class="material-icons" style="font-size:60px">face</i></div>
+            <div class="people"><i id="peoplecon" class="fas fa-user" style='font-size:48px'></i></div>
             <div class="people2"><b>매니저</b></div>
-
+	
         </div>   
 
         <br><br> 
         <!--위치(지도)-->
        <div><h3><b>위치</b></h3> <br> 
-        <div><img src="../../../resources/images/지도.PNG"></div> <br><br></div>
+        <div id="map" style="width:400px;height:400px;"></div> <br><br></div>
         
-    	<br><br><br><br><br><br><br><br><br><br><br><br><br>
+    	<br>
         <!--후기-->
         <div><h3><b>의견 및 소감</b></h3></div> 
         
@@ -218,7 +220,76 @@
             </p>
         </div>
 </div>       
-	    <br><br><br><br>
+	    <br><br><br><br><br><br>
 		<jsp:include page="../common/footer.jsp"/>
+		
+<script>
+    <c:if test="${ fn:contains(o.facility, '와이파이') }">
+    	$("#wifiIcon").css("color","red");
+	</c:if>
+	<c:if test="${ fn:contains(o.facility, '프린트') }">
+		$("#printcon").css("color","red");
+	</c:if>
+	<c:if test="${ fn:contains(o.facility, '주차') }">
+		$("#carcon").css("color","red");
+	</c:if>
+	<c:if test="${ fn:contains(o.facility, 'PC/노트북') }">
+		$("#comcon").css("color","red");
+	</c:if>
+	<c:if test="${ fn:contains(o.facility, 'bar') }">
+		$("#barcon").css("color","red");
+	</c:if>
+	<c:if test="${ fn:contains(o.facility, '회의실') }">
+		$("#meetcon").css("color","red");
+	</c:if> 
+	<c:if test="${ fn:contains(o.facility, '냉/난방시설') }">
+		$("#windcon").css("color","red");
+	</c:if>
+	<c:if test="${ fn:contains(o.facility, '매니저') }">
+		$("#peoplecon").css("color","red");
+	</c:if>
+	
+	<%-- kakao map --%>
+
+    var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+		mapOption = {
+    				center: new kakao.maps.LatLng(33.450701, 126.570667), // 지도의 중심좌표
+    				level: 5 // 지도의 확대 레벨
+				};  
+
+	// 지도를 생성합니다    
+	var map = new kakao.maps.Map(mapContainer, mapOption); 
+
+	// 주소-좌표 변환 객체를 생성합니다
+	var geocoder = new kakao.maps.services.Geocoder();
+		
+	// 주소로 좌표를 검색합니다
+	geocoder.addressSearch("${ o.address }", function(result, status) {
+
+	// 정상적으로 검색이 완료됐으면 
+ 	if (status === kakao.maps.services.Status.OK) {
+
+    var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+    console.log(coords);
+    
+    // 결과값으로 받은 위치를 마커로 표시합니다
+    var marker = new kakao.maps.Marker({
+        map: map,
+        position: coords
+    });
+
+    // 인포윈도우로 장소에 대한 설명을 표시합니다
+    var infowindow = new kakao.maps.InfoWindow({
+        content: '<div style="width:100px;text-align:center;padding:6px 0;">${o.branch}</div>'
+    });
+    infowindow.open(map, marker);
+
+    // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+    map.setCenter(coords);
+		}
+	});
+	
+	
+</script>
 </body>
 </html>

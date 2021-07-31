@@ -69,43 +69,42 @@
 	                <h3><b>XX개의 게시물</b></h3>
 	            </div>
 
-            	<!--반복적으로 생성될 요소들-->
-       			 <c:forEach var="c" items="${comList}">
-	            <div class="TalkBoxItem" id="com-bno">
-	                <input type="hidden" value="${c.bno}">
-	                <hr>
-	                <!--하나의 컨텐츠 감쌀 영역-->
-	                <div class="talk-box-wrapper">
-	                    <!--content 영역-->
-	                    <div class="talk-box-col__content">
+            	  <!--반복적으로 생성될 요소들-->
+				 <c:forEach var="c" items="${comList}">
+		            <div class="TalkBoxItem">
+		                <hr>
+		                <!--하나의 컨텐츠 감쌀 영역-->
+		                <div class="talk-box-wrapper">
+		              		 <input type="hidden" class="com-bno" value="${c.bno}">
+		                    <!--content 영역-->
+		                    <div class="talk-box-col__content">
 	                            <div class="talk-box-row__title">
 	                                <h5 class="post-title">${c.title}
 	                                    <label class="post-commentcount">[0]</label>
 	                                </h5>
 	                            </div>
-	                        <!--게시글 정보 (카테고리, 작성일, 작성자)-->
-	                        <div class="talk-box-row__info">
-	                            <label class="talk-box-label">${c.category } | </label>
-	                            <label class="talk-box-label">${c.enrollDate} | </label>
-	                            <label class="talk-box-label">${c.nickname }</label>
-	                        </div>
-	                    </div>
-	                    <!--thumbnail영역-->
-	                    <!-- 조건식으로 imgPath가 null이면 기본 이미지 출력하기 -->
-	                    <c:choose>
-	                    	<c:when test="${!empty c.imgPath}">
-	                    		<div class="talk-box-col__thumbnail">
-		                        <img src="${c.imgPath}">
+		                        <!--게시글 정보 (카테고리, 작성일, 작성자)-->
+		                        <div class="talk-box-row__info">
+		                            <label class="talk-box-label">${c.category } | </label>
+		                            <label class="talk-box-label">${c.enrollDate} | </label>
+		                            <label class="talk-box-label">${c.nickname }</label>
+		                        </div>
 		                    </div>
-	                    	</c:when>
-	                    	<c:otherwise>
-	                    		<div class="talk-box-col__thumbnail">
-		                        <img src="">
-	                    	</c:otherwise>
-	                    </c:choose>
-	                </div>
-	            </div>
-            </c:forEach>
+		                    <!--thumbnail영역-->
+		                    <c:choose>
+		                    	<c:when test="${!empty c.imgPath}">
+		                    		<div class="talk-box-col__thumbnail">
+			                        <img src="${c.imgPath}">
+			                    </div>
+		                    	</c:when>
+		                    	<c:otherwise>
+		                    		<div class="talk-box-col__thumbnail">
+			                        <img src="${pageContext.request.contextPath}/resources/images/common/default-img.jpg">
+		                    	</c:otherwise>
+		                    </c:choose>
+		            	</div>
+		          	  </div>
+            		</c:forEach>
 
             <!--메인 끝-->
         </div>
@@ -118,15 +117,9 @@
             })  
             
             $(function(){
-                $("#com-bno").click(function(){
-                    
-                    // 반복문으로 생성된 게시글의 글 번호 받아오기 (ex.bno)
-                    console.log($(this).children("input[type=hidden]").val());
-                    // [Test] 화면 확인 용 코드
-                    location.href="comDetail.bo";
-                    
-                    
-                    //location.href="comDetail.bo?bno="+$(this).children("input[type=hidden]").val();
+                $(".talk-box-wrapper").click(function(){
+                    //console.log($(this).children("input[type=hidden]").val());
+                   	location.href="comDetail.bo?com-bno="+$(this).children("input[type=hidden]").val();
                 })
             })
         </script>
@@ -135,24 +128,32 @@
         <div style="display: inline-block; margin-left: 25%;  margin-top: 30px;" >
             <div id="search-area" >
                 <!--키워드 검색-->
-                <form id="searchForm" action="" method="Get">
+                <form id="comSearchForm" action="comSearch.bo" method="Get">
                     <!--카테고리 시작-->
                     <div class="community-header" > 
                         <div class="search-item-wrapper">
                             <div class="category-tag-header-wrapper"  style="margin-top:5px">
-                                <select class="selectpicker radius">
-                                    <option>제목+내용</option>
-                                    <option>제목만</option>
-                                    <option>글작성자</option>
+                                <select class="selectpicker radius" name="condition">
+                                    <option value="titleAndcontent">제목+내용</option>
+                                    <option value="title">제목만</option>
+                                    <option value="writer">글작성자</option>
                                 </select>
                             </div>
                             <input type="search" class="form-control" name="keyword"  placeholder="원하는 정렬 기준으로 검색해보세요!" style="width:300px">
-                            <i class="fas fa-search" style="margin-top:10px"><a></a></i>
-                            
+                           <input type="submit"> <i class="fas fa-search" style="margin-top:10px"></i>
                         </div>
                     <!--카테고리 끝--> 
                     </div>
                 </form>
+                
+                <script>
+                	$(function(){
+                		if("${condition}" != ""){
+                			$("option[value=${condition}]").attr("selected",true);
+                		}
+                	})
+                </script>
+                
                 <!--검색 끝-->
             </div>
             <div style="display:inline-block; margin-left: 30%;margin-bottom:50px; margin-top: 30px;">
@@ -161,21 +162,75 @@
                 <div id="pagingArea">
                     <nav aria-label="Page navigation">
                         <ul class="pagination">
-                            <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                                <span class="sr-only">Previous</span>
-                            </a>
-                            </li>
-                            <li class="page-item"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item">
-                            <a class="page-link" href="#" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                                <span class="sr-only">Next</span>
-                            </a>
-                            </li>
+	                        <!-- 이전으로 -->
+	                        <c:choose>
+	                        	<c:when test="${ pi.currentPage eq 1 }">
+	                        		<li class="page-item disabled">
+		                            	<a class="page-link" aria-label="Previous">
+		                            		<span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span>
+		                            	</a>
+	                            	</li>
+	                            </c:when>
+	                            <c:otherwise>
+	                            	<c:choose>
+	                            		<c:when test="${!empty condition }">
+	                            			<li class="page-item">
+			                            		<a class="page-link" href="comSearch.bo?currentPage=${pi.currentPage-1}&condition=${condition}&keyword=${keyword}" aria-label="Previous">
+			                            			<span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span>
+			                            		</a>
+	                            			</li>
+	                            		</c:when>
+	                            		<c:otherwise>
+			                            	<li class="page-item">
+				                            	<a class="page-link" href="comList.bo?currentPage=${pi.currentPage-1}" aria-label="Previous">
+				                            		<span aria-hidden="true">&laquo;</span><span class="sr-only">Previous</span>
+				                            	</a>
+			                            	</li>
+	                            		</c:otherwise>
+	                            	</c:choose>
+	                            </c:otherwise>
+                     		</c:choose>
+	                        
+	                        <!-- 반복문 돌리기 -->
+	                        <c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage}">
+	                        	<c:choose>
+	                        		<c:when test="${!empty condition}">
+	                        			<li class="page-item"><a class="page-link" href="comSearch.bo?currentPage=${ p }&condition=${condition}&keyword=${keyword}">${ p }</a></li>
+	                        		</c:when>
+	                        		<c:otherwise>
+		                       			<li class="page-item"><a class="page-link" href="comList.bo?currentPage=${ p }">${ p }</a></li>
+	                        		</c:otherwise>
+	                        	</c:choose>
+	                        </c:forEach>
+	                        
+	                        <!-- 다음으로 -->
+	                        <c:choose>
+		                        <c:when test="${ pi.currentPage eq pi.maxPage }">
+		                       	  <li class="page-item disabled">
+			                          <a class="page-link"  aria-label="Next">
+			                              <span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span>
+			                          </a>
+		                          </li>
+		                      	</c:when> 
+		                      	<c:otherwise>
+		                      		<c:choose>
+	                      				<c:when test="${!empty condition}">
+			                      		   <li class="page-item">
+					                          <a class="page-link" href="comSearch.bo?currentPage=${pi.currentPage+1}&condition=${condition}&keyword=${keyword}" aria-label="Next">
+					                              <span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span>
+					                          </a>
+				                          </li>
+			                          	</c:when>
+			                          	<c:otherwise>
+			                          	 <li class="page-item">
+					                          <a class="page-link" href="comList.bo?currentPage=${pi.currentPage+1}" aria-label="Next">
+					                              <span aria-hidden="true">&raquo;</span><span class="sr-only">Next</span>
+					                          </a>
+				                          </li>
+			                          	</c:otherwise>
+		                      		</c:choose>
+		                      	</c:otherwise>
+	                      	</c:choose>   
                         </ul>
                     </nav>
                 </div>
