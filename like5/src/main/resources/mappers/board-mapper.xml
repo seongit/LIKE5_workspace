@@ -17,6 +17,7 @@
         <result column="tag_name" property="tag" />
         <result column="boa_img_path" property="imgPath" />
         <result column="nickname" property="nickname" />
+        <result column="reply" property="reply" />
     </resultMap>
     
     <resultMap id="report" type="Report">
@@ -183,7 +184,7 @@
 
     <!-- [커뮤니티] - 전체 목록 리스트 조회  -->
     <select id="comList" resultMap="board">
-        select
+         select
             boa_no
              ,nickname
              ,boa_category
@@ -191,12 +192,25 @@
              ,boa_content
              ,boa_enroll_date
              ,boa_img_path
-        from board
+             ,boa_count
+             ,(select count(*)
+                from reply r
+                where r.boa_no = b.boa_no) reply
+        from board b
                  join member using (mem_no)
-        where 1=1
-          and regexp_like (boa_category,'일상|스터디모집')
+        where regexp_like (boa_category,'일상|스터디모집')
           and boa_status='Y'
-        order by boa_enroll_date desc
+     	<choose>
+	    	<when test="orderBy=='count'">
+	    		 order by boa_count desc
+	    	</when>
+	    	<when test="orderBy=='reply'">
+	    		order by reply  desc
+    		</when>
+    		<otherwise>
+   			   order by boa_enroll_date desc
+    		</otherwise>
+	    </choose>
     </select>
 
 	<!-- [커뮤니티] - 키워드 검색 결과 list count -->
@@ -205,6 +219,7 @@
 			from board
 			join member using(mem_no)
 			where boa_status = 'Y'
+			and regexp_like (boa_category,'일상|스터디모집')
 			<choose>
 				<when test="condition=='titleAndcontent'">
 					and boa_title like '%'||#{keyword}||'%' or boa_content 
@@ -230,9 +245,14 @@
              ,boa_content
              ,boa_enroll_date
              ,boa_img_path
-        from board
+             ,boa_count
+             ,(select count(*)
+                from reply r
+                where r.boa_no = b.boa_no) reply
+        from board b
 	     join member using(mem_no)
 	    where boa_status = 'Y'
+	    and regexp_like (boa_category,'일상|스터디모집')
 	    <choose>
 		    <when test="condition=='titleAndcontent'">
 		    	and boa_title like '%'||#{keyword}||'%' or boa_content 
@@ -245,8 +265,91 @@
 	    	</otherwise>
 	    </choose>
 	    like '%'||#{keyword}||'%'
-	    order by boa_enroll_date desc
+
+		order by boa_enroll_date desc
+    	
 	</select>
 
+	<!-- [커뮤니티] - 카테고리별 게시글 list count -->
+	<select id="comOrderByListCount" resultType="_int">
+	    select
+           count(*)
+        from board b
+	     join member using(mem_no)
+	    where boa_status = 'Y'
+	    <choose>
+	    	<when test="condition=='daily'">
+	    		and regexp_like (boa_category,'일상')
+	    	</when>
+	    	<otherwise>
+	    		and regexp_like (boa_category,'스터디모집')
+	    	</otherwise>
+	    </choose>
+	    order by boa_enroll_date desc
+	</select>
+	
+	
+	<!-- [커뮤니티] - 전체 | 일상 | 스터디 모집 | 카테고리별 조회 -->
+	<select id="comOrderByCategory" resultMap="board">
+	    select
+            boa_no
+             ,nickname
+             ,boa_category
+             ,boa_title
+             ,boa_content
+             ,boa_enroll_date
+             ,boa_img_path
+             ,boa_count
+             ,(select count(*)
+                from reply r
+                where r.boa_no = b.boa_no) reply
+        from board b
+	     join member using(mem_no)
+	    where boa_status = 'Y'
+   	    <choose>
+	    	<when test="condition=='daily'">
+	    		and regexp_like (boa_category,'일상')
+	    	</when>
+	    	<otherwise>
+	    		and regexp_like (boa_category,'스터디모집')
+	    	</otherwise>
+	    </choose>
+	    order by boa_enroll_date desc
+	</select>
+	
+	
+	<!-- 최신 | 조회수 | 댓글수 기준으로 조회 -->	
+   <select id="comOrderByCount" resultMap="board">
+         select
+            boa_no
+             ,nickname
+             ,boa_category
+             ,boa_title
+             ,boa_content
+             ,boa_enroll_date
+             ,boa_img_path
+             ,boa_count
+             ,(select count(*)
+                from reply r
+                where r.boa_no = b.boa_no) reply
+        from board b
+                 join member using (mem_no)
+        where regexp_like (boa_category,'일상|스터디모집')
+          and boa_status='Y'
+     	<choose>
+	    	<when test="orderBy=='views'">
+	    		 order by boa_count desc,boa_enroll_date desc
+	    	</when>
+	    	<when test="orderBy=='reply'">
+	    		order by reply  desc,boa_enroll_date desc
+    		</when>
+    		<otherwise>
+   			   order by boa_enroll_date desc
+    		</otherwise>
+	    </choose>
+    </select>
+	
+	
+	
 
 </mapper>

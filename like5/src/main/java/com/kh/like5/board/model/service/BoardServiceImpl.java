@@ -39,7 +39,7 @@ public class BoardServiceImpl implements BoardService {
 	 */
 	@Override
 	public ArrayList<Board> comList(PageInfo pi) {
-		return bDao.comList(sqlSession, pi);
+		return bDao.comList(sqlSession,pi);
 	}
 	
 	/**
@@ -61,6 +61,34 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public ArrayList<Board> comSearchList(PageInfo pi, HashMap<String, String> map) {
 		return bDao.comSearchList(sqlSession, pi, map);
+	}
+	
+	/**
+	 * [커뮤니티] - 카테고리별 게시글 list count
+	 * @author seong
+	 */
+	
+	@Override
+	public int comOrderByListCount(String condition) {
+		return bDao.comOrderByListCount(sqlSession, condition);
+	}
+	
+	/**
+	 * [커뮤니티] 전체 | 일상 | 스터디 모집 | 카테고리별 조회
+	 * @author seong
+	 */
+	@Override
+	public ArrayList<Board> comOrderByCategory(PageInfo pi, String condition) {
+		return bDao.comOrderByCategory(sqlSession, pi, condition);
+	}
+
+	/**
+	 * [커뮤니티]최신 | 조회수 | 댓글수 기준으로 조회
+	 * @author seong
+	 */
+	@Override
+	public ArrayList<Board> comOrderByCount(PageInfo pi, String condition) {
+		return bDao.comOrderByCount(sqlSession,pi,condition);
 	}
 
 	/**
@@ -105,6 +133,10 @@ public class BoardServiceImpl implements BoardService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	
+
+
 
 
 

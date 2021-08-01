@@ -61,5 +61,35 @@ public class BoardDao {
 		return (ArrayList)sqlSession.selectList("boardMapper.comSearchList",map,rowBounds);
 	}
 	
+	/**
+	 * [커뮤니티] - 카테고리별 게시글 list count
+	 * @author seong
+	 */
+	
+	public int comOrderByListCount(SqlSessionTemplate sqlSession,String condition) {
+		return sqlSession.selectOne("boardMapper.comOrderByListCount",condition);
+	}
+	
+	
+	
+	/**
+	 * [커뮤니티] 전체 | 일상 | 스터디 모집 | 카테고리별 조회
+	 * @author seong
+	 */
+	public ArrayList<Board> comOrderByCategory(SqlSessionTemplate sqlSession,PageInfo pi,String condition){
+		int offset = (pi.getCurrentPage()-1)*pi.getBoardLimit();
+		RowBounds rowBounds = new RowBounds(offset,pi.getBoardLimit());
+		return (ArrayList)sqlSession.selectList("boardMapper.comOrderByCategory",condition,rowBounds);
+	}
+	
+	/**
+	 * [커뮤니티]최신 | 조회수 | 댓글수 기준으로 조회
+	 * @author seong
+	 */
+	public ArrayList<Board> comOrderByCount(SqlSessionTemplate sqlSession,PageInfo pi,String condition){
+		int offset = (pi.getCurrentPage()-1)*pi.getBoardLimit();
+		RowBounds rowBounds = new RowBounds(offset,pi.getBoardLimit());
+		return (ArrayList)sqlSession.selectList("boardMapper.comOrderByCount",condition,rowBounds);
+	}
 
 }
