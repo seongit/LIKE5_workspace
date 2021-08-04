@@ -146,6 +146,7 @@
     .result-list{
         padding-top:40px;
         width:100%;
+        cursor:pointer;
     }
     .search-card{
         height:183px;
@@ -230,8 +231,11 @@
 </head>
 <body>
 <jsp:include page="../common/header.jsp"/>
+ 
         <div class="search-container">
+        <form class="research" action="research.bk" method="post">
             <div class="search-bar-container">
+            <%-- 추가: 재검색 기능 --%>
                 <div class="input-container">
                     <input type="text" id="branch" name="branch" value="${ b.branch }">
                     <input class="fcheckIn" type="text" name="startDate" value="${ b.startDate }">
@@ -244,7 +248,9 @@
                     <button type="submit"><i class="fas fa-search"></i></button>
                 </div>
             </div>
+         </form>
         </div>
+
         <div id="branch-modal">
             <div class="branch-select">
                 <ul>
@@ -307,6 +313,12 @@
         </div>
 <jsp:include page="../common/footer.jsp"/>
 <script>
+<%-- 날짜 가져오기 --%>
+$.when($.ready).then(function(){
+	localStorage.setItem("startDate",$("input[name=startDate]").val());
+	localStorage.setItem("endDate",$("input[name=endDate]").val());
+})
+
 <%-- 모달 닫기 --%>
     const outcontainer = document.querySelector(".outcontainer");
 	const pmodal = document.querySelector("#person-modal");//인원수 모달
@@ -323,8 +335,8 @@
         pmodal.classList.add('show-modal');
     }
 window.onclick = (e) => {
-        e.target === outcontainer ? bmodal.classList.remove('show-modal') : false
-        e.target === outcontainer ? pmodal.classList.remove('show-modal') : false
+        e.target === bmodal ? bmodal.classList.remove('show-modal') : false
+        e.target === pmodal ? pmodal.classList.remove('show-modal') : false
     }
     
 <%-- 지역 선택 --%>

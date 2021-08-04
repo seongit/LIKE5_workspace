@@ -5,13 +5,18 @@ import java.util.HashMap;
 
 import com.kh.like5.booking.model.vo.Booking;
 import com.kh.like5.booking.model.vo.Office;
+import com.kh.like5.booking.model.vo.Review;
 import com.kh.like5.common.model.vo.Attachment;
 import com.kh.like5.common.model.vo.PageInfo;
 
 public interface BookingService {
 
 	//1.검색 결과 조회(사용자)
-	ArrayList<Office> selectList(Booking b);
+	ArrayList<Office> selectOfficeList(Booking b);
+	
+	//1.2. 예약하기(사용자)
+	
+	int insertBook(Booking b);
 	
 	//2.리스트 전체 조회 + 페이징(관리자)
 	int selectListCount();
@@ -42,9 +47,10 @@ public interface BookingService {
 	//8. 첨부파일 조회(사진)
 	ArrayList<Attachment> selectList(int refFno);
 	
-	//9. 오피스 조회(내용 상세)
+	//9. 예약정보조회
+	Booking selectBooking(int officeNo);
 	
 	//10. 리뷰 조회
-	
+	ArrayList<Review> selectReview(int officeNo);
 }
 

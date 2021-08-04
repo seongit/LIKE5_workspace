@@ -26,16 +26,11 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR&display=swap" rel="stylesheet">
 
-<!-- JavaScript -->
+<!-- AlertifyJS -->
 <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
-<!-- CSS -->
 <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/alertify.min.css"/>
-<!-- Default theme -->
 <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/default.min.css"/>
-<!-- Semantic UI theme -->
 <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/css/themes/semantic.min.css"/>
-
-
 
 <style>
 /* 세부 페이지마다 공통적으로 유지할 스타일 */
@@ -99,7 +94,7 @@ div{box-sizing:border-box;}
 	<div class="header" id="header">
 		<!-- 로고 -->
 		<div id="header_logo" align=center>
-			<br><a href=""><img src="https://i.imgur.com/vhEZ5DJ.png" class="headerImg"></a>
+			<br><a href="index.jsp"><img src="https://i.imgur.com/vhEZ5DJ.png" class="headerImg"></a>
 		</div>
 
 		<!-- 메뉴 -->
@@ -120,7 +115,7 @@ div{box-sizing:border-box;}
 				<c:when test="${ empty loginUser }">
 					<!-- 로그인 전 -->
 					<div id="before_login">
-						<a data-toggle="modal" href="#myModal">로그인&nbsp;</a> | <a href="">&nbsp;회원가입</a>
+						<a data-toggle="modal" href="#myModal">로그인&nbsp;</a> | <a href="insertPage.me">&nbsp;회원가입</a>
 					</div>
 				</c:when>
 				<c:otherwise>

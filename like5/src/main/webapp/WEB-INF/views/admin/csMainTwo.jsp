@@ -138,7 +138,7 @@
 	
 	        <br><br>
 	
-	        <table class="table-bordered table-sm">
+	        <table id="csList" class="table-bordered table-sm">
 	            <thead>
 	                <tr class="table-danger">
 	                    <th width="50">No</th>
@@ -153,12 +153,12 @@
 	            <tbody>
 	                <c:forEach var="cs" items="${list }">
 	                	<tr>
-	                		<td class="csNo" name="csNo" id="csNo">
+	                		<td class="csNo" id="csNo">
 	                			${cs.csNo }
 	                		</td>
 	                		<td>${cs.memName }</td>
 		                    <td>${cs.nickname }</td>
-		                    <td>${cs.csTitle }</td>
+		                    <td ><a href="csDetail.ad?csNo=${cs.csNo }" >${cs.csTitle }</a></td>
 		                    <td>${cs.regDate }</td>
 		                	<c:choose>
 		                		<c:when test="${cs.status == 'Y' }">
@@ -172,7 +172,15 @@
 	                </c:forEach>
 	            </tbody>
 	        </table>
-	
+			<script>
+            	$(function(){
+            		$("#csList>tbody>tr").click(function(){
+            			location.href="csDetail.ad?csNo=" + $(this).children(".csNo").text();
+            		})
+            	})
+            </script>
+			
+			
 	    	<Br>
 	    	<!-- 페이징 바 -->
 	    	
@@ -193,18 +201,31 @@
                     </c:otherwise>
               		</c:choose>
                 <!-- 반복문으로  -->
-                    	
-                <c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage }">
-                	<c:choose>
-                		<c:when test="${!empty condition }">
-                			<li class="page-item"><a class="page-link" href="searchCs.ad?currentPage=${ p }&condition=${condition}&keyword=${keyword}">${ p }</a></li>
-                		</c:when>
-                		<c:otherwise>
-                			<li class="page-item"><a class="page-link" href="csTwo.ad?currentPage=${ p }">${ p }</a></li>
-                		</c:otherwise>
-                	</c:choose>
-                </c:forEach>
-                    
+
+				<c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage}">
+					<c:choose>
+						<c:when test="${!empty condition}">
+							<c:choose>
+								<c:when test="${pi.currentPage eq p}">
+									<li class="page-item active"><a class="page-link" href="searchCs.ad?currentPage=${ p }&condition=${condition}&keyword=${keyword}">${p}</a></li>
+								</c:when>
+								<c:otherwise>
+									<li class="page-item"><a class="page-link" href="searchCs.ad?currentPage=${ p }&condition=${condition}&keyword=${keyword}">${p}</a></li>
+								</c:otherwise>
+							</c:choose>
+						</c:when>
+						<c:otherwise>
+							<c:choose>
+								<c:when test="${pi.currentPage eq p}">
+									<li class="page-item active"><a class="page-link" href="csTwo.ad?currentPage=${ p }">${p}</a></li>
+								</c:when>
+								<c:otherwise>
+									<li class="page-item"><a class="page-link" href="csTwo.ad?currentPage=${ p }">${p}</a></li>
+								</c:otherwise>
+							</c:choose>
+						</c:otherwise>
+					</c:choose>
+				</c:forEach>
                     	
                 <c:choose>
                    	<c:when test="${ pi.currentPage eq pi.maxPage }">
@@ -239,5 +260,7 @@
     		}
     	})
     </script>
+    
+			
 </body>
 </html>

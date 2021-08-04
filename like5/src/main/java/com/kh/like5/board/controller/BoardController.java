@@ -1,16 +1,27 @@
 package com.kh.like5.board.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.google.gson.Gson;
 import com.kh.like5.board.model.service.BoardService;
 import com.kh.like5.board.model.vo.Board;
+import com.kh.like5.board.model.vo.Reply;
 import com.kh.like5.common.model.vo.PageInfo;
 import com.kh.like5.common.template.Pagination;
 
@@ -188,13 +199,80 @@ public class BoardController {
 	/**
 	 * [커뮤니티] - 글 상세보기
 	 * @author seong
-	 * 			
-	 * 			->int bno 받아오기
 	 */
 	
 	@RequestMapping("comDetail.bo")
-	public ModelAndView comDetail(ModelAndView mv) {
-		mv.setViewName("board/community/comDetailView");
+	public ModelAndView comDetail(ModelAndView mv,int bno) {
+		
+		// 클릭시 조회수 증가
+		int result = bService.increaseCount(bno);
+		
+		// 상세보기
+		if(result>0) {
+			Board b = bService.comDetail(bno);
+			mv.addObject("b",b)
+			  .setViewName("board/community/comDetailView");
+		}else {
+			mv.addObject("errorMsg", "조회 실패!")
+				.setViewName("common/errorPage");
+		}
+	
+		return mv;
+	}
+	
+	/**
+	 * Ajax
+	 * 댓글 | 대댓글 전체 조회
+	 * @author seong
+	 */
+	@ResponseBody
+	@RequestMapping(value="rlist.bo",produces="application/json; charset=utf-8")
+	public String selectReplyList(int bno) {
+		ArrayList<Reply>list = bService.selectReplyList(bno);
+		return new Gson().toJson(list);
+	}
+	
+	/**
+	 * 댓글 작성하기
+	 * @author seong
+	 */
+	@ResponseBody
+	@RequestMapping("insertReply.bo")
+	public String insertReply(Reply r,Model model) {
+		int result = bService.insertReply(r);
+		return result>0? "success" : "fail";		
+	}
+	
+	/**
+	 * 대댓글 작성하기
+	 * @author seong
+	 */
+	@ResponseBody
+	@RequestMapping("insertReplies.bo")
+	public String insertReplies(Reply r,Model model) {
+		int result = bService.insertReplies(r);
+		
+		return result>0?"success":"fail";
+	}
+	
+	/**
+	 * [커뮤니티] 게시글 작성하기
+	 * @author seong
+	 */
+	@RequestMapping("insertCom.bo")
+	public ModelAndView insertCommunity(Board b,ModelAndView mv,MultipartFile upfile,HttpSession session) {
+		
+		if(!upfile.getOriginalFilename().equals("")) {
+			String changeName = saveFile(session,upfile); // "2021070217013023152.jpg"
+			b.setImgPath("resources/images/board/" + changeName); // resource/uploadFiles/2021070217013023152.jpg
+		}
+		
+		int result = bService.insertCommunity(b);
+		if(result>0) {
+			
+			session.setAttribute("alertMsg", "성공적으로 등록 되었어요 😀 ");
+			mv.setViewName("redirect:comList.bo");
+		}
 		return mv;
 	}
 	
@@ -208,6 +286,21 @@ public class BoardController {
 	public ModelAndView comUpdateForm(ModelAndView mv) {
 		mv.setViewName("board/community/comUpdateForm");
 		return mv;
+	}
+	
+	/**
+	 * [커뮤니티] 게시글 삭제하기
+	 * @author seong
+	 */
+	
+	@RequestMapping("comDelete.bo")
+	public String deleteCommunity(int bno,HttpSession session){
+		
+		int result = bService.deleteCommunity(bno);
+		if(result>0) {
+			session.setAttribute("alertMsg", "성공적으로 삭제되었습니다!");
+		}
+		return "redirect:comList.bo";
 	}
 	
 	/**
@@ -243,6 +336,31 @@ public class BoardController {
 		return mv;
 	}
 	
+	
+	
+	//-----------------------------------------------------------
+	
+	public String saveFile(HttpSession session,MultipartFile file) {
+		
+		String savePath = session.getServletContext().getRealPath("resources/images/board/");
+		
+		String originName = file.getOriginalFilename();
+		//20210702(년월일) + 23432(랜덤값) + .jpg(원본파일확장자) 
+		String currentTime = new SimpleDateFormat("yyyyMMdd").format(new Date());
+		int ranNum = (int)(Math.random() * 90000 + 10000);
+		String ext = originName.substring(originName.lastIndexOf("."));//.다음 인덱스부터의 문자열 추출
+		
+		String changeName = currentTime + "_" + ranNum + ext;
+		
+		try {
+			file.transferTo(new File(savePath + changeName));
+		} catch (IllegalStateException | IOException e) {
+			e.printStackTrace();
+		}
+		return changeName;
+	}
+	
+
 	
 	
 }

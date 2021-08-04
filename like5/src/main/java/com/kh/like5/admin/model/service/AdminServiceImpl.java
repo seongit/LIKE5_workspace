@@ -3,6 +3,7 @@ package com.kh.like5.admin.model.service;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.kh.like5.admin.model.vo.Faq;
 import com.kh.like5.board.model.vo.Board;
 import com.kh.like5.board.model.vo.Report;
 import org.mybatis.spring.SqlSessionTemplate;
@@ -93,7 +94,21 @@ public class AdminServiceImpl implements AdminService{
 	public ArrayList<Customer> searchCsMemList(PageInfo pi, HashMap<String, String> map) {
 		return adDao.searchCsMemList(sqlSession, pi, map);
 	}
-
+	// 1:1 문의글 상세 조회
+	@Override
+	public Customer selectCustomer(int csNo) {
+		return adDao.selectCustomer(sqlSession, csNo);
+	}
+	// 1:1문의 답변 등록
+	@Override
+	public int insertCsAns(Customer cs) {
+		return adDao.insertCsAns(sqlSession, cs);
+	}
+	// 1:1문의 답변 수정
+	@Override
+	public int updateCsAns(Customer cs) {
+		return adDao.updateCsAns(sqlSession, cs);
+	}
 	@Override
 	public int getReportCount() {
 		return adDao.getReportCount(sqlSession);
@@ -114,5 +129,35 @@ public class AdminServiceImpl implements AdminService{
 		return adDao.getSearchReportList(sqlSession, pi, map);
 	}
 
+	@Override
+	public ArrayList<Faq> getFaqList() {
+		return adDao.getFaqList(sqlSession);
+	}
+
+	@Override
+	public Faq getFaq(int fno) {
+		return adDao.getFaq(sqlSession, fno);
+	}
+
+		@Override
+	public int insertFaq(Faq f) {
+		return adDao.insertFaq(sqlSession, f);
+	}
+
+	@Override
+	public int updateFaq(Faq f) {
+		return adDao.updateFaq(sqlSession, f);
+	}
+
+	@Override
+	public int deleteFaq(int fno) {
+		return adDao.deleteFaq(sqlSession, fno);
+	}
+
+	
+
+	
+
+	
 
 }

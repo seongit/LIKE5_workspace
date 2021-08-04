@@ -182,6 +182,7 @@
     .receipt {
       margin-top: 24px;
     }
+    .receipt-day{display:flex}
     .receipt,
     .fee,
     .total {
@@ -265,7 +266,7 @@
 <jsp:include page="../common/header.jsp"/>
     <div class="outcontainer">
       <div class="bcontainer">
-        <form action="">
+        <form action="submitBook.bk" method="post">
           <div class="btitle">
             <div class="backto">
               <i class="fas fa-chevron-left"></i>
@@ -274,13 +275,15 @@
           </div>
           <div class="bcontent">
             <h2>예약정보</h2>
+            <input type="hidden" name="officeNo" value="${ o.officeNo }">
             <div class="date-section">
               <div class="date-title">
                 <h3>날짜</h3>
               </div>
               <div class="date-content">
-                <div class="dateprint">7월 13일 - 7월 14일</div>
-                <!-- <input class="dateprint" type="text"> -->
+                <div class="dateprint" id="dates"></div>
+                <input type="hidden" id="sd" name="startDate">
+				<input type="hidden" id="ed" name="endDate">                
                 <button class="editdate" type="button">수정</button>
               </div>
             </div>
@@ -289,7 +292,8 @@
                 <h3>인원</h3>
               </div>
               <div class="person-content">
-                <div class="personprint">2 명</div>
+                <div class="personprint">${ o.person }명</div>
+                <input type="hidden" name="person" value="${ o.person }">
                 <button class="editperson" type="button">수정</button>
               </div>
             </div>
@@ -324,11 +328,11 @@
             <div class="mandatory-section">
               <div class="phone">
                 <h3>전화번호</h3>
-                <input type="text" name="phone" id="" />
+                <input type="text" name="phone"/>
               </div>
               <div class="ask">
                 <h3>요청사항</h3>
-                <textarea name="" rows="3"></textarea>
+                <textarea name="bAsk" rows="3"></textarea>
               </div>
             </div>
             <div class="border"></div>
@@ -348,22 +352,22 @@
       <div class="sum-section">
         <div class="sum-float">
           <div class="sum-top">
-            <div class="office-img"><img src="" alt="" /></div>
+            <div class="office-img"><img src="${ o.offImgPath }"/></div>
             <div class="office-desc">
-              <div class="office-type">프라이빗 1인</div>
-              <div class="office-address">서울시 강남구 테헤란로</div>
+              <div class="office-type">${ o.typeName } ${o.person }인</div>
+              <div class="office-address">${ o.address }</div>
             </div>
           </div>
           <div class="border"></div>
           <div class="sum-detail">
             <h2>요금 세부 정보</h2>
             <div class="receipt">
-              <div class="receipt-day">￦80,000 x 1박</div>
+              <div class="receipt-day">￦${ o.price } x <div class="days"></div></div>
               <div class="receipt-price">￦80,000</div>
             </div>
             <div class="fee">
               <div class="fee-title">서비스 수수료</div>
-              <div class="fee-price">￦8,000</div>
+              <div class="fee-price">￦${ o.price * 0.1 }</div>
             </div>
             <div class="total">
               <div class="total-title">총 합계(KRW)</div>
@@ -386,7 +390,7 @@
                 <span>-</span>
               </button>
               <div id="pp2" class="howmany">
-                <input type="text" id="num1" value="0" />
+                <input type="text" id="num1" value="${ o.person }" />
               </div>
               <button type="button" class="circle" onclick="plus();">
                 <span>+</span>
@@ -399,6 +403,40 @@
 <jsp:include page="../common/footer.jsp"/>
 
     <script>
+    <%-- 날짜 가져오기 --%>
+    var startDate = localStorage.getItem("startDate");
+    var endDate = localStorage.getItem("endDate");
+    $.when($.ready).then(function(){
+    	$(".dateprint").html(startDate+" ~ "+endDate);
+    	
+        <%-- 날짜 값 컨트롤러에 넘기기 --%>
+        var dates = $(".dateprint")[0].innerHTML.split(" ~ ");
+       $("#sd").val(dates[0]);
+       $("#ed").val(dates[1]);
+
+        <%-- 날짜 계산 --%>
+        var day1 =  $("#sd").val(dates[0]).val().substring(8);
+        var day2 =  $("#ed").val(dates[1]).val().substring(8);
+        console.log(day2-day1);
+        
+        $(".days").html((day2-day1)+"박");
+        
+        <%-- receiptPrice --%>
+        $(".receipt-price").html("￦" + ${o.price} * (day2-day1));
+        
+        <%-- feePrice --%>
+        $(".fee-price").html("￦" + (${o.price} * (day2-day1)) * 0.1);
+        
+        <%-- totalPrice --%>
+        $(".total-price").html("￦" + (${o.price} * (day2-day1) + (${o.price} * (day2-day1)) * 0.1));
+    });
+    
+    <%-- 삭제하기 --%>
+    $("button[type=submit]").on("change", function(){
+    	localStorage.removeItem("startDate");
+    	localStorage.removeItem("endDate");
+    });
+    
     const editdate = document.querySelector('.editdate');
 	  flatpickr(editdate ,{
           locale: "ko",
@@ -417,10 +455,31 @@
               },
             ],
           onChange: function (selectedDates, dateStr, instance) {
-            $(".dateprint").text(dateStr);
+            $(".dateprint").html(dateStr);
+            <%-- 날짜 값 컨트롤러에 넘기기 --%>
+            var dates = $(".dateprint")[0].innerHTML.split(" ~ ");
+           $("#sd").val(dates[0]);
+           $("#ed").val(dates[1]);
+           
+           <%-- 날짜 계산 --%>
+           var day1 =  $("#sd").val(dates[0]).val().substring(8);
+           var day2 =  $("#ed").val(dates[1]).val().substring(8);
+           console.log(day2-day1);
+           
+           $(".days").html((day2-day1)+"박");
+           
+           <%-- receiptPrice --%>
+           $(".receipt-price").html("￦" + ${o.price} * (day2-day1));
+           
+           <%-- feePrice --%>
+           $(".fee-price").html("￦" + (${o.price} * (day2-day1)) * 0.1);
+           
+           <%-- totalPrice --%>
+           $(".total-price").html("￦" + (${o.price} * (day2-day1) + (${o.price} * (day2-day1)) * 0.1));
           },
           clickOpens: true
-	  })
+	  });
+	  
       $(function(){
 
     	 <%-- 
@@ -449,21 +508,32 @@
       let pp = document.querySelector(".personprint"); //인원수 input
       let pp2 = document.querySelector("#num1");
       const box = document.querySelector(".box");
+      const mbtn = document.querySelector(".circle");
+
+      document.querySelector('.backto').addEventListener('click', () => {
+    	  history.back();
+    	});
+      
       function minus() {
         if (pp2.value > 0) {
-          pp2.value = Math.abs(Number(pp2.value) - 1);
+          pp2.value = Number(pp2.value) - 1;
+          let result = pp2.value;
+          pp.innerHTML = result + " 명";
+          $("input[name=person]").val(result);
         }
-        pp.innerHTML = pp2.value + " 명";
       }
-
+      
       function plus(){
         pp2.value = Number(pp2.value) + 1;
-        pp.innerHTML = pp2.value + " 명";
+        let result = pp2.value;
+        pp.innerHTML = result + " 명";
+        $("input[name=person]").val(result);
       }
 
       window.onclick = (e) => {
         e.target === pmodal ? pmodal.classList.remove("show-modal") : false;
       };
+      
     </script>
 </body>
 </html>

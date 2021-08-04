@@ -53,3 +53,9 @@
    .modal-body span{font-size: 9px;} 
    .modal-body {font-size: 12px;}
    .modal-content{padding: 5px;margin-top: 5px;}
+
+    textarea.form-control:focus, input:focus, input[type]:focus, .uneditable-input:focus {
+       border-color: rgba(224, 224, 224, 0.3);
+       box-shadow: 0 1px 1px rgba(229, 103, 23, 0.075) inset, 0 0 8px rgba(224, 224, 224, 0.3);
+       outline: 0 none;
+   }

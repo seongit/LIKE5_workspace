@@ -3,7 +3,7 @@
  <mapper namespace="bookingMapper">
   
   <resultMap type="Booking" id="bookingResultSet">
-  	<id property="bookingNo" column="booking_no"/>
+  	<id property="bookingNo" column="bookin_no"/>
   	<result property="officeNo" column="office_no"/>
   	<result property="memNo" column="mem_no"/>
   	<result property="startDate" column="start_date"/>
@@ -37,6 +37,37 @@
   	<result property="status" column="status"/>
   	<result property="filePath" column="file_path"/>
   </resultMap>
+  
+  <resultMap type="Review" id="ReviewResultSet">
+  	<result property="reviewNo" column="review_no"/>
+  	<result property="reviewTitle" column="review_title"/>
+  	<result property="reviewContent" column="review_content"/>
+  	<result property="reviewWriter" column="review_Writer"/>
+  	<result property="reviewStar" column="review_Star"/>
+  	<result property="createDate" column="create_Date"/>
+  	<result property="status" column="status"/>
+  </resultMap>
+  
+  <select id="selectOfficeList" parameterType="Office" resultMap="officeResultSet">
+  	select
+  		   distinct o.office_no
+  		 , branch
+  		 , address
+  		 , facility
+  		 , type_name
+  		 , price
+  		 , off_img_path
+    from office o
+    join booking b on(o.office_no = b.office_no)
+   where o.office_no not in (select distinct b.office_no
+   							   from booking b
+   							   join office o on(b.office_no = b.office_no)
+   							  where start_date in #{startDate}
+   							    and end_date in #{endDate}
+   							    and branch like '%'||#{branch}||'%')
+     and branch like '%'||#{branch}||'%'
+  </select>
+  
   <select id="selectList" parameterType="Office" resultMap="officeResultSet">
   select
 		 o.office_no
@@ -202,15 +233,87 @@
 	  and  status = 'Y' 
   </update>
   
+  <!-- 첨부파일 조회 + 사진 -->
   <select id="selectAtList" resultMap="attachmentResultSet">
   		select
 		       file_no
 		     , file_path
+		     , ref_bno
+		     , ref_fno
+		     , upload_date
+		     , status
 		  from attachment
 		 where ref_bno = 9
 		   and ref_fno = #{refFno}
 		   and status = 'Y'
   </select>
   
+  <select id="selectBooking" parameterType="Booking" resultMap="bookingResultSet">
+  	select
+  		  bookin_no
+  		, office_no
+  		, mem_no
+  		, start_date
+  		, end_date
+  		, request_date
+  		, modify_date
+  		, status
+  		, person
+  		, phone
+  		, b_ask
+  		, total
+  	 from booking
+  	where office_no = #{officeNo}
+  	  and status = 'Y';
+  </select>
   
+  <insert id="insertBook" parameterType="Booking">
+  	insert
+  	  into booking
+  	  (
+  	  	   bookin_no
+  	  	 , office_no
+  	  	 , mem_no
+  	  	 , start_date
+  	  	 , end_date
+  	  	 , request_date
+  	  	 , modify_date
+  	  	 , status
+  	  	 , person
+  	  	 , phone
+  	  	 , b_ask
+  	  	 , total
+  	  )
+  	values
+  	  (
+  	  	   seq_bno.nextval
+  	  	 , #{officeNo}
+  	  	 , #{memNo}
+  	  	 , #{startDate}
+  	  	 , #{endDate}
+  	  	 , default
+  	  	 , default
+  	  	 , default
+  	  	 , #{person}
+  	  	 , #{phone}
+  	  	 , #{bAsk}
+  	  	 , #{total}
+  	  )
+  </insert>
+
+	<!-- 리뷰 조회 -->
+	  <select id="selectReview" resultMap="ReviewResultSet">
+		  	select
+		       review_no
+		     , review_title
+		     , review_content
+		     , review_writer
+		     , review_star
+		     , create_date
+		     , office_no
+		     , status
+		  from review 
+		 where office_no = #{officeNo}
+		   and status = 'Y'
+		</select>
 </mapper>

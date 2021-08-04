@@ -86,6 +86,21 @@
         background-color: white;
     }
     .fas{color:lightgrey}
+    
+    /*별점*/
+    span.star-prototype, span.star-prototype > * {
+    height: 16px; 
+    background: url(http://i.imgur.com/YsyS5y8.png) 0 -16px repeat-x;
+    width: 80px;
+    display: inline-block;
+	}
+ 
+	span.star-prototype > * {
+    background-position: 0 0;
+    max-width:80px; 
+	}
+	/*스크롤 이동*/
+	html {scroll-behavior: smooth; /* 부드럽게 */}
 </style>
 </head>
 <body>
@@ -97,9 +112,13 @@
 
         <!--공간 제목,별점-->
         <div class="wrap1">
-            <h1><b>${o.branch}</b></h1>
-            <h4>★ 3.5</h4>
-            <h4>후기(10)</h4>
+            <h1><b>${o.branch}</b></h1> 
+            <c:forEach var="r" items="${ rv }">
+            	<span class="star-prototype">${r.reviewStar}</span>
+            </c:forEach>
+            <div class="hz" id="section1">
+            <a href="#section2"><h4>후기</h4></a>
+            </div>
         </div>
 
         <br>
@@ -145,19 +164,27 @@
         <br><br>
         
         <!-- 세부 공간 선택-->
-	        <div class="space"><h3><b>세부 공간 선택</b></h3></div> <br>
-	        <div class="space2">
-	            <div class="space3">
-	                <b>호스트의 승인을 기다릴 필요 없이 <br>
-	                    지금 바로 예약하세요!</b><br><br>
-	                <b>${o.branch}</b> &nbsp;&nbsp;&nbsp;<b>${o.price} 원 / 1일 </b></b> <br><br><br>
-	                <b>체크인</b> <br>
-	                <input type="text" placeholder="2021년 07월 12일(목)"> <br><br>
-	                <b>체크아웃</b> <br>
-	                <input type="text" placeholder="2021년 07월 13일(금)"> <br><br><br><br>
-	                <button type="button" class="btn btn-danger btn-block">예약 하기</button>
-	            </div>
-	        </div> 
+        <div class="space"><h3><b>세부 공간 선택</b></h3></div> <br>
+        
+        <div class="space2">
+            <div class="space3">
+                <b>호스트의 승인을 기다릴 필요 없이 <br>
+                    지금 바로 예약하세요!</b><br><br>
+                <form class="detailForm" action="paymentForm.bk" method="post">
+                
+                <b>${o.branch}</b> &nbsp;&nbsp;&nbsp;<b>${o.price} 원 / 1일 </b></b> <br><br><br>
+                <b>체크인</b> <br>
+                <%--flatpickr이용해서 날짜 선택할 수 있게 해주세요 --%>
+                <input type="text" class="startDate" name="startDate"> <br><br>
+                <b>체크아웃</b> <br>
+                <input type="text" class="endDate" name="endDate"> <br><br><br><br>
+                
+                <input type="hidden" name="officeNo" value="${ o.officeNo }">
+                <button type="submit" class="btn btn-danger btn-block">예약 하기</button>
+            	</form>
+            </div>
+        </div>
+ 
         <!--시설 안내-->
    <div class="fa1"><h3><b>시설 안내</b></h3></div> <br>
    <div class="facility">
@@ -199,31 +226,35 @@
         
         <hr>
         
-        <div class="review">
-            <p>
-            <b>강하나</b> <br>
-            2021-05-21 <br>
-            ★★★★ <br>
-            깔끔하고 좋았음.
-            </p>
-        </div>
+        <c:forEach var="r" items="${ rv }">
+	        <div class="review">
+	            <div class="hz" id="section2">
+	            	<a href="#section1"></a>
+	            </div> 
+	            <b>${r.reviewWriter}</b> <br>
+	            ${r.createDate} <br>
+	           	<span class="star-prototype">${r.reviewStar}</span><br>
+	           	${r.reviewContent}
+	        </div>
+	
+	        <hr>
+		</c:forEach>
 
-        <hr>
-
-        <div class="review">
-            <p>
-            <b>김하늘</b> <br>
-            2021-05-24 <br>
-            ★★★★ <br>
-            오아이스도 없는 사막이다 보이는 끝까지 찾아다녀도 목숨이 있는 때까지 방황하여도 보이는 것은 거친 모래뿐일 것이다 <br>
-            이상의 꽃이 없으면 쓸쓸한 인간에 남는 것은 영락과 부패 뿐이다 낙원을 장식하는 천자만홍이 어디 있으며 인생을 풍부하게....
-            </p>
-        </div>
+        
 </div>       
 	    <br><br><br><br><br><br>
 		<jsp:include page="../common/footer.jsp"/>
 		
 <script>
+	<%-- 날짜 가져오기 --%>
+	var startDate = localStorage.getItem("startDate");
+	var endDate = localStorage.getItem("endDate");
+	console.log(startDate);
+	$.when($.ready).then(function(){
+		$("input[name=startDate]").val(startDate);
+		$("input[name=endDate]").val(endDate);
+	})
+	<%--시설 안내 관련 if문 --%>
     <c:if test="${ fn:contains(o.facility, '와이파이') }">
     	$("#wifiIcon").css("color","red");
 	</c:if>
@@ -249,6 +280,29 @@
 		$("#peoplecon").css("color","red");
 	</c:if>
 	
+	<%--별점 관련 function--%>
+	$.fn.generateStars = function() {
+        return this.each(function(i,e){$(e).html($('<span/>').width($(e).text()*16));});
+    };
+	
+    // 숫자 평점을 별로 변환하도록 호출하는 함수
+    $('.star-prototype').generateStars();
+    
+    <%--스크롤 이동--%>
+    $(document).ready(function(){
+        $("a").on('click', function(event) {
+          if (this.hash !== "") {
+            event.preventDefault();
+            var hash = this.hash;
+            $('html, body').animate({
+              scrollTop: $(hash).offset().top
+            }, 800, function(){
+              window.location.hash = hash;
+            });
+          } 
+        });
+      });
+    
 	<%-- kakao map --%>
 
     var mapContainer = document.getElementById('map'), // 지도를 표시할 div 

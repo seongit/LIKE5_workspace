@@ -3,6 +3,7 @@ package com.kh.like5.admin.model.dao;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.kh.like5.admin.model.vo.Faq;
 import com.kh.like5.board.model.vo.Board;
 import com.kh.like5.board.model.vo.Report;
 import org.apache.ibatis.session.RowBounds;
@@ -73,10 +74,18 @@ public class AdminDao {
 		return (ArrayList)sqlSession.selectList("customerMapper.searchCsMemList", map, rowBounds);
 	}
 	
-	
-	
-	
-	
+	// 1:1 문의 상세 페이지
+	public Customer selectCustomer(SqlSessionTemplate sqlSession, int csNo) {
+		return sqlSession.selectOne("customerMapper.selectCustomer", csNo);
+	}
+	// 1:1문의 관리자 답변 등록 (update)
+	public int insertCsAns(SqlSessionTemplate sqlSession, Customer cs) {
+		return sqlSession.update("customerMapper.insertCsAns", cs);
+	}
+	// 1:1문의 관리자 답변 수정 update
+	public int updateCsAns(SqlSessionTemplate sqlSession, Customer cs) {
+		return sqlSession.update("customerMapper.updateCsAns", cs);
+	}
 
 	// ============================= [재환] =============================
 
@@ -138,6 +147,31 @@ public class AdminDao {
 
 		return (ArrayList) sqlSession.selectList("boardMapper.getSearchReportList", map, rowBounds);
 
+	}
+
+	// FAQ 리스트 조회
+	public ArrayList<Faq> getFaqList(SqlSessionTemplate sqlSession) {
+		return (ArrayList)sqlSession.selectList("adminMapper.getFaqList");
+	}
+
+	// FAQ 상세 조회
+	public Faq getFaq(SqlSessionTemplate sqlSession, int fno) {
+		return sqlSession.selectOne("adminMapper.getFaq", fno);
+	}
+
+	// FAQ 작성 기능
+	public int insertFaq(SqlSessionTemplate sqlSession, Faq f) {
+		return sqlSession.insert("adminMapper.insertFaq", f);
+	}
+
+	// FAQ 수정 기능
+	public int updateFaq(SqlSessionTemplate sqlSession, Faq f) {
+		return sqlSession.update("adminMapper.updateFaq", f);
+	}
+
+	// FAQ 삭제 기능
+	public int deleteFaq(SqlSessionTemplate sqlSession, int fno) {
+		return sqlSession.delete("adminMapper.deleteFaq", fno);
 	}
 	
 	

@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import javax.servlet.http.HttpSession;
 
+import com.kh.like5.admin.model.vo.Faq;
 import com.kh.like5.board.model.vo.Report;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -33,12 +34,6 @@ public class AdminController {
 	@RequestMapping("about.ad")
 	public String about() {
 		return "admin/about";
-	}
-
-	// faq 페이지
-	@RequestMapping("faq.ad")
-	public String faq() {
-		return "admin/faq";
 	}
 
 	// tags 페이지
@@ -143,6 +138,50 @@ public class AdminController {
     	return mv;
 	}
 	
+	// 1:1 문의 페이지 상세
+	@RequestMapping("csDetail.ad")
+	public ModelAndView csDetail(int csNo, ModelAndView mv) {
+		Customer cs = adService.selectCustomer(csNo);
+		
+		mv.addObject("cs",cs).setViewName("admin/csDetail");
+		return mv;
+	}
+	
+	// 1:1문의 페이지 답변달기
+	@RequestMapping("insertCsAns.ad")
+	public String insertCsAns(Customer cs, HttpSession session) {
+		// 관리자의 답변 update해주기
+		int result = adService.insertCsAns(cs);
+		// 이에 성공했다면 Customer 객체 다시 받아와서 redirect로 해당 페이지 혹은 list페이지로 돌아갈 수 있도록 하기
+		if(result>0) { // 성공했을 경우 
+			session.setAttribute("alertMsg", "관리자님 답변이 성공적으로 등록되었습니다");
+			return "redirect:csTwo.ad";
+			
+		}else { // 실패한 경우
+			session.setAttribute("errorMsg", "관리자님 답변 등록에 실패했습니다.");
+			return "common/errorPage";
+		}
+		
+	}
+	//1:1문의 페이지 답변 수정
+	@RequestMapping("updateCsAns.ad")
+	public String updateCsAns(Customer cs, HttpSession session) {
+		// 관리자의 답변 update해주기
+		int result = adService.updateCsAns(cs);
+		// 이에 성공했다면 Customer 객체 다시 받아와서 redirect로 해당 페이지 혹은 list페이지로 돌아갈 수 있도록 하기
+		if(result>0) { // 성공했을 경우 
+			session.setAttribute("alertMsg", "관리자님 답변이 성공적으로 수정되었습니다.");
+			return "redirect:csTwo.ad";
+			
+		}else { // 실패한 경우
+			session.setAttribute("errorMsg", "관리자님 답변 등록에 실패했습니다.");
+			return "common/errorPage";
+		}
+		
+	}
+	
+	
+	
 	
 	// 후원관리 - 메인페이지 불러오기 & 리스트 조회
 	@RequestMapping("donation.ad")
@@ -165,9 +204,18 @@ public class AdminController {
 			return "admin/donationDetailTwo";
 		}
 		
+	// tag 메인페이지
 	
-	
-	
+	// tag 관리자 페이지
+	@RequestMapping("tagAdmin.ad")
+	public String tagAdmin() {
+		return "admin/tagAdmin";
+	}
+		
+		
+		
+		
+	// tag 게시글 끌어오는 페이지
 	
 	
 	
@@ -273,6 +321,83 @@ public class AdminController {
 		return mv;
 
 	}
-	
+
+	// FAQ 페이지
+	@RequestMapping("faq.ad")
+	public ModelAndView faqList(ModelAndView mv) {
+
+		ArrayList<Faq> list = adService.getFaqList();
+
+		mv.addObject("list", list)
+				.setViewName("admin/faq");
+
+		adService.getFaqList().forEach(faq -> log.info("list: " + faq));
+
+		return mv;
+	}
+
+	// FAQ 작성하기 페이지
+	@RequestMapping("enrollForm.faq")
+	public String faqEnrollForm() {
+		return "admin/faqEnrollForm";
+	}
+
+	// FAQ 작성 기능
+	@RequestMapping("insertFaq.ad")
+	public String insertFaq(Faq f, HttpSession session, Model model) {
+
+		int result = adService.insertFaq(f);
+
+		if (result > 0) {
+			session.setAttribute("alertMsg", "등록 성공");
+			return "redirect:faq.ad";
+		} else {
+			model.addAttribute("errorMsg", "등록 실패");
+			return "common/errorPage";
+		}
+
+	}
+
+	// FAQ 수정하기 페이지
+	@RequestMapping("updateForm.faq")
+	public String faqUpdateForm(int fno, Model model) {
+
+		model.addAttribute("f", adService.getFaq(fno));
+
+		return "admin/faqUpdateForm";
+
+	}
+
+	// FAQ 수정 기능
+	@RequestMapping("updateFaq.ad")
+	public String updateFaq(Faq f, HttpSession session, Model model) {
+
+		int result = adService.updateFaq(f);
+
+		if(result > 0) {
+			session.setAttribute("alertMsg", "수정 성공");
+			return "redirect:faq.ad";
+		}else {
+			model.addAttribute("errorMsg", "수정 실패");
+			return "common/errorPage";
+		}
+
+	}
+
+	// FAQ 삭제 기능
+	@RequestMapping("deleteFaq.ad")
+	public String deleteFaq(int fno, HttpSession session, Model model) {
+
+		int result = adService.deleteFaq(fno);
+
+		if(result > 0) {
+			session.setAttribute("alertMsg", "삭제 성공");
+			return "redirect:faq.ad";
+		}else {
+			model.addAttribute("errorMsg", "삭제 실패");
+			return "common/errorPage";
+		}
+
+	}
 
 }

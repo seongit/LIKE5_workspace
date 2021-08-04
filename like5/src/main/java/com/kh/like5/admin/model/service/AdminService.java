@@ -3,6 +3,7 @@ package com.kh.like5.admin.model.service;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.kh.like5.admin.model.vo.Faq;
 import com.kh.like5.board.model.vo.Board;
 import com.kh.like5.board.model.vo.Report;
 import com.kh.like5.common.model.vo.PageInfo;
@@ -30,8 +31,13 @@ public interface AdminService {
 	public ArrayList<Customer> searchCsMemList(PageInfo pi, HashMap<String, String> map);
 	
 	// 1:1문의 상세페이지 select문
+	Customer selectCustomer(int csNo);
 	
-	// 1:1문의 수정 페이지 update문(다시 상세 페이지로 돌아가게)
+	// 1:1문의 답변 페이지 update문 (1:1문의 메인페이지로 )
+	int insertCsAns(Customer cs);
+	// 1:1문의 수정 페이지 update문 (1:1문의 메인페이지로 )
+	int updateCsAns(Customer cs);
+	
 	
 	// 후원관리 메인 페이지 select문-페이징처리
 	
@@ -67,6 +73,22 @@ public interface AdminService {
 	// 신고내역 검색 리스트 조회
 	int getSearchReportCount(HashMap<String, String> map);
 	ArrayList<Report> getSearchReportList(PageInfo pi, HashMap<String, String> map);
-	
+
+	// FAQ 리스트 조회
+	ArrayList<Faq> getFaqList();
+
+	// FAQ 조회
+	Faq getFaq(int fno);
+
+//	// FAQ 작성 기능
+	int insertFaq(Faq f);
+//
+//	// FAQ 수정 기능
+	int updateFaq(Faq f);
+//
+//	// FAQ 삭제 기능
+	int deleteFaq(int fno);
+
+
 	
 }

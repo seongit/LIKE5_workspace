@@ -164,10 +164,7 @@
             <!--메인 끝-->
         </div>
         
-        
-		<script>
-			
-		</script>
+
 
         <script>
             
@@ -188,18 +185,15 @@
    	    			if(condition==2){
    	    				//input type hidden 요소의 value를 daily로 지정하기
    	    				$("#comOrderByCount").children("input[type=hidden]").attr("value","views");
-   	    				$("#comOrderByCount").attr("action","comOrderByCount.bo")
+   	    				$("#comOrderByCount").attr("action","comOrderByCount.bo?")
    	    				.submit();
 
    	    			}else{
    	    				// 댓글수
    	        			// input type hidden 요소의 value를 study로 지정하기 
    	    				$("#comOrderByCount").children("input[type=hidden]").attr("value","reply");
-   	    				$("#comOrderByCount").attr("action","comOrderByCount.bo")
+   	    				$("#comOrderByCount").attr("action","comOrderByCount.bo?")
    	    				.submit();
-   	    				
-   	    				$(this).toggleClass('on');
-   	    			 	$(this).siblings().removeClass('on');
    	    			}
    	    		}
            	 }
@@ -208,7 +202,7 @@
             $(function(){
                 $(".talk-box-wrapper").click(function(){
                     //console.log($(this).children("input[type=hidden]").val());
-                   	location.href="comDetail.bo?com-bno="+$(this).children("input[type=hidden]").val();
+                   	location.href="comDetail.bo?bno="+$(this).children("input[type=hidden]").val();
                 })
             })
         </script>

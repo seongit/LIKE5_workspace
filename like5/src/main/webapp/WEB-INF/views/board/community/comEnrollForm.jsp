@@ -25,18 +25,18 @@
             <h6><b>질문은 QnA게시판을 이용해주세요.</b> </h6>
             <hr>
         </div>
-
-        <form id="" action="" method="post" enctype="multipart/form-data">
-            <input type="hidden" id="" value="${loginUser.userId}" name="">
+															
+        <form action="insertCom.bo" method="post" enctype="multipart/form-data">
+            <input type="hidden" value="${loginUser.memNo}" name="mno">
             <!--카테고리 시작-->
             <!--작성자 아이디, 카테고리, 제목, 내용, 첨부파일-->
             <div class="community-header"> 
                 <div class="sidebar-item-wrapper" >
                     <div class="category-tag-header-wrapper" style="margin-top: 10px; padding-top: 10px;" >
                         <h6 class="item-header"><b>카테고리 📚</b></h6>
-                        <select class="selectpicker radius" name="">
-                            <option>📕일상</option>
-                            <option>📕커뮤니티</option>
+                        <select class="selectpicker radius" name="category">
+                            <option value="일상">📕일상</option>
+                            <option value="스터디모집">📕스터디모집</option>
                         </select>
                     </div>
                 </div>
@@ -46,7 +46,7 @@
             <div class="content-header">
                 <div class="form-group">
                     <label for="usr"><b>제목</b></label>
-                    <input type="text" class="form-control" id="content-title" name=""  placeholder="5글자 이상을 입력해주세요.">
+                    <input type="text" class="form-control" id="content-title" name="title"  placeholder="5글자 이상을 입력해주세요." required>
                     <div id="counting-title" style="float: right; font-size: 11px"></div>
                 </div>
             </div>
@@ -54,15 +54,15 @@
             <div class="content-body">
                 <div class="form-group">
                     <label for="comment"><b>내용</b></label>
-                    <textarea class="form-control" id="comment" name="" rows="10"  style="resize: none;" ></textarea>
+                    <textarea class="form-control" id="comment" name="content" rows="10"  style="resize: none;" ></textarea>
                 </div>
             </div>
             <div class="file-upload" style="padding: 0px;">
               
-                <!--<button class="file-upload-btn" type="button" onclick="$('.file-upload-input').trigger( 'click' )">첨부파일 등록하기</button>-->
+                <!-- <button class="file-upload-btn"  type="button" onclick="$('.file-upload-input').trigger( 'click' )">첨부파일 등록하기</button> -->
             
                 <div class="image-upload-wrap">
-                <input class="file-upload-input"  name="" type='file' onchange="readURL(this);" accept="image/*" />
+                	<input class="file-upload-input" type='file' name="upfile" onchange="readURL(this);" accept="image/*" />
                 <div class="drag-text">
                     <p>업로드하고 싶은 파일을 드래그 해보세요😜</p>
                 </div>
@@ -86,9 +86,9 @@
             </div>
             <br><br>
 
-            <div style="display: flex;  justify-content: space-between; margin-bottom:50px;"  >
+            <div id="comEnrollbtn" style="display: flex;  justify-content: space-between; margin-bottom:50px;"  >
                 <button type="reset" class="btn btn-outline-danger">취소</button>
-                <button type="submit" class="btn btn-danger">등록</button>
+                <button type="submit" class="btn btn-danger" disabled>등록</button>
             </div>
         </form>    
 
@@ -113,6 +113,21 @@
                     $('#counting-title').html("49 / 49");
                 }
             });
+            
+            $(function(){
+            	
+            	var $titleInput = $("#content-title");
+            	
+            	$titleInput.keyup(function(){
+            		
+            		if($titleInput.val().length>=5){
+            			$("#comEnrollbtn :submit").attr("disabled",false);
+            		}
+            		
+            	})
+            	
+            })
+            
 
             // 첨부파일 업로드
             function readURL(input) {

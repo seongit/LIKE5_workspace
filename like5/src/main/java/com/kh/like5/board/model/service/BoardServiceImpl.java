@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.kh.like5.board.model.dao.BoardDao;
 import com.kh.like5.board.model.vo.Board;
+import com.kh.like5.board.model.vo.Reply;
 import com.kh.like5.common.model.vo.PageInfo;
 
 @Service
@@ -97,9 +98,9 @@ public class BoardServiceImpl implements BoardService {
 	 */
 	@Override
 	public int increaseCount(int bno) {
-		// TODO Auto-generated method stub
-		return 0;
+		return bDao.increaseCount(sqlSession, bno);
 	}
+
 	
 	/**
 	 *  [커뮤니티] 커뮤니티 게시글 상세보기
@@ -108,10 +109,57 @@ public class BoardServiceImpl implements BoardService {
 	
 	@Override
 	public Board comDetail(int bno) {
-		// TODO Auto-generated method stub
-		return null;
+		return bDao.comDetail(sqlSession, bno);
 	}
 
+	/**
+	 * [커뮤니티] 댓글 | 대댓글 전체 조회
+	 * @author seong
+	 */
+	@Override
+	public ArrayList<Reply> selectReplyList(int bno) {
+		return bDao.selectReplyList(sqlSession, bno);
+	}
+	
+	/**
+	 * [커뮤니티] 댓글 작성하기
+	 * @author seong
+	 */
+	
+	@Override
+	public int insertReply(Reply r) {
+		return bDao.insertReply(sqlSession, r);
+	}
+
+	/**
+	 * [커뮤니티] 대댓글 작성하기
+	 * @author seong
+	 */
+	@Override
+	public int insertReplies(Reply r) {
+		return bDao.insertReplies(sqlSession, r);
+	}
+	
+	/**
+	 * [커뮤니티] 게시글 작성하기
+	 * @author seong
+	 */
+	
+	@Override
+	public int insertCommunity(Board b) {
+		return bDao.insertCommunity(sqlSession, b);
+	}
+
+	/**
+	 * [커뮤니티] 게시글 삭제하기
+	 * @author seong
+	 */
+	@Override
+	public int deleteCommunity(int bno) {
+		return bDao.deleteCommunity(sqlSession, bno);
+	}
+
+	
 	/**
 	 *  [칼럼] - 전체 목록 리스트 조회
 	 *  @author seong
@@ -133,6 +181,11 @@ public class BoardServiceImpl implements BoardService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+
+
+
+
 
 	
 
