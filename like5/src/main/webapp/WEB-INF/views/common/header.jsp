@@ -65,13 +65,11 @@ div{box-sizing:border-box;}
 #before_login{font-size:13px; margin-top:35px; text-align:center;}
 #after_login{font-size:13px; margin-top:30px; text-align:center;}
 
-/* 페이지 실제 연결 시 활성화시킬 코드 아직 사용X
+/*
 방문하지 않은 링크
-#menu a:link{color: black;}
-방문한 링크
-#menu a:visited{color: black;}
+#menu a:link{color:#424242;}
 링크를 활성화 할 때
-#menu>a:active{color: black;} */
+#menu>a:active{color:rgb(220, 53, 69);} */
 
 /* 바로가기버튼 마진 */
 #explanation{margin:7% 0% 10% 0%;}
@@ -101,7 +99,7 @@ div{box-sizing:border-box;}
 		<div id="header_navi">
 			<br><ul id="menu">
 				<li><a href="about.ad">LIKE5?</a></li>
-				<li><a href="qList.bo">QnA</a></li>
+				<li><a href="qnaList.bo">QnA</a></li>
 				<li><a href="bMain.bk">공간대여</a></li>
 				<li><a href="comList.bo">커뮤니티</a></li>
 				<li><a href="colList.bo">칼럼</a></li>

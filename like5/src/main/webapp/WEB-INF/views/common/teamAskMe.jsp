@@ -30,7 +30,7 @@
 					<div class="sideBar">
 						<!-- Team AskMe -->
 						<div class="askMe">
-						<a href=""><h4 class="barName">Team AskMe</h4></a></div>
+						<a href="teamAskMe.me"><h4 class="barName">Team AskMe</h4></a></div>
 
 						<div class="divider"></div>
 
@@ -50,8 +50,7 @@
 						<div class="contact">
 							<div class="contactUs"><h4 class="barName">Contact Us</h4></div>	
 								<ul>
-									<li><a href="">GitHub</a></li>
-									<li><a href="">Something</a></li>
+									<li><a href="https://github.com/hansololiviakim/like5">GitHub</a></li>
 								</ul>
 						</div>
 					</div>

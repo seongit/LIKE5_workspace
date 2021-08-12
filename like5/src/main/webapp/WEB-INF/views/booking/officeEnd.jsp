@@ -6,10 +6,6 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <style>
     /*전체 공간*/
     .reservation{
@@ -20,15 +16,16 @@
 		margin-top:50px !important;
 		border:1px solid lightgray;
 		padding:140px !important;
+		align-items:center;
     }
     /*예약 정보 box*/
     .box{
-        width:750px !important;
-        height:300px !important;
-        position:relative !important;
-        border:1px solid lightgray !important;
-        padding:20px !important;
-        margin-left:90px;
+        width:750px;
+        height:300px;
+        border:1px solid lightgray;
+        padding:20px;
+        margin:auto;
+		position:relative;	
     }
     /*예약 가운데 선*/
     .updown{ 
@@ -63,11 +60,11 @@
              <!--내 예약정보-->
             <div class="wrap">
                 <b>내 예약정보</b> <br><br>
-                <b>회원</b> 고길동 <br><br>
+                <b>회원</b> ${ loginUser.memName } <br><br>
                 <b>날짜</b> <br>
-                07월 12일~ 07월 15일 <br><br>
+                ${ b.startDate } ~ ${ b.endDate }<br><br>
                 <b>인원</b> <br>
-                2명
+                ${ b.person } 명
             </div>
 
             <br><br>
@@ -79,13 +76,13 @@
             <div class="wrap2">
                 <b>결제 금액</b>
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                <b>60,000원</b> <br><br>
+                <b>${ b.total } 원</b> <br><br>
                 <b>1일</b> 
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                60000원 <br><br> 
+               	<div class="price">${ o.price } 원</div><br><br> 
                 <b>부가세(10%)</b>
                 &nbsp;&nbsp;&nbsp;&nbsp; 
-                6000원 <br><br>
+                <div class="fee">${(o.price *0.1)} 원</div><br><br>
             </div>
         </div>
         <br><br>
@@ -94,6 +91,9 @@
         </div>
         
     </div>
-<jsp:include page="../common/footer.jsp"/>    
+<jsp:include page="../common/footer.jsp"/>
+<script>
+
+</script>    
 </body>
 </html>    

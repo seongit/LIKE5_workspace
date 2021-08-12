@@ -24,8 +24,6 @@
 
 <body>
    
-    <!--토스트 UI-->
-    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
 
 
    <!--메뉴바-->
@@ -38,15 +36,17 @@
             <h2><b>칼럼</b></h2>
             <hr>
         </div>
-        <form  id="" action="" method="post" style="margin-top: 0px;" enctype="multipart/form-data">
-            <input type="hidden" id="" value="${loginUser.userId}" name="">
+        
+     
+         
+         
             <!--카테고리 시작-->
             <!--작성자 아이디, 제목, 내용, 첨부파일-->
             <br>
             <div class="content-header">
                 <div class="form-group">
                     <label for="content-title"><b>제목</b></label>
-                    <input type="text" name="" class="form-control" id="content-title" placeholder="5글자 이상을 입력해주세요." required>
+                    <input type="text" name="title" class="form-control" id="content-title" placeholder="5글자 이상을 입력해주세요." required>
                     <div id="counting-title" style="float: right; font-size: 11px"></div>
                 </div>
             </div>
@@ -54,23 +54,28 @@
             <div class="content-body">
                 <div class="form-group">
                     <label for="comment"><b>내용</b></label>
-                    <div id="editor"><textarea name=""></textarea></div>
+                    <!-- TOAST UI Editor가 들어갈 div 태그 -->
+                    <div id="editor"></div>
+                    <!-- TOAST UI 에디터 내용을 받을 div 태그 -->
+                    <div id="editorContents"></div>
                     <div id="tui-color-picker-conatiner"></div>
                 </div>
             </div>
+            
+		    <!--토스트 UI-->
+		    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+		    
+	        <!--🔥토스트 UI 컬러피커 작업중🔥-->
+            <script src="https://uicdn.toast.com/tui-color-picker/latest/tui-color-picker.js"></script>
 
             <div class="content-footer">
                 <div class="container-fluid" style="background-color: rgba(224, 224, 224, 0.3);">
                         Like5에 멋진 글을 작성해주셔서 감사드립니다 🧡<br>
-                        청결한 게시판을 위해 
-                        욕설이나 비방, 모욕, 선정성이 존재하는 사진이나 게시글은 업로드하지 말아주세요.
+                       	 청결한 게시판을 위해 
+                                                       욕설이나 비방, 모욕, 선정성이 존재하는 사진이나 게시글은 업로드하지 말아주세요.
                 </div>
             </div>
                 
-            <!--🔥토스트 UI 컬러피커 작업중🔥
-            <script src="https://uicdn.toast.com/tui-color-picker/latest/tui-color-picker.js"></script>-->
-            
-
             <br><br>
 
             <div style="display: flex; justify-content: space-between;  margin-bottom:50px;margin-bottom:50px">
@@ -78,14 +83,10 @@
                     <button type="reset" class="btn btn-outline-danger">취소</button>
                 </div>
                 <div class="submit-btn">
-                    <button type="button" onclick="temSave();" class="btn btn-outline-danger">임시저장</button>
+                    <button type="button" onclick="submit(2);" class="btn btn-outline-danger">임시저장</button>
                     <a data-toggle="modal" data-target="#thumbnail-modal"><button class="btn btn-danger">등록</button></a>
                 </div>
             </div>
-
-            <script>
-  
-            </script>
 
             <!--썸네일 insert 모달창-->
             <!-- The Modal -->
@@ -106,7 +107,13 @@
                         </a>
 
                         <div class="input-type" id="file-area">
-		                    <input type="file" id="thumbnail1" name="" onchange="loadImg(this,1)" class="form-control-file border" required>
+                       		<form id="insertColumn" action="" method="post" style="margin-top: 0px;" enctype="multipart/form-data"> 
+				             	<input type="hidden" name="mno" value="${loginUser.memNo}" >
+					           	<input type="hidden" name="category" value="칼럼">
+					           	<input type="hidden" name="title" value="">
+					           	<input type="hidden" name="content" value="">
+			                    <input type="file" id="thumbnail1" name=upfile onchange="loadImg(this,1)" class="form-control-file border" required>
+				         	</form>  
 		                </div>
 
                         <p style="font-size: 12px; margin-top: 15px; font-weight: bold;">
@@ -118,13 +125,41 @@
             
                     <!-- Modal footer -->
                     <div class="modal-footer"  style="justify-content: center;">
-                        <button type="submit" class="btn btn-danger btn-block">OK</button>
+                        <button onclick="submit(1);" class="btn btn-danger btn-block">OK</button>
                     </div>
-            
+            	
                 </div>
                 </div>
             </div>
-        </form>
+            
+            <script>
+            
+	            /*토스트 UI 에디터 insert하기 */
+	            function submit(num){
+	            	
+	            	// 등록하기
+	            	if(num=1){
+	            		// 제목과 내용 변수에 담아서 form에 담기
+	            		var $title = $("#content-title").val()
+	            		var content = editor.getHTML();
+		            	$("#insertColumn").children().eq(2).attr("value",$title);
+		            	$("#insertColumn").children().eq(3).attr("value",content);
+
+		            	//form을 submit하기
+	            		$("#insertColumn").attr("action","insert.bo").submit();
+	            	}else{
+	            		//임시저장
+	            		
+	            		
+	            	}
+	            	
+	            	
+	            }
+            
+            </script>
+            
+            
+       
     </div>
 
 
@@ -140,10 +175,14 @@
             initialValue: '📝당신의 한 줄이 개발자들의 영감이 됩니다.',
             language: 'ko',
         });
+   
+        
+     	
+     	
+        
 
         /*첨부파일-div 영역 클릭시 첨부파일 등록*/
         $(function(){
-            
             $("#file-area").hide();
             $("#thumbnail").click(function(){
                 $("#thumbnail1").click();	
@@ -155,13 +194,13 @@
             
             if(inputFile.files.length == 1){
                 var reader = new FileReader();
-                    
                 reader.readAsDataURL(inputFile.files[0]);
+               
                 reader.onload = function(e){
                         $("#thumbnail").attr("src",e.target.result);
                         $('[data-toggle="tooltip"]').attr("data-original-title","멋진사진이네요!👍");
                     }
-
+				
             }else{
                 /*🔥기본 이미지는 Like5로고로 넣을 것🔥*/
                 $("#thumbnail").attr("src",null);

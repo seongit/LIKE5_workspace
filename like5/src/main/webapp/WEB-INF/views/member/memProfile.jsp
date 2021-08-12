@@ -54,7 +54,7 @@
 				<div class="listInfo">
 					<table class="w3-table w3-bordered w3-centered">
 						<thead>
-							<tr class="w3-red">
+							<tr class="thCell">
 								<th class="nullCell"></th>
 								<th class="checkIt">선택</th>
 								<th class="contentNo">번호</th>
@@ -89,7 +89,9 @@
 				<div class="listCheck">
 					<div class="checkAll"><input type="checkbox">&nbsp;&nbsp;전체선택</div>
 					<div class="deleteButton">
-						<button type="submit" class="btn btn-danger"><a href="">삭제하기</a></button>
+						<button type="submit" class="btn btn-danger" data-toggle="modal" data-target="#delete-modal">
+							<a href="">삭제하기</a>
+						</button>
 					</div>
 				</div>
 				<!-- 전체선택, 삭제하기 영역 끝 -->
@@ -109,9 +111,32 @@
 			<!-- 페이지 하단 전체 영역 끝 -->
 		</div>
 		<!-- 전체를 감싸는 div -->
+		
+		<!-- 삭제하기 모달창 -->
+		<div class="modal fade" id="delete-modal">
+			<div class="modal-dialog modal-dialog-centered modal-sm">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title">🚫 <b>삭제하기</b></h5>
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+					</div>
+					<div class="modal-body" style="text-align: center;">
+						<br>선택한 글을 삭제하시겠어요?<br>삭제된 게시글은 복구할 수 없어요😥<br>정말 삭제하시겠어요?
+						<br><br>
+						<p style="font-size: 9px;">(삭제하기 버튼 클릭 시 글이 삭제됩니다.)</p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">삭제하기</button>
+						<button type="button" class="btn btn-outline-secondary btn-sm" data-dismiss="modal">취소</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- 삭제하기 모달창 끝 -->
+		
 	</div>
 	<!--페이지 영역 끝 -->
-
+	
 
 	<!-- JS -->
 	<script>

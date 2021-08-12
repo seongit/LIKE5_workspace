@@ -93,7 +93,7 @@
                 <a href="member.ad">회원관리</a>
             </li>
             <li>
-                <a class="active" href="board.ad">게시글관리</a>
+                <a href="board.ad">게시글관리</a>
             </li>
             <li>
                 <a href="customer.ad">고객센터</a>
@@ -102,7 +102,10 @@
                 <a href="donation.ad">후원관리</a>
             </li>
             <li>
-                <a href="booking.ad">공간대여관리</a>
+                <a href="list.bk">공간대여관리</a> <%--신원 루트 수정 --%>
+            </li>
+            <li>
+            	<a href="space.bo">공간예약관리</a> <%--정빈 사이드 바 추가 --%>
             </li>
         </ul>
     </aside>

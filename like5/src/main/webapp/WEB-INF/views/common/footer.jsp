@@ -40,8 +40,8 @@
 	<footer class="container-fluid">
 		<div class="row" id="footer">
 			<div class="col-12" id="footerTop">
-				<!-- 약관3종, 소개로 넘어가는 페이지 추후 연결 -->
-				<a href=""><img src="https://i.imgur.com/vhEZ5DJ.png" class="footerImg"></a>
+				<!-- 약관3종, 소개 페이지 -->
+				<a href="teamAskMe.me"><img src="https://i.imgur.com/vhEZ5DJ.png" class="footerImg"></a>
 			</div>
 		</div>
 		<div class="row" id="footer">

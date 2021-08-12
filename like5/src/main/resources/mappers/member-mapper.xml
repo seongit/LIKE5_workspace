@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="memberMapper">
-	
+
 	<resultMap id="memberResult" type="Member">
 		<result column="mem_no" property="memNo"/>
 		<result column="email" property="email"/>
@@ -16,7 +16,7 @@
 		<result column="user_status" property="userStatus"/>
 		<result column="ent_yn" property="entYN"/>
 	</resultMap>
-	
+
 	<resultMap id="boardResultSet" type="Board">
 		<result column="boa_no" property="bno"/>
 		<result column="mem_no" property="mno"/>
@@ -32,7 +32,7 @@
 		<result column="tag_name" property="tag"/>
 		<result column="boa_img_path" property="imgPath"/>
 	</resultMap>
-	
+
 	<resultMap id="replyResultSet" type="Reply">
 		<result column="rep_no" property="repNo"/>
 		<result column="boa_no" property="boaNo"/>
@@ -44,12 +44,12 @@
 		<result column="ref_rep_no" property="refRepNo"/>
 		<result column="ref_level" property="refLevel"/>
 	</resultMap>
-	
+
 	<resultMap id="MergerResultSet" type="Merger">
 		<collection property="board" resultMap="boardResultSet"/>
 		<collection property="reply" resultMap="replyResultSet"/>
 	</resultMap>
-	
+
 	<resultMap id="SponResultSet" type="Sponsorship">
 		<result column="spon_no" property="sponNo"/>
 		<result column="mem_no" property="memNo"/>
@@ -59,7 +59,7 @@
 		<result column="spon_category" property="sponCategory"/>
 		<result column="ref_boa_no" property="refBoaNo"/>
 	</resultMap>
-	
+
 	<resultMap id="CalculateResultSet" type="Calculate">
 		<result column="cal_no" property="calNo"/>
 		<result column="mem_no" property="memNo"/>
@@ -70,11 +70,11 @@
 		<result column="cal_bank" property="calBank"/>
 		<result column="cal_account" property="calAccount"/>
 	</resultMap>
-	
+
 	<!--                     동규                            -->
-	
+
 	<insert id="insertMember" >
-		
+
 		insert
 		  into member
 		  (
@@ -88,25 +88,42 @@
 		     , bank
 		     , account_num
 		     , enr_date
-		  )   
+		  )
 		  values
 		  (
 		  	   seq_mno.nextval
 		  	 , #{email}
 		  	 , #{memPwd}
 		  	 , #{memName}
-		  	 , #{nickName}  
+		  	 , #{nickName}
 		  	 , #{memProfile}
 		  	 , 'L'
 		  	 , #{bank}
 		  	 , #{accountNum}
 		  	 , sysdate
 		  )
-		
+
 	</insert>
-	
+
+	<resultMap type="Booking" id="bookingResultSet">
+	  	<id property="bookingNo" column="bookin_no"/>
+	  	<result property="officeNo" column="office_no"/>
+	  	<result property="memNo" column="mem_no"/>
+	  	<result property="startDate" column="start_date"/>
+	  	<result property="endDate" column="end_date"/>
+	  	<result property="requestDate" column="request_date"/>
+	  	<result property="modifyDate" column="modify_date"/>
+	  	<result property="status" column="status"/>
+	  	<result property="person" column="person"/>
+	  	<result property="phone" column="phone"/>
+	  	<result property="bAsk" column="b_ask"/>
+	  	<result property="total" column="total"/>
+	  	<result property="typeName" column="type_name"/>
+	  	<result property="price" column="price"/>
+    </resultMap>
+
 	<select id="loginMember" resultMap="memberResult">
-	
+
 		select
 		        mem_no
 		      , email
@@ -124,12 +141,12 @@
 		  where ent_yn = 'N'
           and email = #{email}
           and mem_pwd = #{memPwd}
-				
+
 	</select>
-	
-	
+
+
 	<update id="updateMember">
-		update 
+		update
 		        member
 		        <choose>
 		        	<when test="#{memPwd eq null}">
@@ -150,9 +167,9 @@
 		      	</choose>
 		      		where mem_no = #{memNo}
 	</update>
-	
+
 	<select id="newlylist" parameterType="Board" resultMap="boardResultSet">
-	
+
 		SELECT * FROM (
 					    select
 					           boa_no
@@ -173,11 +190,11 @@
 						) where <![CDATA[ROWNUM <= 3 ]]>
 				       and mem_no = #{memNo}
 				       and boa_status = 'Y'
-		
+
 	</select>
-	
+
 	<select id="tempSaveList" parameterType="Board" resultMap="boardResultSet">
-	
+
 		SELECT * FROM (
 					    select
 					           boa_no
@@ -198,11 +215,11 @@
 						) where <![CDATA[ROWNUM <= 3 ]]>
 				       and mem_no = #{memNo}
 				       and boa_status = 'F'
-	
+
 	</select>
-	
+
 	<select id="ansList" parameterType="Merger" resultMap="MergerResultSet">
-	
+
 		SELECT * FROM (
 					    select
 					           r.rep_no
@@ -221,11 +238,11 @@
 						)where <![CDATA[ROWNUM <= 3 ]]>
 				       and mem_no = #{memNo}
 				       and rep_status = 'N'
-	
+
 	</select>
-	
+
 	<select id="Spon" parameterType="Sponsorship" resultMap="SponResultSet">
-	
+
 		select
 		       spon_no
 		     , mem_no
@@ -236,11 +253,11 @@
 		     , ref_boa_no
 		  from sponsorship
 		  where SMEM_NO = #{memNo}
-		
+
 	</select>
-	
+
 	<select id="Calculate" parameterType="Calculate" resultMap="CalculateResultSet">
-	
+
 		select
 		       cal_no
 		     , mem_no
@@ -252,18 +269,18 @@
 		     , cal_account
 		  from calculate
 		 where mem_no = #{memNo}
-		
+
 	</select>
-	
-	
+
+
 	<!-- [지현]회원관리 맴버 전체 조회 -->
 	<select id="selectMemCount" resultType="_int">
-		select 
+		select
 			count(*)
 		from member
 		where user_status='N'
 	</select>
-	
+
 	<select id="selectMemList" resultMap="memberResult">
 		select
 		      mem_no
@@ -277,10 +294,10 @@
 		    , ent_yn
 		from member
 		where user_status ='N'
-		order 
+		order
 			by mem_no
 	</select>
-	
+
 	<!-- [지현]회원관리 맴버 키워드 조회-->
 	<select id="selectSearchMemCount" resultType="_int">
 		select
@@ -302,7 +319,7 @@
 	 	like '%' || #{keyword} || '%'
 	 	order by mem_no
 	</select>
-	
+
 	<select id="selectSearchMemList" resultMap="memberResult">
 		select
 			      mem_no
@@ -330,25 +347,25 @@
 		 	</choose>
 		 	like '%' || #{keyword} || '%'
 		 	order by mem_no
-			
+
 	</select>
 	<update id="deleteMem">
-		update 
+		update
 				member
 		   set ent_yn ='Y'
 		   where mem_no = #{memNo}
 	</update>
-	
-	
-	
-	
-	
+
+
+
+
+
 	<!--                   성은                              -->
 	<!-- [1:1문의] 작성 - Author Seong  -->
-	
+
 	<insert id="insertInquiry" >
-		insert into 
-				customer 
+		insert into
+				customer
 				(cs_no
 				,mem_no
 				,cs_title
@@ -359,6 +376,32 @@
 				,#{csTitle}
 				,#{csContent})
 	</insert>
-	
-	
+
+	<select id="selectMyRecentBookList" parameterType="Booking" resultMap="bookingResultSet">
+	select * from(
+					select
+				  		  bookin_no
+				  		, o.office_no
+				  		, mem_no
+				  		, start_date
+				  		, end_date
+				  		, request_date
+				  		, modify_date
+				  		, status
+				  		, b.person
+				  		, phone
+				  		, b_ask
+				  		, total
+				  		, branch
+				  		, type_name
+				  		, price
+				  	 from booking b
+				  	 join office o on(b.office_no = o.office_no)
+				  	where mem_no = #{memNo}
+				  	  and status ='Y'
+				  	order
+				  	  by request_date desc)
+	where ROWNUM &lt;=3
+	</select>
 </mapper>
+

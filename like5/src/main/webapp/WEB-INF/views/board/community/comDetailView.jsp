@@ -26,11 +26,6 @@
                 <div class="TalkContentHeaderModule">
                     <div>
 
-                        <!--조건식으로 신고된 게시글은 아래의 이미지 보여지게끔 구현하기🔥
-                        <div>
-                            <img src="블라인드 게시글.jpg" style="width: 100%; height: 100%;"><img> 
-                        </div>
-                        -->
 
                         <h3><b>커뮤니티</b></h3><br>
                         <div class="content-header">
@@ -45,17 +40,31 @@
                                 </div>
                                 
                                 <div class="rigth-items">
-                                    <span>조회 ${b.count } | </span>
-                                    <span><a href="" class="aTags" data-toggle="modal" data-target="#report-modal">🚨신고</a></span>
+                                    <span>조회 ${b.count }  </span>
+                                    <c:choose>
+                                    	<c:when test="${!empty loginUser }">
+                                    	<span><a href="" class="aTags" data-toggle="modal" data-target="#report-modal"> | 🚨신고</a></span>
+                                		</c:when>
+                                	</c:choose>
                                 </div>
                             </div>
                             <hr>
                         </div>
-                        <div class="main-content" style="height: 500px;">
-
-                            <div>${b.content}</div>
-                          
+                        <!-- 첨부파일 유무 조건식으로 검사하기 -->
+                        <div class="main-content" style="height:100%;">
+                           <c:choose>
+                       		<c:when test="${!empty b.imgPath}">
+								<div>
+									<img src="${b.imgPath}" style="width:300px;height:300px;">
+								</div>
+								${b.content }
+                       		</c:when>
+                       		<c:otherwise>
+                       			<div style="height:500px">${b.content}</div>
+                       		</c:otherwise>
+                       		</c:choose>
                         </div>
+                        
                         <!--글작성자에게만 보여지는 버튼-->
                         <c:choose>
                         	<c:when test="${loginUser.memNo eq b.mno}">
@@ -66,64 +75,19 @@
                         	</c:when>
                         </c:choose>
 	                        
-	                         
-	                        <form id="postForm" action="" method="post">
-								<input type="hidden" name="bno" value="${b.bno}">
-								<input type="hidden" name="imgPath" value="${b.imgPath}">
-							</form>
-							
-		
-                       		 
+                        
+     
+	                       		 
                         <hr>
                     </div>
                 </div>
             </div>
             
-            
-            
-            <!-- 삭제하기 모달창 -->
-             <form  method="post" style="margin-top: 0px;" >
-                <!--ex.아이디랑 글 번호 넘겨서 삭제 (sql문에 따라 보내는 값을 달라질 수 있음)-->
-                <input type="hidden" name="bno" value="${b.bno}" >
-                <div class="container">
-                    <!-- The Modal -->
-                    <div class="modal fade" id="delete-modal">
-                        <div class="modal-dialog modal-dialog-centered modal-sm">
-                            <div class="modal-content">
-                            
-                                <!-- Modal Header -->
-                                <div class="modal-header" style="background-color: rgba(224, 224, 224, 0.24);">
-                                    <h4 class="modal-title">🧺삭제하기</h4>
-                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                                </div>
-                                
-                                <!-- Modal body -->
-                                <div class="modal-body">
-                                   		<p align="center"><b>${b.nickname}</b>님 안녕하세요!</p>
-                                    <div class="modal-content" style="border:1px solid grey;width: 100%;height: 100%; border-radius: 5px;">
-                                        <div>
-                                            <div align="center">
-                                            	삭제 후에는 복구가 불가능합니다.<br>
-                                            	정말로 삭제하시겠어요? 🙃
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- Modal footer -->
-                                <div class="modal-footer" style="justify-content: center;">
-                                    <div>
-                                        <button type="button" class="btn btn-danger btn-sm" onclick="postFormSubmit(2)">삭제하기</button>
-                                        <button type="button" class="btn btn-outline-secondary btn-sm" data-dismiss="modal">취소</button>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </form>    
-            
+            <form id="postForm" action="" method="post">
+				<input type="hidden" name="bno" value="${b.bno}">
+				<input type="hidden" name="imgPath" value="${b.imgPath}">
+			</form>
+					
 			<script>
 				function postFormSubmit(num){
 					if(num==1){ // 수정하기
@@ -134,13 +98,59 @@
 					}
 				}
 			</script>
+            
+            
+           	<!-- 삭제하기 모달창 -->
+               <input type="hidden" name="bno" value="${b.bno}" >
+               <div class="container">
+                   <!-- The Modal -->
+                   <div class="modal fade" id="delete-modal">
+                       <div class="modal-dialog modal-dialog-centered modal-sm">
+                           <div class="modal-content">
+                           
+                               <!-- Modal Header -->
+                               <div class="modal-header" style="background-color: rgba(224, 224, 224, 0.24);">
+                                   <h4 class="modal-title">🧺삭제하기</h4>
+                                   <button type="button" class="close" data-dismiss="modal">&times;</button>
+                               </div>
+                               
+                               <!-- Modal body -->
+                               <div class="modal-body">
+                                  		<p align="center"><b>${b.nickname}</b>님 안녕하세요!</p>
+                                   <div class="modal-content" style="border:1px solid grey;width: 100%;height: 100%; border-radius: 5px;">
+                                       <div>
+                                           <div align="center">
+                                           	삭제 후에는 복구가 불가능합니다.<br>
+                                           	정말로 삭제하시겠어요? 🙃
+                                           </div>
+                                       </div>
+                                   </div>
+                               </div>
+                               <!-- Modal footer -->
+                               <div class="modal-footer" style="justify-content: center;">
+                                   <div>
+                                       <button type="button" class="btn btn-danger btn-sm" onclick="postFormSubmit(2)">삭제하기</button>
+                                       <button type="button" class="btn btn-outline-secondary btn-sm" data-dismiss="modal">취소</button>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+            
+		
 
 
-            <form  id="" action="" method="post" style="margin-top: 0px;" >
+            <form action="report.bo" method="post" style="margin-top: 0px;" >
+            
                 <!--신고하기 모달창-->
                 <div class="container">
+                   
                     <!-- The Modal -->
                     <div class="modal fade" id="report-modal">
+                    <input type="hidden" name="mno" value="${loginUser.memNo}">
+            	   	<input type="hidden" name="refNo" value="${b.bno}">
+              		<input type="hidden" name="category" value="${b.category}">
                         <div class="modal-dialog modal-dialog-centered modal-sm">
                             <div class="modal-content">
                             
@@ -152,7 +162,7 @@
                                 
                                 <!-- Modal body -->
                                 <div class="modal-body">
-                                   		 작성자 : 꼰대가르송(작성자 닉네임)
+                                   		 <p><b>${b.nickname }<b>님을 신고하시겠어요?</p>
                                     <div class="modal-content" style="border:1px solid grey;width: 100%;height: 100%; border-radius: 5px;">
                                         <div>
                                             <b><span style="font-size: 15px;">사유 선택 : </span></b>
@@ -161,20 +171,20 @@
                                                 <span>대표적인 사유 1개를 선택해주세요.</span><br>
                                                 
                                                 <br>     
-                                                <input type="radio" id="f-option" name="selector">
-                                                <label for="f-option">부적절한 홍보 게시글</label>
+                                                <input type="radio" id="a-option" name="reason"  value="홍보성 게시글">
+                                                <label for="a-option">홍보성 게시글</label>
                                                 <br>
 
-                                                <input type="radio" id="s-option" name="selector">
-                                                <label for="s-option">욕설,비방 음란성등</label>
+                                                <input type="radio" id="b-option" name="reason"  value="욕설 및 비방">
+                                                <label for="b-option">욕설 및 비방</label>
                                                 <br>                               
 
-                                                <input type="radio" id="t-option" name="selector">
-                                                <label for="t-option">명예훼손, 사생활 침해</label>
+                                                <input type="radio" id="c-option" name="reason" value="명예훼손 및 사생활 침해">
+                                                <label for="c-option">명예훼손 및 사생활 침해</label>
                                                 <br> 
                                                 
-                                                <input type="radio" id="o-option" name="selector">
-                                                <label for="o-option">기타</label>
+                                                <input type="radio" id="d-option" name="reason" value="기타">
+                                                <label for="d-option" >기타</label>
                                                 <br>
 
                                             </div>
@@ -227,58 +237,15 @@
 							<div id="replyResult"></div>
 							<div id="answerComment"></div>
 							
-                            <!--댓글 조회목록
-                            <div class="comment-wrapper_value" >
-                                <div class="comment-info">
-                                    <div class="info-wrapper">
-                                        <div class="user-info">
-                                            <div class="user-img">
-                                                <i class="far fa-user fa-2x"></i>
-                                            </div>
-                                            <div class="user-info" style="display: inline-block;width: 90%;">
-                                                <div class="test"> 
-                                                    <span><a href="" class="aTags">사용자 닉네임</a></span>
-                                                    <span style="float: right;"><a href="" class="aTags" data-toggle="modal" data-target="#report-modal"><img src="">🚨신고</a></span>
-                                                 </div>
-                                                <div>21-07-06</div>
-                                            </div>
-                                            
-                                        </div>
-                                        <div class="comment-content">
-                                            <div>댓글 영역입니다.</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!--대댓글 조회 목록
-                            <div class="comments-wrapper_value" >
-                                <div class="comment-info">
-                                    <div class="info-wrapper">
-                                        <div class="user-info">
-                                            <div class="user-img">
-                                                <i class="far fa-user fa-2x"></i>
-                                            </div>
-                                            <div class="user-info" style="display: inline-block; width: 90%;">
-                                                <span><a href="" class="aTags">사용자 닉네임</a></span>
-                                                <span style="float: right;"><a href="" class="aTags" data-toggle="modal" data-target="#report-modal"><img src="">🚨신고</a></span>
-                                                <div>21-07-06</div>
-                                            </div>
-                                        </div>
-                                        <div class="comment-content">
-                                            <div>대댓글 영역입니다.</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>-->
-                            
                             <script >
                             	$(function(){
                             		selectReplyList();
                             	})
-                            	
-                            	var repNo=[];
+						       	
                             	function selectReplyList(){
+
+                            		var repNo=[];
+                            		
                             		$.ajax({
                             			url:"rlist.bo",
                             			data:{bno:${b.bno}},
@@ -286,18 +253,13 @@
                             			// 통신 성공했을 때
                             			success:function(list){
                             				
-                            				console.log(list); //배열 확인 완료
                             				$("#rcount").text(list.length);
                             				
                             				var value="";
-                            				// 참조되는 댓글 번호가 담길 배열
-                            				
-                            			
                             				
                             				for(var i in list){
                             					if(list[i].refLevel == 1){
-                            						  <!--댓글 조회목록-->
-                            						  
+
                             						  value += 
                                                      '<div class="comment-wrapper_value" style="margin-top:50px">'
                                                     +  '<div class="comment-info">'
@@ -309,7 +271,7 @@
                                                     +              '<div class="user-info" style="display: inline-block;width: 90%;">'
                                                     +                  '<div class="test">' 
                                                     +                      '<span>'+'<a href="" class="aTags">' + list[i].nickname + '</a>'+'</span>'
-                                                    +                      '<span style="float: right;">'+'<a href="" class="aTags" data-toggle="modal" data-target="#report-modal">'+'<img src="">'+"🚨신고"+'</a>'+'</span>'
+                                                    +                      '<span style="float: right;">'+'<a href="" class="aTags" data-toggle="modal" data-target="#report-reply-modal">'+'<img src="">'+"🚨신고"+'</a>'+'</span>'
                                                     +                   '</div>'
                                                     +                  '<div>' + list[i].repEnrollDate + '</div>'
                                                     +              '</div>'
@@ -320,31 +282,29 @@
                                                     +      '</div>'
                                                     +  '</div>'
                                                     + '</div>'
-                                                    
-                                               	 	<!--대댓글 달기/취소하기 버튼-->
                                                     + '<div class="comment-plus-icon-wrapper" align="center">'
                                                     +    '<div class="container">'
-                                                    +        '<a href="#demo" id="comments" onclick="comments();" class="btn btn-outline-secondary" data-toggle="collapse" style="margin-bottom: 10px;">'+"대댓글 달기"+'</a>'
-                                                    +        '<div id="demo" class="collapse">'
+                                                    +        '<a href="#collapse'+list[i].repNo+'"class="btn btn-outline-secondary comments" data-toggle="collapse" style="margin-bottom: 10px;">'+"대댓글 달기"+'</a>'
+                                                    +        '<div id="collapse'+list[i].repNo+'"class="collapse">'
                                                     +            '<div class="talk-newcomment-box">'
                                                     +                '<div class="auto-heigth" style="box-sizing: border-box; height: auto;">'
                                                     +                    '<textarea class="form-control" rows="5" id="insertReplies" style="resize:none">'+'</textarea>'
-                                                    +                    '<button type="button" class="btn-danger btn btn-sm" style="float:right; margin-top: 10px;" onclick="insertReplies();">'+"대댓글 작성"+'</button>'
+                                                    +					 '<input type="hidden" value="'+list[i].repNo+'">'
+                                                    +                    '<button type="button" class="btn-danger btn btn-sm insert-comments" style="float:right; margin-top: 10px;">'+"대댓글 작성"+'</button>'
                                                     +                '</div>'
                                                     +            '</div>'
                                                     +        '</div>'
                                                     +   '</div>'
                                                     +'</div>'
+                                                   
                                                     
                                                 	$("#replyResult").html(value);	
                                                     
                             						  repNo.push(list[i].repNo);
-                            						  console.log(repNo);
                                                     
                             					}else{
 	                            						
 	                           						 if(repNo.indexOf(list[i].refRepNo)!= -1){
-	                            						<!--대댓글 조회목록-->
 	                            						value +=
 	                            						'<div class="comments-wrapper_value" >' 
 	                                                   + '<div class="comment-info">'
@@ -376,6 +336,7 @@
                             		})
                             		}
                             	
+                            	// Ajax 댓글 작성하기
                             	function insertReply(){
                             		
                             		if($("#comment").val().trim().length != 0){
@@ -398,20 +359,17 @@
                         	      					console.log("댓글 작성용 AJAX 통신 실패");
                         	      				}
                                 			})
-                                			
-                                			
-                                            
                             		}
                             	}
                             	
-                            	<%--
-                            	function insertReplies(){
+                               // Ajax 대댓글 작성하기
+                            	function insertReplies(repNo){
                             		if($("#insertReplies").val().trim().length != 0){
                             				// 대댓글일때
                             				$.ajax({
                                 				url:"insertReplies.bo",
                                 				data:{
-                                					boaNo :${b.bno}
+                                					boaNo : ${b.bno}
                                 					,repContent : $("#insertReplies").val()
                                 					,memNo : '${loginUser.memNo}'
                                 					,refRepNo : repNo
@@ -427,15 +385,8 @@
                         	      				}
                                 			})
                             		}
-                            	}--%>
-                            	
-                            	
-                            	
+                            	}
                             </script>
-                            
-                           
-                            
-                            
                         </div>
                     </div>
                 </div>
@@ -446,21 +397,19 @@
     
                             
     <script>
-
-        /*대댓글*/
-        function comments(){
-
-            var a = $("#comments").text();
-
-            $("#comments").text("취소하기").on("click",function(){
-              $("#comments").text("대댓글 달기");
-                if(a == '대댓글 달기'){
-                    comments();
-                }
-            });
-
-        }
-
+	   /*대댓글 문구 변경*/
+ 	  $(document).on("click", ".comments", function(){
+ 		  var a = $(this).text();
+ 		  if(a=='취소하기'){
+ 			  $(this).text("대댓글 달기");
+ 		  }else{
+ 			  $(this).text("취소하기");
+ 		  }
+   	 });
+	   
+ 	   $(document).on("click",".insert-comments",function(){
+	      insertReplies($(this).prev().val());
+	   });
     </script>
 
 	<!--푸터바-->

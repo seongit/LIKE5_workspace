@@ -30,7 +30,7 @@
         #body>div{float: left;}
 
         #sidebar{width: 15%; height: 100%;}
-        #sidmenu{height: 32%; width: 100%;border: 3px solid rgb(220, 53, 69);}
+        #sidmenu{height: 32%; width: 100%;border: 3px solid rgb(220, 53, 69); cursor:pointer;}
         #sidmenu>div{width: 100%; height: 25%; text-align:center; margin:0; padding-top:21px; font-size: 22px;}
         #sidmenu>div:hover{color:white; background-color:rgb(220, 53, 69) ; }
         #profile{height:23%; width: 100%;  margin-top: 15px; margin-left:3px;}
@@ -99,10 +99,11 @@
                   	후원
           </div>
           <div id="" onclick="location.href='donate.me?memNo=${ loginUser.memNo }'">
-                  	공간예약
+                  	1:1문의
           </div>
-          <div id="" onclick="location.href='reservation.me?memNo=${ loginUser.memNo }'">
-                  1:1문의
+          <%-- 신원 수정 --%>
+          <div onclick="location.href='myBookList.bk?memNo=${ loginUser.memNo }'">
+                  	공간예약
           </div>
         </div>
     </div>
@@ -227,8 +228,32 @@
                       </table>
                     </div>
             </div>
+            
+            <%-- 신원 공간 추가 
+            <div class="bookingSection">
+            	<table class="table">
+            		<thead>
+            			<tr>
+            				<th>예약번호</th>
+            				<th>예약일</th>
+            				<th>예약사무실</th>
+            				<th>상태</th>
+            			</tr>
+            		</thead>
+            		<tbody>
+            		<c:forEach var="b" items="${ blist }">
+            		 	<tr>
+            				<td>${ b.bookingNo }</td>
+            				<td>${ b.requestDate }</td>
+	                        <td>${ b.typeName }</td>
+	                        <td>${ b.status }</td>
+            			</tr>
+            		</c:forEach>
+            		</tbody>
+            	</table>
+            </div>
         </div>
-        
+        --%>
         <!-- The Modal -->
         <div class="modal fade" id="myModal">
             <div class="modal-dialog modal-dialog-centered">

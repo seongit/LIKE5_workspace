@@ -18,7 +18,6 @@
         .main-content a{
             text-decoration: none;
             color: rgb(220, 53, 69);
-
         }
         .main-content i{
             font-size: 70px;
@@ -46,12 +45,9 @@
             box-sizing:border-box;
             display:none;
         }
-        .faqArea{
-            margin: 0 auto;
-            width: 50%;
-        }
         .question, .answer{
             margin-bottom: 5px;
+            text-align: left;
         }
         .answer a{
             text-decoration: none;
@@ -110,7 +106,7 @@
         <br>
     </c:if>
 
-    <div class="faqArea">
+    <div class="faqArea" align="center">
 
         <c:forEach var="f" items="${list}">
             <div class="question">Q [
@@ -124,7 +120,7 @@
                     <c:otherwise>
                         QnA
                     </c:otherwise>
-                </c:choose>
+                        </c:choose>
                 ] ${f.question}
             </div>
             <p class="answer">

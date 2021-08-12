@@ -10,13 +10,156 @@
 		<result column="spon_date" property="sponDate"/>
 		<result column="spon_category" property="sponCategory"/>
 		<result column="ref_boa_no" property="refBoaNo"/>
+		<result column="mem_name" property="memName"/>
+		<result column="nickname" property="nickName"/>
+		<result column="email" property="email"/>
+		<result column="bank" property="bank"/>
+		<result column="account_num" property="accountNum"/>
 	</resultMap>
+  <!-- 후원관리 메인 -->
+  	<select id="selectSponCount" resultType="_int">
+  		select 
+		     count(distinct smem_no)
+		from sponsorship
+  	</select>
+  	
+  	<select id="selectSponList" resultMap="sponResult">
+  		select 
+		    smem_no
+		  , mem_name
+		  , nickname
+		  , email
+		  , sum(spon_fee) as spon_fee
+		  , account_num
+		from sponsorship s
+		join member m on(s.smem_no = m.mem_no)
+		group 
+		    by smem_no
+		      , mem_name
+		      , nickname
+		      , email
+		      , account_num
+		order by s.smem_no
+  	</select>
   
+  <select id="searchDonaCount" resultType="_int">
+  	select count (*)
+		from (select 
+				    smem_no
+				  , mem_name
+				  , nickname
+				  , email
+				  , sum(spon_fee) as spon_fee
+				  , account_num
+				from sponsorship s
+				join member m on(s.smem_no = m.mem_no)
+				group 
+				    by smem_no
+				      , mem_name
+				      , nickname
+				      , email
+				      , account_num
+				order by s.smem_no)
+		where    
+	    <choose>
+	 		<when test="condition == 'memName'">
+	 			mem_name
+	 		</when>
+	 		<when test="condition == 'nickName'">
+	 			 nickName
+	 		</when>
+	 		<otherwise>
+	 			mem_name like '%' || #{keyword} || '%'
+	 			or nickName
+	 		</otherwise>
+	 	</choose>
+	 	like '%' || #{keyword} || '%'
+  </select>
   
+  <select id="searchDonaList" resultMap="sponResult">
+  	select 
+	            *
+	from (select 
+			    smem_no
+			  , mem_name
+			  , nickname
+			  , email
+			  , sum(spon_fee) as spon_fee
+			  , account_num
+			from sponsorship s
+			join member m on(s.smem_no = m.mem_no)
+			group 
+			    by smem_no
+			      , mem_name
+			      , nickname
+			      , email
+			      , account_num
+			order by s.smem_no)
+  	where    
+	    <choose>
+	 		<when test="condition == 'memName'">
+	 			mem_name
+	 		</when>
+	 		<when test="condition == 'nickName'">
+	 			 nickName
+	 		</when>
+	 		<otherwise>
+	 			mem_name like '%' || #{keyword} || '%'
+	 			or nickName
+	 		</otherwise>
+	 	</choose>
+	 	like '%' || #{keyword} || '%'
+	 	order by smem_no
+  </select>
+  <!-- 후원상세 -->
+  <select id="selectSponsorCount" resultType="_int">
+	select count(*)
+		from (select 
+		        spon_no
+		      , mem_name
+		      , nickname
+		      , spon_fee
+		      , to_char(spon_date,'YYYY-MM-DD') as spon_date
+		from member
+		join sponsorship using(mem_no)
+		where smem_no = #{smemNo}
+		order by spon_no)
+  </select>
+  <select id="selectSponMem" resultMap="sponResult">
+  	select 
+		    smem_no
+		  , mem_name
+		  , nickname
+		  , email
+		  , sum(spon_fee) as spon_fee
+          ,bank
+		  , account_num
+		from sponsorship s
+		join member m on(s.smem_no = m.mem_no)
+		group 
+		    by smem_no
+		      , mem_name
+		      , nickname
+		      , email
+              , bank
+		      , account_num
+        having smem_no = #{smemNo}
+  </select>
   
-  
-  
-  
+  <select id="selectSponsorList" resultMap="sponResult">
+  	select 
+	        spon_no
+	      , mem_name
+	      , nickname
+	      , spon_fee
+	      , to_char(spon_date,'YYYY-MM-DD') as spon_date
+	      , bank
+	      , account_num
+	from member
+	join sponsorship using(mem_no)
+	where smem_no = #{smemNo}
+	order by spon_no
+  </select>
   
   
 </mapper>

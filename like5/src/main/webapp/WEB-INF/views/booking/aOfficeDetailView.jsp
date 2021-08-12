@@ -9,6 +9,44 @@
 <title>Insert title here</title>
 </head>
 <style>
+<%-- aside --%>
+	aside{
+            float: left;
+            margin-right: 50px;
+        }
+	.aside-title{
+            padding: 30px 10px;
+        }
+	aside ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            width: 130px;
+        }
+	aside li{
+            border: 1px lightgray solid;
+        }
+
+	aside li a {
+            display: block;
+            color: #000;
+            padding: 8px 16px;
+            text-decoration: none;
+            text-align: center;
+        }
+
+	aside li a.active {
+            background-color: rgb(220, 53, 69);
+            color: white;
+            text-decoration: none;
+        }
+
+	aside li a:hover:not(.active) {
+            background-color: rgb(220, 53, 69);
+            color: white;
+            text-decoration: none;
+        }
+        
 	.innerOuter{ display:flex;}
 	.admin-box,
 	.office-box {
@@ -113,18 +151,28 @@
 <body>
 <jsp:include page="../common/header.jsp"/>
     <div class="innerOuter">
-        <nav class="nav flex-column">
-            <a class="nav-link active" href="#">Active</a>
-            <a class="nav-link" href="#">Link</a>
-            <a class="nav-link" href="#">Link</a>
-            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
-        </nav>
+    
+	    <div class="sideBar">
+	        <div class="aside-title"><h3>통합관리</h3></div>
+		    <aside>
+		        <ul>
+		            <li><a href="member.ad">회원관리</a></li>
+		            <li><a href="board.ad">게시글관리</a></li>
+		            <li><a href="customer.ad">고객센터</a></li>
+		            <li><a href="donation.ad">후원관리</a></li>
+		            <li><a href="list.bk">공간대여관리</a></li>
+		            <li><a href="space.bo">공간예약관리</a></li>
+		        </ul>
+		    </aside>
+	    </div>
+    
         <div class="office-box">
             <form class="updateOffice" action="updateOf.bk" method="post" enctype="multipart/form-data">
                 <div class="office-title">
                     <h1>${ o.typeName } ${ o.person }</h1>
                 </div>
                 <hr>
+               
                 <div class="office-imgs">
                     <div class="top-img">
                         <div class="img1"><img id="img1" name="offImgPath" src="${o.offImgPath}"></div>
@@ -190,6 +238,7 @@
                     --%>
                     </div>    
                 </div>
+
                	<div id="file-area">
                 	<input type="file" id="file1" name="refile" onchange="loadImg(this, 1);">
                 	<input type="file" id="file2" name="refile" onchange="loadImg(this, 2);">
@@ -302,7 +351,7 @@
                 <hr>
                 <div class="button-box">
                     <button type="submit">수정하기</button>
-                    <button type="button">삭제하기</button>
+                    <button type="button"><a href="deleteOffice.bk?ono=${ o.officeNo }">삭제하기</a></button>
                 </div>
             </form>
         </div>

@@ -21,4 +21,5 @@ public class Calculate {
 	private String calBank;
 	private String calAccount;
 	
+	
 }

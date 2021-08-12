@@ -18,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 import com.kh.like5.admin.model.vo.Calculate;
 import com.kh.like5.board.model.vo.Board;
 import com.kh.like5.board.model.vo.Reply;
+import com.kh.like5.booking.model.vo.Booking;
 import com.kh.like5.member.model.service.MemberService;
 import com.kh.like5.member.model.vo.Customer;
 import com.kh.like5.member.model.vo.Member;
@@ -112,6 +113,11 @@ public class MemberController {
 		ArrayList<Reply> ansList = mService.anslist(memNo);
 		ArrayList<Board> tempSaveList = mService.tempSavelist(memNo);
 		
+		/*
+		 * 신원 공간 추가
+		 * ArrayList<Booking> blist = mService.myRecentBookList(memNo);
+		 */
+				
 		for(int i=0; i <sponList.size(); i++) {
 			price += 1000;
 		}
@@ -127,6 +133,7 @@ public class MemberController {
 		  .addObject("tempSavList", tempSaveList)
 		  .addObject("price", price)
 		  .addObject("settleable", settleable)
+		  //.addObject("blist", blist)
 		  .setViewName("member/myPage");
 		
 		//System.out.println(newlyList);

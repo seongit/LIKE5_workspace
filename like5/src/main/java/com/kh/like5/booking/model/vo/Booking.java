@@ -22,4 +22,8 @@ public class Booking {
 	private String bAsk;
 	private int total;
 	private String branch;
+	private String typeName;
+	private int price;
+	private String memName;
+	
 }

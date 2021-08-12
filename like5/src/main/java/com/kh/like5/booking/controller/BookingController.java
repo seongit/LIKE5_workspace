@@ -14,9 +14,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.google.gson.Gson;
 import com.kh.like5.booking.model.service.BookingService;
 import com.kh.like5.booking.model.vo.Booking;
 import com.kh.like5.booking.model.vo.Office;
@@ -39,6 +41,14 @@ public class BookingController {
 	@RequestMapping("bMain.bk")
 	public String bMain() {
 		return "booking/bMain";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="autoBranch.bk", produces="application/json; charset=utf-8")
+	public String autoComplete(String searchKeyword) {
+		System.out.println(searchKeyword);
+		ArrayList<Office> list = bService.autoComplete(searchKeyword);
+		return new Gson().toJson(list);
 	}
 	
 	/**
@@ -68,13 +78,15 @@ public class BookingController {
 	}
 	
 	@RequestMapping("detail.bk")
-	public ModelAndView selectOffice(int ono, ModelAndView mv) {
+	public ModelAndView selectOffice(int ono, ModelAndView mv,HttpSession session) {
 		int officeNo = ono;
 		//attachment에도 접근해서 list로 가져와서 화면에 뿌려줘야함...
 		Office o = bService.selectOffice(officeNo);
 		ArrayList<Attachment> list = bService.selectOfficeAtt(officeNo);
-		System.out.println(list);
+		//System.out.println(list);
 		if(o != null) {
+			session.setAttribute("ott", o);
+			session.setAttribute("alist", list);
 			mv.addObject("o", o).setViewName("booking/aOfficeDetailView");
 			mv.addObject("list", list).setViewName("booking/aOfficeDetailView");
 		} else {
@@ -176,7 +188,7 @@ public class BookingController {
 					String changeName = saveFile(refile[i], session);
 					o.setOffImgPath("resources/images/" + changeName);
 				} else if(att.getFileNo() != 0) {//기존파일이 존재할경우
-					System.out.println(att.getFilePath());//왜 두개가 찍히니--> 배열로 안 가져오니까
+					//System.out.println(att.getFilePath());//왜 두개가 찍히니--> 배열로 안 가져오니까
 					String filePath[] = att.getFilePath().split(",");
 					//기존 것 삭제
 					new File(session.getServletContext().getRealPath(filePath[0])).delete();
@@ -207,6 +219,46 @@ public class BookingController {
 		}
 	}
 	
+	
+	@RequestMapping("deleteOffice.bk")
+	public String deleteOffice(int ono, HttpSession session , HttpServletRequest request, Model model) {
+		int memNo = ((Member)request.getSession().getAttribute("loginUser")).getMemNo();
+		String offImgPath = ((Office)request.getSession().getAttribute("ott")).getOffImgPath();
+		ArrayList<Attachment> list = ((ArrayList)request.getSession().getAttribute("alist"));
+		System.out.println(list);
+		//오피스 단독만 삭제
+		if(list.isEmpty()) {
+			int result = bService.deleteOffice(ono);
+			
+			if(result > 0) {
+				
+				new File(session.getServletContext().getRealPath(offImgPath)).delete();
+				session.setAttribute("alertMsg", "삭제 성공");
+				return "redirect:/list.bk";
+				
+			} else {
+				session.setAttribute("errorMsg", "삭제 실패");
+				return "common/errorPage";
+			}
+			//첨부파일이 있을경우에 같이 삭제
+		} else {
+			int result = bService.deleteOfficeWithAtt(ono);
+			
+			if(result > 0) {
+				new File(session.getServletContext().getRealPath(offImgPath)).delete();
+				for(int i=0; i<list.size(); i++) {
+					new File(session.getServletContext().getRealPath(list.get(i).getFilePath())).delete();
+				}
+				session.setAttribute("alertMsg", "삭제 성공");
+				return "redirect:/list.bk";
+			} else {
+				session.setAttribute("errorMsg", "삭제 실패");
+				return "common/errorPage";
+			}
+		}
+		
+	}
+	
 	/**
 	 * 추가부분 - 상세조회 클릭시 연동 페이지(officeDetail)
 	 */
@@ -229,7 +281,7 @@ public class BookingController {
 	/*첨부파일 조회 + 사진 + 리뷰 조회*/
 	@RequestMapping("detail.bo")
 	public String officeDetailPage(int ono, Model model) {
-		ArrayList<Attachment> at = bService.selectList(ono);
+		ArrayList<Attachment> at = bService.selectOfficeAtt(ono);
 		model.addAttribute("at", at);
 		Office o = bService.selectOffice(ono);
 		model.addAttribute("o", o);
@@ -238,12 +290,18 @@ public class BookingController {
 		
 		return "booking/officeDetail";
 	}
-	
+	/*날짜 선택에 따른 시작,끝 추가*/
 	@RequestMapping("paymentForm.bk")
-	public String paymentForm(int officeNo, Model model) {
+	public String paymentForm(int officeNo, Model model, String startDate, String endDate) {
 		
 		Office o = bService.selectOffice(officeNo);
+		
+		//예약된 날짜들 받아오기
+		ArrayList<Booking> list = bService.selectB(officeNo);
+		model.addAttribute("list", list);
 		model.addAttribute("o", o);	
+		model.addAttribute("startDate", startDate);
+		model.addAttribute("endDate", endDate);
 		return "booking/bPayment";
 	}
 	
@@ -257,8 +315,13 @@ public class BookingController {
 		return"booking/bResult";
 	}
 	
+	@RequestMapping("import.ts")
+	public String iamport() {
+		return"booking/importTest";
+	}
+	
 	@RequestMapping("submitBook.bk")
-	public String insertBook(Booking b, HttpServletRequest request, HttpSession session, Model model) {
+	public String insertBook(Booking b, Office o ,HttpServletRequest request, HttpSession session, Model model) {
 		String startDate = request.getParameter("startDate");
 		String endDate = request.getParameter("endDate");
 		String person = request.getParameter("person");
@@ -274,12 +337,97 @@ public class BookingController {
 		
 		int result = bService.insertBook(b);
 		if(result > 0) {
+			model.addAttribute("o", o);
 			model.addAttribute("b", b);
 			return"booking/officeEnd";
 		} else {
 			model.addAttribute("errorMsg", "예약실패");
 			return "common/errorPage";
 		}
-
 	}
+	
+	@RequestMapping("myBookList.bk")
+	public String selectMyBookList(@RequestParam(value="currentPage", defaultValue="1") int currentPage, HttpServletRequest request, HttpSession session, Model model) {
+
+		int memNo = ((Member)request.getSession().getAttribute("loginUser")).getMemNo();
+		//반환되는 게시글 개수
+		int listCount = bService.selectListCountBook(memNo);
+		//page설정
+		PageInfo pi = Pagination.getPageInfo(listCount, currentPage, 10, 5);
+		//게시글조회
+		ArrayList<Booking> list = bService.selectMyBookList(memNo, pi);
+		model.addAttribute("list", list);
+		model.addAttribute("pi", pi);
+		
+		return "booking/myBookList";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="myDetail.bk", produces="application/json; charset=utf-8")
+	public String selectMyBook(int bookingNo) {
+		Booking b = bService.selectMyBook(bookingNo);
+		return new Gson().toJson(b);
+	}
+	
+	@RequestMapping("modifyMyBook.bk")
+	public String updateMyBook(Booking b, HttpServletRequest request, HttpSession session, int bookNo, Model model) {
+		int memNo = ((Member)request.getSession().getAttribute("loginUser")).getMemNo();
+		b.setBookingNo(bookNo);
+		int result = bService.updateMyBook(b);
+		if(result > 0) {
+			return "redirect:/myBookList.bk?mno=" + memNo;
+		} else {
+			model.addAttribute("errorMsg", "예약수정실패");
+			return "common/errorPage";
+		}
+		
+	}
+	
+	@RequestMapping("cancelMyBook.bk")
+	public String deleteMyBook(int bno, HttpServletRequest request, HttpSession session, Model model) {
+		System.out.println(bno);
+		int memNo = ((Member)request.getSession().getAttribute("loginUser")).getMemNo();
+		int result = bService.deleteMyBook(bno);
+		
+		if(result>0) {
+			return "redirect:/myBookList.bk?mno=" + memNo;
+		} else {
+			model.addAttribute("errorMsg", "예약수정실패");
+			return "common/errorPage";
+		}
+	}
+	
+	/*공간 예약관리 화면 연결
+	@RequestMapping("space.bo")
+	public String officeSpace() {
+		return "booking/officeManagement";
+	}*/
+	
+	/*공간 예약관리 조회*/
+	@RequestMapping("space.bo")
+	public String selectSpace(HttpServletRequest request, HttpSession session, @RequestParam(value="currentPage", defaultValue="1") int currentPage, Model model) {
+		//int memNo = ((Member)request.getSession().getAttribute("loginUser")).getMemNo();
+		
+		int listCount = bService.selectSpaceCount();
+		PageInfo pi = Pagination.getPageInfo(listCount, currentPage, 10, 5);
+		
+		ArrayList<Booking> list = bService.selectSpace(pi);
+		
+		model.addAttribute("list", list);
+		model.addAttribute("pi", pi);
+		
+		return "booking/officeManagement";
+	}
+	
+	/* 예약관리 게시물 선택삭제*/
+	@RequestMapping(value = "/delete")
+	 public String ajaxTest(HttpServletRequest request) {
+        
+        String[] ajaxMsg = request.getParameterValues("valueArr");
+        int size = ajaxMsg.length;
+        for(int i=0; i<size; i++) {
+        	bService.delete(ajaxMsg[i]);
+        }
+        return "redirect:list";
+    }
 }

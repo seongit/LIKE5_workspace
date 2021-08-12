@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.kh.like5.admin.model.vo.Calculate;
 import com.kh.like5.board.model.vo.Board;
 import com.kh.like5.board.model.vo.Reply;
+import com.kh.like5.booking.model.vo.Booking;
 import com.kh.like5.member.model.vo.Customer;
 import com.kh.like5.member.model.vo.Member;
 import com.kh.like5.member.model.vo.Sponsorship;
@@ -35,5 +36,8 @@ public interface MemberService {
 	ArrayList<Sponsorship> price(int memNo);
 
 	ArrayList<Calculate> calculate(int memNo);
+	
+	//공간리스트(신원)
+	//ArrayList<Booking> myRecentBookList(int memNo);
 	
 }

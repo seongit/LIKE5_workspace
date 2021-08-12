@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.kh.like5.admin.model.vo.Calculate;
 import com.kh.like5.board.model.vo.Board;
 import com.kh.like5.board.model.vo.Reply;
+import com.kh.like5.booking.model.vo.Booking;
 import com.kh.like5.member.model.vo.Customer;
 import com.kh.like5.member.model.vo.Member;
 import com.kh.like5.member.model.vo.Sponsorship;
@@ -84,4 +85,9 @@ public class MemberDao {
 	
 	
 	
+	/*신원 최근 공간 예약 리스트 조회
+	public ArrayList<Booking> myRecentBookList(SqlSessionTemplate sqlSession, int memNo){
+		return (ArrayList)sqlSession.selectList("memberMapper.selectMyRecentBookList", memNo);
+	}
+	*/
 }

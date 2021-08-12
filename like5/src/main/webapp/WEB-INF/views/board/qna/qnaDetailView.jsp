@@ -357,15 +357,15 @@
 								<tr><td rowspan="5"></td></tr>
 								<tr>
 									<td><input type="radio" id="f-option" name="selector">
-										<label for="f-option">부적절한 홍보 게시글</label></td>
+										<label for="f-option">홍보성 게시글</label></td>
 								</tr>
 								<tr>
 									<td><input type="radio" id="s-option" name="selector">
-										<label for="s-option">욕설,비방 음란성등</label></td>
+										<label for="s-option">욕설 및 비방</label></td>
 								</tr>
 								<tr>
 									<td><input type="radio" id="t-option" name="selector">
-										<label for="t-option">명예훼손, 사생활 침해</label></td>
+										<label for="t-option">명예훼손 및 사생활 침해</label></td>
 								</tr>
 								<tr>
 									<td><input type="radio" id="o-option" name="selector">
@@ -433,7 +433,7 @@
 			<div class="modal-dialog modal-dialog-centered modal-sm">
 				<div class="modal-content">
 					<div class="modal-header">
-						<h5 class="modal-title">🗑<b>삭제하기</b></h5>
+						<h5 class="modal-title">🚫 <b>삭제하기</b></h5>
 						<button type="button" class="close" data-dismiss="modal">&times;</button>
 					</div>
 					<div class="modal-body" style="text-align: center;">
@@ -448,7 +448,7 @@
 				</div>
 			</div>
 		</div>
-		<!-- 채택하기 모달창 끝 -->
+		<!-- 삭제하기 모달창 끝 -->
 		
 		<!-- URL 공유 모달창 -->
 		<div class="modal fade" id="url-modal">
@@ -467,7 +467,7 @@
 				</div>
 			</div>
 		</div>
-		<!-- 후원하기 모달창 끝 -->
+		<!-- URL 공유 모달창 끝 -->
 
 	</div>
 	<!-- 전체를 감싸는 div 끝 -->

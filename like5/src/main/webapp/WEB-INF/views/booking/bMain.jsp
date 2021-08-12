@@ -12,6 +12,35 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
 <style>
+	.hide{
+		display:none !important;
+	}
+	.search-result{
+		display:flex;
+		position:abolute;
+		margin-top:12px;
+		box-shadow: rgb(0 0 0 / 20%) 0px 6px 20px !important;
+        padding: 20px 22px;
+		justify-content: space-around;
+		border-radius: 32px;
+        background-color: #ffff;
+        border:1px solid rgb(221,221,221);
+        width: 300px;
+	}
+	
+	.pop_keywords{
+		position: relative;
+		list-style: none;
+		width:100%;
+		margin: 0 -32px -8px !important;
+        padding:8px 0;
+	}
+	.pop_keywords > li {
+		display:flex;
+		line-height:40px;
+		margin:5px;
+		cursor:pointer;
+	}
     .outerbox{
         position: relative;
         background: linear-gradient(rgba(255,255,255, 0.5), rgba(255, 255, 255, 0.5)), url(resources/images/bg-1.jpg) center/cover no-repeat fixed;
@@ -26,6 +55,7 @@
     } */
 
     form{
+    	border:1px solid pink;
         max-width: 850px;
         margin: 0 auto;
         display: block;
@@ -173,7 +203,7 @@
         cursor: pointer;
     }
     .marker{
-        width:48px;
+        width:60px;
         height:48px;
         background-color: rgb(241, 241, 241);
         border-radius: 8px;
@@ -184,9 +214,8 @@
         font-size: 18px;
     }
     .region{
-        display: flex;
-        flex-direction: column;
         width: 100%;
+        text-align: center;
         justify-content: center;
         color:rgb(34,34,34);
     }
@@ -195,7 +224,6 @@
         margin-top:12px;
         box-shadow: rgb(0 0 0 / 20%) 0px 6px 20px !important;
         padding: 30px 32px;
-        /* margin: 0 -32px -8px !important; */
         border-radius: 32px;
         background-color: #ffff;
         border:1px solid rgb(221,221,221)
@@ -206,6 +234,7 @@
     #person-modal{
         display: none;
         position: relative !important;
+        border:1px solid orange;
     }
     .show-modal{
         display: block !important;
@@ -237,27 +266,8 @@
                     </div>
                 </div>
         <!-- 지역 선택 박스 -->
-                <div id="branch-modal">
-                    <div class="branch-select">
-                        <ul>
-                            <li>
-                                <div class="marker"><i class="fas fa-map-marker-alt"></i></div>
-                                <div class="region">강남</div>
-                            </li>
-                            <li>
-                                <div class="marker"><i class="fas fa-map-marker-alt"></i></div>
-                                <div class="region">마포</div> 
-                            </li>
-                            <li>
-                                <div class="marker"><i class="fas fa-map-marker-alt"></i></div>
-                                <div class="region">합정</div>
-                            </li>
-                            <li>
-                                <div class="marker"><i class="fas fa-map-marker-alt"></i></div>
-                                <div class="region">관악</div>
-                            </li>
-                        </ul>
-                    </div>
+                <div class="search-result">
+                	<ul class="pop_keywords"></ul>
                 </div>
         <!-- 인원수 체크 박스 -->
                 <div id="person-modal">
@@ -316,20 +326,111 @@
     </div>
 <jsp:include page="../common/footer.jsp"/>
 <script>
+
+const checkInput = () => {
+    const beforeInput = $("#branch").val();
+    timer(beforeInput);
+};
+
+const timer = (beforeInput) => {
+    setTimeout(() => {
+        if ($("#branch").val() === beforeInput) {
+            console.log("잠깐멈춤??");
+            loadData($("#branch").val());
+            checkInput();
+        } else {
+            console.log("다시입력시작");
+            checkInput();
+        }
+        if ($("#branch").val() === "") {
+            $(".search-result").addClass("hide");
+        } else {
+        	$(".search-result").removeClass("hide");
+        }
+        
+        $(".search-result li").on("click", function(){
+        	$(this).parent().addClass("hide");
+        })//선택하고 모달 닫기 하고 싶은데 안됨 ㅜㅜ
+    }, 1000); //1초 기준 데이터 로드
+};
+
+const loadData = (input) =>{
+    $.ajax({
+    	url:"autoBranch.bk",
+    	data: {searchKeyword: input},
+    	type: "GET",
+    	success:function(list){
+    		console.log(list);
+    		var result = "";
+    		if(list!=null){
+    			for(var i=0; i<list.length; i++){
+    			result += 
+                    "<li>"
+                    +    "<div class='marker'><i class='fas fa-map-marker-alt'></i></div>"
+                    +    "<div class='region'>"+ list[i].branch + "</div>"
+                   +"</li>"
+    			};
+    			$(".pop_keywords").html(result);
+    		} else {
+    			$(".pop_keywords").text("검색결과가없습니다");
+    		}
+    		
+    		<%-- 지역 선택 --%>
+    		for(let i=0; i<regions.length; i++){
+    		    regions[i].addEventListener('click', function(){
+    		        branch.value = regions[i].innerHTML
+    		    })
+    		}
+    		
+    	}, error:function(){
+    		console.log("ajax실패");
+    	}
+    })
+};
+
+checkInput();
+
+<%--
+$("#branch").on("keydown", function autoComplete(){
+    $.ajax({
+    	url:"autoBranch.bk",
+    	data: {searchKeyword: $("#branch").val()},
+    	type: "GET",
+    	success:function(list){
+    		console.log(list);
+    		var result = "";
+    		if(list!=null){
+    			for(var i=0; i<list.length; i++){
+    			result += 
+                    "<li>"
+                    +    "<div class='marker'><i class='fas fa-map-marker-alt'></i></div>"
+                    +    "<div class='region'>"+ list[i].branch + "</div>"
+                   +"</li>"
+    			};
+    			$(".branch-select ul").html(result);
+    		} else {
+    			$(".branch-select ul li").text("검색결과가없습니다");
+    		}
+    		
+    	}, error:function(){
+    		console.log("ajax실패");
+    	}
+    })
+}); --%>
 const outerbox = document.querySelector(".outerbox");
 const pmodal = document.querySelector("#person-modal");//인원수 모달
 let pp = document.querySelector("#pnum"); //인원수 input
 let branch = document.querySelector("#branch"); //지점 선택 input
-const bmodal = document.querySelector("#branch-modal"); //지점 모달
+const bmodal = document.querySelector(".search-result"); //지점 모달
 let pp2 = document.querySelector("#num1");
 let regions = document.getElementsByClassName("region");
-
+<%--
 branch.onclick = () => {
     bmodal.classList.add('show-modal');
-}
+}--%>
 bmodal.onclick = () => {
-    bmodal.classList.remove('show-modal');
-}
+    bmodal.classList.add('hide');
+} 
 pp.onclick = () =>{
     pmodal.classList.add('show-modal');
 }
@@ -379,6 +480,9 @@ for(let i=0; i<regions.length; i++){
         //mode: "range",
         dateFormat:"Y-m-d"
     });
+    
+
+
 </script>
 </body>
 </html>

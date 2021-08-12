@@ -30,28 +30,27 @@
 				<div class="pageLeft">
 					<div class="sideBar">
 						<!-- Team AskMe -->
-						<div class="askMe"><a href=""><h4 class="barName">Team AskMe</h4></a></div>
+						<div class="askMe"><a href="teamAskMe.me"><h4 class="barName">Team AskMe</h4></a></div>
 
-						<hr class="divider">
+						<div class="divider"></div>
 
 						<!-- Legal Notice -->
 						<div class="legal">
 							<div><h4 class="barName">Legal Notice</h4></div>
 							<ul>
-								<li><a href="">이용약관</a></li>
-								<li><a href="">법적고지</a></li>
-								<li><a href="">개인정보처리방침</a></li>
+								<li><a href="terms.me">이용약관</a></li>
+								<li><a href="legal.me">법적고지</a></li>
+								<li><a href="privacy.me">개인정보처리방침</a></li>
 							</ul>
 						</div>
 
-						<hr class="divider">
+						<div class="divider"></div>
 
 						<!-- Contact Us -->
 						<div class="contact">
 							<div class="contactUs"><h4 class="barName">Contact Us</h4></div>	
 								<ul>
-									<li><a href="">GitHub</a></li>
-									<li><a href="">Something</a></li>
+									<li><a href="https://github.com/hansololiviakim/like5">GitHub</a></li>
 								</ul>
 						</div>
 					</div>

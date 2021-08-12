@@ -21,6 +21,13 @@ public class Sponsorship {
 	private int sponCategory;
 	private int refBoaNo;
 	
+	// 관라자단에서 필요해서 추가한 코드입니다.
+	private String memName;
+	private String nickName;
+	private String email;
+	private String accountNum;
+	private String bank;
+	
 	private ArrayList<Sponsorship> sponsorList;
 		
 }

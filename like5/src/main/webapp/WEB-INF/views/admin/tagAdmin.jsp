@@ -7,9 +7,9 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 <style>
-	#star{
+		#star{
             color: yellow;
-            size: 6x;
+            size: 6px;
         }
         .starIcon{
             position:absolute;
@@ -101,60 +101,7 @@
                         <td>124</td>
                         <td><button id="updateTag"  data-toggle="modal" data-target="#updateModal">수정하기</button></td>
                     </tr>
-                    <tr>
-                        <td>2</td>
-                        <td>JavaScript</td>
-                        <td>234</td>
-                        <td><button id="updateTag">수정하기</button></td>
-                    </tr>
-                    <tr>
-                        <td>3</td>
-                        <td>C</td>
-                        <td>2554</td>
-                        <td><button id="updateTag">수정하기</button></td>
-                    </tr>
-                    <tr>
-                        <td>4</td>
-                        <td>Python</td>
-                        <td>345</td>
-                        <td><button id="updateTag">수정하기</button></td>
-                    </tr>
-                    <tr>
-                        <td>5</td>
-                        <td>Spring</td>
-                        <td>1525</td>
-                        <td><button id="updateTag">수정하기</button></td>
-                    </tr>
-                    <tr>
-                        <td>6</td>
-                        <td>Html</td>
-                        <td>153</td>
-                        <td><button id="updateTag">수정하기</button></td>
-                    </tr>
-                    <tr>
-                        <td>7</td>
-                        <td>Android</td>
-                        <td>522</td>
-                        <td><button id="updateTag">수정하기</button></td>
-                    </tr>
-                    <tr>
-                        <td>8</td>
-                        <td>C++</td>
-                        <td>8312</td>
-                        <td><button id="updateTag">수정하기</button></td>
-                    </tr>
-                    <tr>
-                        <td>9</td>
-                        <td>CSS/td>
-                        <td>23</td>
-                        <td><button id="updateTag">수정하기</button></td>
-                    </tr>
-                    <tr>
-                        <td>10</td>
-                        <td>MySQL</td>
-                        <td>71</td>
-                        <td><button id="updateTag">수정하기</button></td>
-                    </tr>
+                    
                 </tbody>
             </table>
             <br>

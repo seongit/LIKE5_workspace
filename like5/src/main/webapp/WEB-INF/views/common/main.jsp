@@ -83,7 +83,7 @@
 							개발자들과 다양한 질문을<br>
 							자유롭게 주고 받아보세요
 						</p>
-						<a class="w3-button w3-red w3-round-xxlarge w3-hover-deep-orange" id="aboutUs" href="qList.bo">
+						<a class="w3-button w3-red w3-round-xxlarge w3-hover-deep-orange" id="aboutUs" href="qnaList.bo">
 							&nbsp;&nbsp;바로가기&nbsp;&nbsp;
 						</a>
 						<br><br><br>

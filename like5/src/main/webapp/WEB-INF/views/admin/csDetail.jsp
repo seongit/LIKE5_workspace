@@ -118,8 +118,6 @@
 	            	</c:choose>
 	            	<script>
 	            		// 답변하기 버튼이 문서 로딩과 동시에 사라져야함
-	            		
-	            		
 						function updateCsAns(){
 							// 수정하기 버튼은 사라지고
 							$("#updateBtn").hide();

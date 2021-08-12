@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.kh.like5.admin.model.vo.Calculate;
 import com.kh.like5.board.model.vo.Board;
 import com.kh.like5.board.model.vo.Reply;
+import com.kh.like5.booking.model.vo.Booking;
 import com.kh.like5.member.model.dao.MemberDao;
 import com.kh.like5.member.model.vo.Customer;
 import com.kh.like5.member.model.vo.Member;
@@ -93,6 +94,11 @@ public class MemberServiceImpl implements MemberService {
 		return mDao.calculate(sqlSession, memNo);
 		
 	}
+/*
+	@Override
+	public ArrayList<Booking> myRecentBookList(int memNo) {
+		return mDao.myRecentBookList(sqlSession, memNo);
+	}
 	
-
+*/
 }

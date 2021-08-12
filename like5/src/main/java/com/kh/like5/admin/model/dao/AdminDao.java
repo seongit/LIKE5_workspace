@@ -3,17 +3,19 @@ package com.kh.like5.admin.model.dao;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.kh.like5.admin.model.vo.Faq;
-import com.kh.like5.board.model.vo.Board;
-import com.kh.like5.board.model.vo.Report;
 import org.apache.ibatis.session.RowBounds;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.kh.like5.admin.model.vo.Calculate;
+import com.kh.like5.admin.model.vo.Faq;
 import com.kh.like5.board.model.vo.Board;
+import com.kh.like5.board.model.vo.Report;
+import com.kh.like5.board.model.vo.Tag;
 import com.kh.like5.common.model.vo.PageInfo;
 import com.kh.like5.member.model.vo.Customer;
 import com.kh.like5.member.model.vo.Member;
+import com.kh.like5.member.model.vo.Sponsorship;
 
 @Repository
 public class AdminDao {
@@ -86,6 +88,77 @@ public class AdminDao {
 	public int updateCsAns(SqlSessionTemplate sqlSession, Customer cs) {
 		return sqlSession.update("customerMapper.updateCsAns", cs);
 	}
+	
+	// 후원관리 메인 - 페이징
+	public int selectSponCount(SqlSessionTemplate sqlSession) {
+		return sqlSession.selectOne("sponsorshipMapper.selectSponCount");
+	}
+	// 후원관리 메인 - 리스트 조회
+	public ArrayList<Sponsorship> selectSponList(SqlSessionTemplate sqlSession, PageInfo pi){
+		int offset = (pi.getCurrentPage()-1)*pi.getBoardLimit();
+		RowBounds rowBounds = new RowBounds(offset, pi.getBoardLimit());
+		
+		return (ArrayList)sqlSession.selectList("sponsorshipMapper.selectSponList", null, rowBounds);
+	}
+	// 후원관리 검색 기능 - 페이징
+	public int searchDonaCount(SqlSessionTemplate sqlSession, HashMap<String,String>map) {
+		return sqlSession.selectOne("sponsorshipMapper.searchDonaCount", map);
+	}
+	// 후원관리 검색 기능 - 리스트조회
+	public ArrayList<Sponsorship> searchDonaList(SqlSessionTemplate sqlSession, PageInfo pi, HashMap<String, String>map){
+		int offset = (pi.getCurrentPage() - 1) * pi.getBoardLimit();
+		RowBounds rowBounds = new RowBounds(offset, pi.getBoardLimit());
+		
+		return (ArrayList)sqlSession.selectList("sponsorshipMapper.searchDonaList",map,rowBounds);
+	}
+	// 후원상세 - 페이징
+	public int selectSponsorCount(SqlSessionTemplate sqlSession, int smemNo) {
+		return sqlSession.selectOne("sponsorshipMapper.selectSponsorCount", smemNo);
+	}
+	// 후원상세 - smem정보
+	public Sponsorship selectSponMem(SqlSessionTemplate sqlSession, int smemNo) {
+		return sqlSession.selectOne("sponsorshipMapper.selectSponMem",smemNo);
+	}
+	// 후원상세 - 리스트 조회
+	public ArrayList<Sponsorship> selectSponsorList(SqlSessionTemplate sqlSession, PageInfo pi, int smemNo){
+		int offset = (pi.getCurrentPage()-1)*pi.getBoardLimit();
+		RowBounds rowBounds = new RowBounds(offset, pi.getBoardLimit());
+		
+		return (ArrayList)sqlSession.selectList("sponsorshipMapper.selectSponsorList", smemNo, rowBounds);
+	}
+	// 정산상세-페이징
+	public int selectCalCount(SqlSessionTemplate sqlSession, int smemNo) {
+		return sqlSession.selectOne("calculateMapper.selectCalCount",smemNo);
+	}
+	// 정산상세 -총정산금 조회
+	public Calculate selectTotalCal(SqlSessionTemplate sqlSession, int smemNo) {
+		return sqlSession.selectOne("calculateMapper.selectTotalCal",smemNo);
+	}
+	// 정산상세 - 리스트 조회
+	public ArrayList<Calculate> selectCalList(SqlSessionTemplate sqlSession, PageInfo pi, int smemNo){
+		int offset = (pi.getCurrentPage()-1)*pi.getBoardLimit();
+		RowBounds rowBounds = new RowBounds(offset, pi.getBoardLimit());
+		
+		return (ArrayList)sqlSession.selectList("calculateMapper.selectCalList", smemNo, rowBounds);
+	}
+	
+	// TAG 리스트 조회
+	public ArrayList<Tag> tagList(SqlSessionTemplate sqlSession) {
+		return (ArrayList)sqlSession.selectList("tagMapper.tagList");
+	}
+
+	// TAG 상세조회
+	public int getTagCount(SqlSessionTemplate sqlSession, String tagName) {
+		return sqlSession.selectOne("boardMapper.getTagCount", tagName);
+	}
+
+	public ArrayList<Board> tagDetailList(SqlSessionTemplate sqlSession, PageInfo pi, String tagName) {
+		int offset = (pi.getCurrentPage() - 1) * pi.getBoardLimit();
+		RowBounds rowBounds = new RowBounds(offset, pi.getBoardLimit());
+
+		return (ArrayList)sqlSession.selectList("boardMapper.tagDetailList", tagName, rowBounds);
+	}
+	
 
 	// ============================= [재환] =============================
 

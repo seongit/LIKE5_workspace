@@ -183,6 +183,24 @@
         by REPORT_UNIQUE desc
     </select>
 
+    <!-- [재환] 관리자단 태그별 게시글 개수 조회 -->
+    <select id="getTagCount" resultType="_int">
+        select count(*)
+        from board
+        where tag_name like '%#' || #{tagName} || '%'
+    </select>
+
+    <!-- [재환] 관리자단 태그별 게시글 리스트 조회 -->
+    <select id="tagDetailList" resultMap="board">
+        select BOA_CATEGORY
+             , BOA_TITLE
+             , NICKNAME
+             , BOA_ENROLL_DATE
+          from BOARD
+          join MEMBER using(mem_no)
+         where tag_name like '%#' || #{tagName} || '%'
+    </select>
+
     <!--                    성은                           -->
 
     <!-- [커뮤니티] - 전체 목록 리스트 페이징 처리시 필요한 게시글 전체 count-->
@@ -363,8 +381,8 @@
 	    </choose>
     </select>
 	
-	<!-- 커뮤니티 게시글 상세보기 -->
-	<select id="comDetail" resultMap="board">
+	<!-- [커뮤니티 | 칼럼] 게시글 상세보기 -->
+	<select id="boardDetail" resultMap="board">
         select
             boa_no
             ,mem_no
@@ -384,7 +402,7 @@
           and boa_status='Y'
 	</select>
 	
-	<!-- 게시글 상세보기시 조회수 증가 -->
+	<!-- [공통] 게시글 상세보기시 조회수 증가 -->
 	<update id="increaseCount">
 	     update 
 	     	board
@@ -410,7 +428,9 @@
 	        from reply
 	        join member using(mem_no)
 	        where boa_no = #{bno}
-	        order by rep_enroll_date desc
+         	start with ref_rep_no = 0 
+            connect by prior rep_no = ref_rep_no
+	        order siblings by rep_enroll_date desc
 	</select>
 	
 	<!-- 댓글 작성하기 -->
@@ -459,7 +479,9 @@
 	</insert>
 	
 	<!-- 커뮤니티 게시글 작성하기 -->
-	<insert id="insertCommunity">
+	<!-- 칼럼 insert도 같이 해보기 -->
+	<!-- 성공 시 id이름 변경 -->
+	<insert id="insertComAndCol">
 		insert into 
 			board
 			    (
@@ -493,6 +515,299 @@
 			boa_no = #{bno}
 	</update>
 	
+	<!-- 커뮤니티 게시글 수정하기 -->
+	<update id="updateCommunity">
+	update 
+		board
+		set 
+			boa_category = #{category}
+		    , boa_title =#{title}
+		    , boa_content=#{content}
+		    , boa_img_path =#{imgPath}
+		    , boa_update_date = sysdate
+		where 
+			boa_no = #{bno}
+		and boa_status = 'Y'
+	</update>
+
+	<!-- 커뮤니티 게시글 신고하기 -->
+	<insert id="reportCommunity">
+		insert into 
+		report
+		 	(
+		    report_unique
+		    ,mem_no
+		    ,category
+		    ,ref_no
+		    ,report_reason
+	    	)
+    		values 
+    		(
+		    seq_repno.nextval
+		    ,#{mno}
+		    ,#{category}
+		    ,#{refNo}
+		    ,#{reason}
+	    	)
+	</insert>
+	
+	<!--[칼럼] 전체 목록 리스트 페이징 처리시 필요한 게시글 전체 count  -->
+	<select id="colListCount" resultType="_int">
+		select
+	            count(*) count
+	        from
+	            board
+	        where
+	            regexp_like (boa_category,'칼럼')
+	             and boa_status='Y'
+	</select>
+	
+	<!--  [칼럼] - 전체 목록 리스트 조회 -->
+	<select id="colList" resultMap="board">
+		select
+	            boa_no
+	             ,nickname
+	             ,boa_category
+	             ,boa_title
+	             ,boa_content
+	             ,boa_enroll_date
+	             ,boa_img_path
+	             ,boa_count
+	             ,boa_like
+	        from board b
+	                 join member using (mem_no)
+	        where regexp_like (boa_category,'칼럼')
+	          and boa_status='Y'
+	</select>
+	
+	<!-- 최신 | 조회수 | 댓글수 기준으로 조회 -->	
+   <select id="colOrderByCount" resultMap="board">
+         select
+	            boa_no
+	             ,nickname
+	             ,boa_category
+	             ,boa_title
+	             ,boa_content
+	             ,boa_enroll_date
+	             ,boa_img_path
+	             ,boa_count
+	             ,boa_like
+	        from board b
+	                 join member using (mem_no)
+	        where regexp_like (boa_category,'칼럼')
+	          and boa_status='Y'
+     	<choose>
+	    	<when test="orderBy=='views'">
+	    		 order by boa_count desc,boa_enroll_date desc
+	    	</when>
+	    	<when test="orderBy=='likes'">
+	    		order by boa_like desc,boa_enroll_date desc
+    		</when>
+    		<otherwise>
+   			   order by boa_enroll_date desc
+    		</otherwise>
+	    </choose>
+    </select>
+    
+    <!-- 게시글 상세 조회 시 로그인한 회원의  좋아요 여부 -->
+    <select id="likesCount" resultType="_int">
+	    select 
+    		count(*)
+		from 
+			likes
+		where 
+			mem_no = #{mno}
+		and 
+			boa_no = #{bno}
+    </select>
+    
+    <!-- 게시글 상세 조회 시 로그인한 회원의  스크랩 여부 -->
+    <select id="scrapCount" resultType="_int">
+    	select 
+    		count(*)
+		from 
+			scrap
+		where 
+			mem_no = #{mno}
+		and 
+			boa_no = #{bno}
+    </select>
+    
+    <!--[ 스크랩 | 좋아요 ]  등록 -->
+    <insert id="insertLike">
+	   	insert 
+	   		into
+		   	<choose>
+			   	<when test="condition =='like'">
+			   		 likes 
+			   	</when>
+			   	<when test="condition=='scrap'">
+			   		scrap
+			   	</when>
+		   	</choose>
+		    (
+		    mem_no
+		    ,boa_no
+		    ,
+		    <choose>
+		    	<when test="condition =='like'">
+		    	likes_date
+		    	</when>
+		    	<when test="condition=='scrap'">
+		    	scrap_date
+		    	</when>
+		    </choose>
+		    )
+		    values
+		    (
+		    #{mno}
+		    ,#{bno}
+		    ,sysdate
+		    )
+    </insert>
+    
+	<delete id="UnlikeAndUnScrap">
+		delete 
+			<choose>
+				<when test="condition =='like'">
+				likes
+				</when>
+				<when test="condition=='scrap'">
+				scrap
+				</when>
+			</choose>
+		where
+			 mem_no = #{mno}
+		and 
+		 	boa_no = #{bno}
+	</delete>
+	
+	
+	
+	<!-- ********** 한솔 ********** -->
+	<!-- [QnA] - QnaList 조회 시 유효한 게시글 총 개수 조회 -->
+	<select id="qnaListCount" resultType="_int">
+		select
+			   count(*)
+		  from board
+		 where 
+		 	   boa_category like 'QNA'
+		 	   and boa_status = 'Y'
+	</select>
+	
+	<!-- [QnA] - QnaList 사용자가 요청한 페이지에 뿌려줄 리스트 조회 -->
+	<select id="qnaList" resultMap="board">
+		select
+			   boa_no
+			 , boa_title
+			 , tag_name
+			 , nickname
+			 , boa_enroll_date
+			 , boa_like
+			 , boa_count
+			 , (select count(*)
+			 	  from reply r
+			 	 where r.boa_no = b.boa_no) reply
+		  from board b
+		  join member using (mem_no)
+		 where
+		 	   boa_category like 'QNA'
+		 	   and boa_status = 'Y'
+		<choose>
+			<when test="orderBy == 'like'">
+				order by boa_like desc
+			</when>
+			<when test="orderBy == 'reply'">
+				order by reply desc
+			</when>
+			<when test="orderBy == 'count'">
+				order by boa_count desc
+			</when>
+			<otherwise>
+				order by boa_enroll_date desc
+			</otherwise>
+		</choose>
+	</select>
+	
+	<!-- [QnA] - QnaEnrollForm 게시글 insert -->
+	<insert id="qnaInsert">
+		insert
+		  into board
+		  	 (
+		  	   boa_no
+		  	 , mem_no
+		  	 , boa_category
+		  	 , boa_title
+		  	 , boa_content
+		  	 , tag_name
+		  	 , boa_enroll_date
+		  	 )
+		 	 values
+		 	 (
+		 	   seq_bno.nextval
+		 	 , #{mno}
+		 	 , #{category}
+		 	 , #{title}
+		 	 , #{content}
+		 	 , #{tag}
+		 	 , sysdate
+		 	 )
+	</insert>
+	
+	<!-- [QnA] - QnaEnrollForm 게시글 임시저장 -->
+	<insert id="qnaStorageInsert">
+		insert
+		  into board
+		  	 (
+		  	   boa_no
+		  	 , mem_no
+		  	 , boa_category
+		  	 , boa_status
+		  	 , boa_title
+		  	 , boa_content
+		  	 , tag_name
+		  	 , boa_enroll_date
+		  	 )
+		 	 values
+		 	 (
+		 	   seq_bno.nextval
+		 	 , #{mno}
+		 	 , #{category}
+		 	 , 'F'
+		 	 , <choose>
+		 	 		<when test='title.equals("")'>
+		 	 			'제목없음'
+		 	 		</when>
+		 	 		<otherwise>
+		 	 			#{title}
+		 	 		</otherwise>
+		 	   </choose>
+		 	 , #{content}
+		 	 , #{tag}
+		 	 , sysdate
+		 	 )
+	</insert>
+	
+	<!-- [QnA] - QnaDetailView 게시글 상세보기 -->
+	<select id="qnaDetail" resultMap="board">
+		select
+			   boa_no
+			 , mem_no
+			 , boa_title
+			 , tag_name
+			 , boa_like
+			 , boa_count
+			 , (select count(*)
+			 	  from reply r
+			 	 where r.boa_no = b.boa_no) reply
+			 , nickname
+			 , boa_enroll_date
+		  from board b
+		  join member using(mem_no)
+		 where
+		 	   boa_no = #{bno}
+		 	   and boa_category like 'QNA'
+	</select>
 	
 
 

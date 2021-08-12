@@ -18,12 +18,19 @@
 /* 검색, 질문하기 배열 */
 .qnaSearch>div{float:left;}
 .qnaSearch_tip{width:25%; font-size:14px; text-align:right; padding-top:1.5%; padding-right:3%; color:gray;}
-.qnaSearch_retrieve{width:50%; height:100; border:1px solid rgb(220, 53, 69);}
-.qnaSearch_question{width:25%; text-align:right; padding-right:5%;}
+.qnaSearch_question{width:30%; text-align:right; padding-right:5%;}
 
 /* 검색창 스타일 */
-input{width:220px; height:31px; margin:0; padding:10px; border:0; outline:none; float:left; font-size:13px;}
-.qnaSearch_retrieve>button{width:40px; height:31px; margin:0px; border:0px; outline:none; float:right; background:rgb(220, 53, 69); }
+.searchArea{
+	width:200px; height:31px; margin:0; padding:10px; 
+	white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+	border:1px solid rgb(220, 53, 69);
+	outline:none; float:left; font-size:13px;
+}
+.qnaSearch_retrieve>button{
+	width:40px; height:31px; margin:0px; border:0px;
+	outline:none; float:right; background:rgb(220, 53, 69);
+	position:sticky;}
 [class$=fa-search]{color:white;}
 
 /* 질문하기 버튼 크기 맞추기 */
@@ -42,9 +49,9 @@ input::-moz-placeholder{font-size:13px;}   /* 파이어폭스 */
 #qnaUser{width:15%;}
 
 /* 좋아요, 답변, 조회수 세부 배열 */
-.qnaBoard{width:100%;}
-.qnaBoard>div{width:100%; float:left;}
-div[id$=_1]{height:7px;}
+.qnaBoard_main{width:100%;}
+.qnaBoard_main>div{width:100%; float:left;}
+div[id$=_1]{padding-top:7px;}
 div[id$=_2]{width:100%; display:flex; font-size:15px;}
 div[id$=_4]{width:30%; text-align:center;}
 div[id$=_5]{width:70%; padding:0px 0px 0px 10px; text-align:left;}
@@ -54,9 +61,11 @@ div[id$=_3]{font-size:12px; color:darkgray; text-align:center;}
 #qnaUser_4{text-align:right;}
 
 /* 게시글 제목 */
-#qnaTitle{font-size:18px; font-weight:bold;}
+#qnaTitle{font-size:18px; font-weight:bold; padding-top:10px !important;}
 
 /* 태그 버튼 스타일 */
+/*tr, td, td>div{border:1px solid black;}*/
+#noTag{padding:3px 0 0 0px !important; margin:0; font-size:13px; color:lightgray;}
 .w3-button{height:10px; margin-top:4px; padding-top:0.1% !important; padding-bottom:3% !important;}
 
 /* hover 시 나타나는 검색 툴팁 스타일 */
@@ -91,12 +100,13 @@ div[id$=_3]{font-size:12px; color:darkgray; text-align:center;}
 .qnaSearch_tip:hover .tooltiptext{visibility:visible;}
 
 /* a태그 스타일 */
-#qnaTitle>a, #qnaUser_5>a, .w3-button>a, div[class^=qnaList_]>a, .btn>a, .w3-center>a{text-decoration:none !important;}
-#qnaTitle a:hover, #qnaUser_5 a:hover, .w3-button a:hover, .btn>a:hover, .w3-center a:hover{color:white;}
+#qnaTitle>a, #qnaUser_5>a, .w3-button>a, div[class^=qnaList_]>a, .btn>a, .pagination li>a{text-decoration:none !important;}
+#qnaTitle a:hover, #qnaUser_5 a:hover, .w3-button a:hover, .btn>a:hover{color:white;}
 [class^=qnaList_]>a:hover{color:lightgray;}
 
-/* 페이지네이션 스타일 */
-.w3-center{margin:5% 0% 5% 0%; height:100%;}
-.w3-center a{padding:8px 16px;}
-.w3-center a.active{background-color:rgb(220, 53, 69); color:white;}
-.w3-center a:hover:not(.active){background-color:lightgray;}
+/* 페이지네이션 배열 및 스타일 */
+.pagingArea{height:100px; width:100%; display:flex; position:left;}
+.nullArea{width:35%;}
+.pagination{height:100%; margin:auto; padding-top:30px;}
+.pagination li>a{border:0; padding:10px 16px; color:#424242;}
+.pagination li>a:active{background-color:rgb(220, 53, 69); color:white;}
