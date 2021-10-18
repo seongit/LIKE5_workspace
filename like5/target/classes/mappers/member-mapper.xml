@@ -49,11 +49,16 @@
 		<collection property="board" resultMap="boardResultSet"/>
 		<collection property="reply" resultMap="replyResultSet"/>
 	</resultMap>
+	
+	<resultMap id="MergerMemSponResultSet" type="MergerMemSpon">
+		<collection property="member" resultMap="memberResult"/>
+		<collection property="Sponsorship" resultMap="SponResultSet"/>
+	</resultMap>
 
 	<resultMap id="SponResultSet" type="Sponsorship">
 		<result column="spon_no" property="sponNo"/>
 		<result column="mem_no" property="memNo"/>
-		<result column="smem_no" property="sponNo"/>
+		<result column="smem_no" property="smemNo"/>
 		<result column="spon_fee" property="sponFee"/>
 		<result column="spon_date" property="sponDate"/>
 		<result column="spon_category" property="sponCategory"/>
@@ -70,41 +75,7 @@
 		<result column="cal_bank" property="calBank"/>
 		<result column="cal_account" property="calAccount"/>
 	</resultMap>
-
-	<!--                     동규                            -->
-
-	<insert id="insertMember" >
-
-		insert
-		  into member
-		  (
-		  	   mem_no
-		     , email
-		     , mem_pwd
-		     , mem_name
-		     , nickname
-		     , mem_profile
-		     , mem_check
-		     , bank
-		     , account_num
-		     , enr_date
-		  )
-		  values
-		  (
-		  	   seq_mno.nextval
-		  	 , #{email}
-		  	 , #{memPwd}
-		  	 , #{memName}
-		  	 , #{nickName}
-		  	 , #{memProfile}
-		  	 , 'L'
-		  	 , #{bank}
-		  	 , #{accountNum}
-		  	 , sysdate
-		  )
-
-	</insert>
-
+	
 	<resultMap type="Booking" id="bookingResultSet">
 	  	<id property="bookingNo" column="bookin_no"/>
 	  	<result property="officeNo" column="office_no"/>
@@ -121,9 +92,79 @@
 	  	<result property="typeName" column="type_name"/>
 	  	<result property="price" column="price"/>
     </resultMap>
+    
+    <resultMap type="Customer" id="CustomerResultSet">
+    	<result column="cs_no" property="csNo"/>
+    	<result column="mem_no" property="memNo"/>
+    	<result column="cs_title" property="csTitle"/>
+    	<result column="cs_content" property="csContent"/>
+    	<result column="reg_date" property="regDate"/>
+    	<result column="status" property="status"/>
+    	<result column="ans_content" property="ansContent"/>
+    	<result column="ans_date" property="ansDate"/>
+    </resultMap>
 
+	<!--                     동규                            -->
+
+	<insert id="insertMember" >
+		
+		insert
+		  into member
+		  (
+		  	   mem_no
+		     , email
+		     , mem_pwd
+		     , mem_name
+		     , nickname
+		     , mem_profile
+		     , mem_check
+		     , bank
+		     , account_num
+		     , enr_date
+		  )   
+		  values
+		  (
+		  	   seq_mno.nextval
+		  	 , #{email}
+		  	 , #{memPwd}
+		  	 , #{memName}
+		  	 , #{nickName}  
+		  	 , #{memProfile}
+		  	 , 'L'
+		  	 , #{bank}
+		  	 , #{accountNum}
+		  	 , sysdate
+		  )
+		
+	</insert>
+	
+	<select id="insertcalculate">
+		insert
+		  into calculate
+		  (
+		  		cal_no
+			  , mem_no
+			  , mem_name
+			  , cal_date
+			  , cal_price
+			  , cal_bank
+			  , cal_account
+		  )
+		  values
+		  (
+		  	  seq_cal.nextval
+		    , #{memNo}
+		    , #{memName}
+		    , sysdate
+		    , #{calPrice}
+		    , #{calBank}
+		    , #{calAccount}
+		  )
+		  
+	</select>
+	
 	<select id="loginMember" resultMap="memberResult">
-
+	
 		select
 		        mem_no
 		      , email
@@ -141,12 +182,31 @@
 		  where ent_yn = 'N'
           and email = #{email}
           and mem_pwd = #{memPwd}
-
+				
 	</select>
-
-
+	
+	<select id="memberInfor" resultMap="memberResult">
+	
+		select
+		        mem_no
+		      , email
+		      , mem_pwd
+		      , mem_name
+		      , nickname
+		      , mem_profile
+		      , mem_check
+		      , bank
+		      , account_num
+		      , enr_date
+		      , user_status
+		      , ent_yn
+		   from member
+		  where mem_no = #{memNo}
+		  
+	</select>
+	
 	<update id="updateMember">
-		update
+		update 
 		        member
 		        <choose>
 		        	<when test="#{memPwd eq null}">
@@ -167,9 +227,9 @@
 		      	</choose>
 		      		where mem_no = #{memNo}
 	</update>
-
+	
 	<select id="newlylist" parameterType="Board" resultMap="boardResultSet">
-
+	
 		SELECT * FROM (
 					    select
 					           boa_no
@@ -190,11 +250,11 @@
 						) where <![CDATA[ROWNUM <= 3 ]]>
 				       and mem_no = #{memNo}
 				       and boa_status = 'Y'
-
+		
 	</select>
-
+	
 	<select id="tempSaveList" parameterType="Board" resultMap="boardResultSet">
-
+	
 		SELECT * FROM (
 					    select
 					           boa_no
@@ -215,11 +275,11 @@
 						) where <![CDATA[ROWNUM <= 3 ]]>
 				       and mem_no = #{memNo}
 				       and boa_status = 'F'
-
+	
 	</select>
-
+	
 	<select id="ansList" parameterType="Merger" resultMap="MergerResultSet">
-
+	
 		SELECT * FROM (
 					    select
 					           r.rep_no
@@ -238,11 +298,11 @@
 						)where <![CDATA[ROWNUM <= 3 ]]>
 				       and mem_no = #{memNo}
 				       and rep_status = 'N'
-
+	
 	</select>
-
+	
 	<select id="Spon" parameterType="Sponsorship" resultMap="SponResultSet">
-
+	
 		select
 		       spon_no
 		     , mem_no
@@ -253,11 +313,11 @@
 		     , ref_boa_no
 		  from sponsorship
 		  where SMEM_NO = #{memNo}
-
+		
 	</select>
-
+	
 	<select id="Calculate" parameterType="Calculate" resultMap="CalculateResultSet">
-
+	
 		select
 		       cal_no
 		     , mem_no
@@ -269,9 +329,152 @@
 		     , cal_account
 		  from calculate
 		 where mem_no = #{memNo}
-
+		
+	</select>
+	
+	<select id="tempSaveListCount" resultType="_int">
+		select
+		       count(*)
+		  from board
+		 where boa_status = 'F'
+		   and mem_no = #{memNo}
+	</select>
+	
+	<select id="tempSaveListDeatil" resultMap="boardResultSet">
+	
+		SELECT * FROM (
+					    select
+					           boa_no
+					         , mem_no
+					         , boa_category
+					         , boa_status
+					         , boa_title
+					         , boa_content
+					         , boa_enroll_date
+					         , boa_update_date
+					         , boa_count
+					         , boa_like
+					         , boa_scrap
+					         , tag_name
+					         , boa_img_path
+					      from board
+					      order by boa_no desc
+						) where mem_no = #{memNo}
+				       and boa_status = 'F'
+				       
+	</select>
+	
+	<select id="memPostListDetailCount" resultType="_int">
+		select
+		       count(*)
+		  from board
+		 where boa_status = 'Y'
+		   and mem_no = #{memNo}
+	</select>
+	
+	<select id="memPostListDetail" resultMap="boardResultSet">
+	
+		SELECT * FROM (
+					    select
+					           boa_no
+					         , mem_no
+					         , boa_category
+					         , boa_status
+					         , boa_title
+					         , boa_content
+					         , boa_enroll_date
+					         , boa_update_date
+					         , boa_count
+					         , boa_like
+					         , boa_scrap
+					         , tag_name
+					         , boa_img_path
+					      from board
+					      order by boa_no desc
+						) where mem_no = #{memNo}
+				       and boa_status = 'Y'
+				       
+	</select>
+	
+	<select id="donateCount" resultType="_int">
+		select
+		       count(*)
+		  from sponsorship
+		 where mem_no = #{memNo}
 	</select>
 
+	<select id="donateList" resultMap="MergerMemSponResultSet" parameterType="MergerMemSpon">
+	
+		SELECT * FROM (
+						select 
+						       SPON_NO
+						     , s.MEM_NO
+						     , SMEM_NO
+						     , SPON_FEE
+						     , SPON_DATE
+						     , SPON_CATEGORY
+						     , REF_BOA_NO
+                             , m.nickname
+						  from sponsorship s, member m
+						  where s.smem_no = m.mem_no
+						  order by SPON_NO desc
+						 ) where mem_no = #{memNo}
+					     
+	</select>
+	
+	<select id="ansListCount" resultType="_int">
+		select
+		       count(*)
+		  from reply
+		 where mem_no = #{memNo}
+	</select>
+	
+	<select id="ansListDetail" parameterType="Merger" resultMap="MergerResultSet">
+	
+		SELECT * FROM (
+					    select
+					           r.rep_no
+							 , r.boa_no
+							 , r.mem_no
+							 , r.rep_content
+							 , r.rep_enroll_date
+							 , r.rep_adoption
+							 , r.rep_status
+							 , r.ref_rep_no
+							 , r.ref_level
+							 , b.boa_category
+					      from reply r, board b
+                          where r.boa_no = b.boa_no
+					      order by r.rep_no desc
+						)where mem_no = #{memNo}
+				       and rep_status = 'N'
+	
+	</select>
+	
+	<select id="inquiryCount" resultType="_int">
+		select
+		       count(*)
+		  from customer
+		 where mem_no = #{memNo}
+	</select>
+	
+	<select id="inquiryList" resultMap="CustomerResultSet" parameterType="Customer">
+	SELECT * FROM (
+			select  
+			       cs_no
+			 	 , mem_no
+				 , cs_title
+				 , cs_content
+				 , reg_date
+				 , status
+				 , ans_content
+				 , ans_date
+			  from customer
+			 order by cs_no desc
+			 )where mem_no = #{memNo}
+		 
+	</select>
+	
 
 	<!-- [지현]회원관리 맴버 전체 조회 -->
 	<select id="selectMemCount" resultType="_int">
@@ -403,5 +606,49 @@
 				  	  by request_date desc)
 	where ROWNUM &lt;=3
 	</select>
+	
+	
+	<!-- ********** 한솔 ********** -->
+	<!-- [한솔] - 프로필 조회 시 유효한 게시글 총 개수 조회 -->
+	<select id="boListCount" resultType="_int">
+		select
+			   count(*)
+		  from board
+		 where 
+		 	   mem_no = #{memNo}
+		 	   and boa_status = 'Y'
+	</select>
+	
+	<!-- [QnA] - QnaList 사용자가 요청한 페이지에 뿌려줄 게시글 리스트 조회 -->
+	<select id="boList" resultMap="boardResultSet">
+		select
+			   boa_no
+			 , nickname
+			 , boa_title
+			 , boa_enroll_date
+			 , boa_count
+		  from board
+		  join member using (mem_no)
+		 where
+		 	   boa_status = 'Y'
+		 order by boa_enroll_date desc
+	</select>
+	
+	<!-- [QnA] - QnaList 사용자가 요청한 페이지에 뿌려줄 댓글 리스트 조회 -->
+	<select id="reList" resultMap="replyResultSet">
+		select
+			   rep_no
+			 , boa_no
+			 , mem_no
+			 , rep_content
+			 , rep_enrolldate
+	      from reply
+	      join board using (boa_no)
+	     where
+	           rep_status = 'N'
+	     order by rep_enroll_date desc
+	</select>
+	
+	
 </mapper>
 

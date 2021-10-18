@@ -109,7 +109,7 @@ public class BoardDao {
 	}
 	
 	/**
-	 * [커뮤니티] 댓글 | 대댓글 전체 조회
+	 * [커뮤니티, QnA] 댓글 | 대댓글 전체 조회
 	 * @author seong
 	 */
 	
@@ -119,7 +119,7 @@ public class BoardDao {
 	
 	
 	/**
-	 * [커뮤니티] 댓글 작성하기
+	 * [커뮤니티, QnA] 댓글 작성하기
 	 * @author seong
 	 */
 	
@@ -128,7 +128,7 @@ public class BoardDao {
 	}
 	
 	/**
-	 * [커뮤니티] 대댓글 작성하기
+	 * [커뮤니티, QnA] 대댓글 작성
 	 * @author seong
 	 */
 	public int insertReplies(SqlSessionTemplate sqlSession,Reply r) {
@@ -136,7 +136,7 @@ public class BoardDao {
 	}
 	
 	/**
-	 * [커뮤니티 | 칼럼] 게시글 작성하기
+	 * [커뮤니티 | 칼럼] - 게시글 작성
 	 * @author seong
 	 */
 	public int insertComAndCol(SqlSessionTemplate sqlSession, Board b) {
@@ -144,25 +144,25 @@ public class BoardDao {
 	}
 	
 	/**
-	 * [커뮤니티] 게시글 삭제하기
+	 * [커뮤니티 | 칼럼] - 게시글 삭제
 	 * @author seong
 	 */
-	public int deleteCommunity(SqlSessionTemplate sqlSession,int bno) {
-		return sqlSession.update("boardMapper.deleteCommunity",bno);
+	public int deleteComAndCol(SqlSessionTemplate sqlSession,int bno) {
+		return sqlSession.update("boardMapper.deleteComAndCol",bno);
 	}
 	
 	
 	
 	/**
-	 * [커뮤니티] - 게시글 수정하기
+	 * [커뮤니티 | 칼럼] - 게시글 수정
 	 * @author seong
 	 */
-	public int updateCommunity(SqlSessionTemplate sqlSession,Board b) {
-		return sqlSession.update("boardMapper.updateCommunity",b);
+	public int updateComAndCol(SqlSessionTemplate sqlSession,Board b) {
+		return sqlSession.update("boardMapper.updateComAndCol",b);
 	}
 	
 	/**
-	 * [커뮤니티] - 게시글 신고하기
+	 * [커뮤니티] - 게시글 신고
 	 * @author seong
 	 */
 	public int reportCommunity(SqlSessionTemplate sqlSession,Report r) {
@@ -230,6 +230,15 @@ public class BoardDao {
 		return sqlSession.selectOne("boardMapper.scrapCount",b);
 	}
 	
+	/**
+	 *  게시글 상세 조회 시 로그인한 회원의  후원 여부
+	 * @author seong
+	 */
+	
+	public int sponsorCount(SqlSessionTemplate sqlSession,Board b) {
+		return sqlSession.selectOne("boardMapper.sponsorCount",b);
+	}
+	
 	
 	/**
 	 * [ 스크랩 | 좋아요 ]  등록
@@ -240,6 +249,14 @@ public class BoardDao {
 	}
 	
 	/**
+	 * [ 스크랩 | 좋아요 ] count 증가
+	 * @author seong
+	 */
+	public int increaseCounts(SqlSessionTemplate sqlSession,HashMap<String,Object>map) {
+		return sqlSession.update("boardMapper.increaseCounts",map);
+	}
+	
+	/**
 	 * Ajax로 좋아요 | 스크랩 해제
 	 * @author seong
 	 */
@@ -247,6 +264,40 @@ public class BoardDao {
 	public int UnlikeAndUnScrap(SqlSessionTemplate sqlSession,HashMap<String,Object>map) {
 		return sqlSession.insert("boardMapper.UnlikeAndUnScrap",map);
 	}
+	
+	/**
+	 * [ 스크랩 | 좋아요 ] count 감소
+	 * @author seong
+	 */
+	public int decreaseCounts(SqlSessionTemplate sqlSession,HashMap<String,Object>map) {
+		return sqlSession.update("boardMapper.decreaseCounts",map);
+	}
+	
+
+	/**
+	 * Ajax [ 칼럼 ] 관심 칼럼 조회
+	 * @author seong
+	 */
+	public ArrayList<Board>topBoardList(SqlSessionTemplate sqlSession){
+		return (ArrayList)sqlSession.selectList("boardMapper.topBoardList");
+	}
+	
+	/**
+	 * [ 칼럼 ] 임시저장
+	 * @author seong
+	 */
+	public int colStorageInsert(SqlSessionTemplate sqlSession,Board b) {
+		return sqlSession.insert("boardMapper.colStorageInsert",b);
+	}
+	
+	/**
+	 * [ 칼럼 ] 임시저장 글 조회
+	 * @author seong
+	 */
+	public Board selectTemSave(SqlSessionTemplate sqlSession,int bno){
+		return sqlSession.selectOne("boardMapper.selectTemSave",bno);
+	}
+	
 	
 	//------------------ 한솔 -------------------------
 
@@ -300,4 +351,88 @@ public class BoardDao {
 	public Board qnaDetail(SqlSessionTemplate sqlSession, int bno) {
 		return sqlSession.selectOne("boardMapper.qnaDetail", bno);
 	}
+	
+	/**
+	 * [QnA] - QnaDetailView 게시글 delete
+	 * @author Hansol
+	 */
+	public int qnaDelete(SqlSessionTemplate sqlSession, int bno) {
+		return sqlSession.update("boardMapper.qnaDelete", bno);
+	}
+	
+	/**
+	 * [QnA] - QnaUpdateForm 게시글 update
+	 * @author Hansol
+	 */
+	public int qnaUpdate(SqlSessionTemplate sqlSession, Board b) {
+		System.out.println(b);
+		return sqlSession.update("boardMapper.qnaUpdate", b);
+	}
+	
+	
+	/**
+	 * [QnA] - QnaDetailView 답변(댓글) 채택
+	 * @author Hansol
+	 */
+	public int adoptionReply(SqlSessionTemplate sqlSession, int repNo) {
+		return sqlSession.update("boardMapper.adoptionReply", repNo);
+	}
+	
+	
+	//-----------------동규----------------
+	
+	public int itNewsCount(SqlSessionTemplate sqlSession) {
+				
+		return sqlSession.selectOne("boardMapper.itNewsCount");
+				
+	}
+
+	public ArrayList<Board> itNews(SqlSessionTemplate sqlSession, PageInfo pi) {
+				
+		int offset = (pi.getCurrentPage()-1) * pi.getBoardLimit();
+		RowBounds rowBounds = new RowBounds(offset, pi.getBoardLimit());
+			
+		return (ArrayList)sqlSession.selectList("boardMapper.itNews", null, rowBounds);
+				
+	}
+
+	public Board itNewsDetail(SqlSessionTemplate sqlSession, int bno) {
+				
+		return sqlSession.selectOne("boardMapper.itNewsDetail", bno);
+				
+	}
+
+	public int itNewsSearchCount(SqlSessionTemplate sqlSession, HashMap<String, String> map) {
+			
+		return sqlSession.selectOne("boardMapper.itNewsSearchCount", map);
+			
+	}
+
+	public ArrayList<Board> itNewsSearch(SqlSessionTemplate sqlSession, PageInfo pi, HashMap<String, String> map) {
+			
+		int offset = (pi.getCurrentPage()-1) * pi.getBoardLimit();
+		RowBounds rowBounds = new RowBounds(offset, pi.getBoardLimit());
+				
+		return (ArrayList)sqlSession.selectList("boardMapper.itNewsSearch", map, rowBounds);
+			
+	}
+
+	public int insertItNews(SqlSessionTemplate sqlSession, Board b) {
+
+		return sqlSession.insert("boardMapper.insertItNews", b);
+		
+	}
+
+	public int deleteItnews(SqlSessionTemplate sqlSession, int bno) {
+		
+		return sqlSession.insert("boardMapper.deleteItnews", bno);
+		
+	}
+
+	public int upadateItNews(SqlSessionTemplate sqlSession, Board b) {
+		
+		return sqlSession.insert("boardMapper.upadateItNews", b);
+		
+	}
+	
 }

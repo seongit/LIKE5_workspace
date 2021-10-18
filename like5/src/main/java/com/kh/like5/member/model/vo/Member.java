@@ -31,7 +31,6 @@ public class Member {
 	
 	private ArrayList<Member> memList;
 	
-	// 해당 멤버의 후원금액 총합 구하려면 spon테이블에서 해당 회원이 후원받은거 다 조회해야함
 	private ArrayList<Sponsorship> sponList;
 	
 	

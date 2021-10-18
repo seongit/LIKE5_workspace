@@ -126,7 +126,7 @@
 	        </aside>
 	
 	        <article>
-	        	<!-- 검색창 **********이거 get방식으로 안하면 나중에 검색 페이지에 정보가 많아서 페이지 바뀔 때 keyword랑 condition이 바껴서 안되남? -->
+	        	
 	            <form id="searchBar" action="searchMem.ad" method="POST">
 	                <select class="selectpicker" name="condition">
 	                    <option value="all" name="all">전체</option>

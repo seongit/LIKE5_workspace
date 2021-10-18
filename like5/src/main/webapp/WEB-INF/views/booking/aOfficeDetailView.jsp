@@ -7,7 +7,9 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-</head>
+<!-- daum address -->
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
 <style>
 <%-- aside --%>
 	aside{
@@ -53,7 +55,8 @@
 	  display: flex;
 	  align-self: center;
 	  flex-direction: column;
-	  border: 1px solid black;
+	  border: 1px solid rgb(134,134,134);
+	  margin:30px 0 60px 0;
 	  min-width: 80%;
 	}
 	.button-box {
@@ -147,13 +150,41 @@
         width: 120px;
         color:#eb3e3e;
     }
+    .line3 input{
+    	margin:5px 0;
+    }
+    .address1{display:flex;}
+	.address1 input[type=button]{width:30%}
+	.address1 input[type=text]{margin-right:5px;}
+	.office-title{display:flex; align-items:center;}
+	.backto {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      margin-right: 32px;
+      align-items: center;
+      position: relative;
+    }
+    .backto:hover {
+      background-color: #f7f7f7;
+      cursor: pointer;
+    }
+    .backto i {
+      color: rgb(34, 34, 34);
+      position: absolute;
+      top: 35%;
+      left: 35%;
+    }
 </style>
+</head>
 <body>
 <jsp:include page="../common/header.jsp"/>
     <div class="innerOuter">
     
 	    <div class="sideBar">
-	        <div class="aside-title"><h3>통합관리</h3></div>
+	        <div class="aside-title">
+	        	<h3>통합관리</h3>
+	        </div>
 		    <aside>
 		        <ul>
 		            <li><a href="member.ad">회원관리</a></li>
@@ -169,6 +200,9 @@
         <div class="office-box">
             <form class="updateOffice" action="updateOf.bk" method="post" enctype="multipart/form-data">
                 <div class="office-title">
+                <div class="backto">
+	              <i class="fas fa-chevron-left"></i>
+	            </div>
                     <h1>${ o.typeName } ${ o.person }</h1>
                 </div>
                 <hr>
@@ -179,68 +213,30 @@
                         <input type="hidden" name="offImgPath" value="${ o.offImgPath }">
                     </div>
                     <div class="below-imgs">
-                    <c:choose>
-                    	<%--리스트에 사진이 없을때 --%>
-                    	<c:when test="${ list.isEmpty() }">
-                    		<div class="img2"><img id="img2"></div>
-                    		<div class="img2"><img id="img3"></div>
-                    		<div class="img2"><img id="img4"></div>
-                    		<div class="img2"><img id="img5"></div>
-                    	</c:when>
-                    	
-                    	<%--리스트에 사진이 1개일때--%>
-                    	<c:when test="${fn:length(list) == 1}">
-                    		<c:forEach var="att" items="${ list }" varStatus="status">
-                    			<div class="img2"><img id="img${ status.count+1 }" src="${ att.filePath }"></div>
-                    			<input type="hidden" name="fileNo" value="${ att.fileNo }">
-                    			<input type="hidden" name="filePath" value="${ att.filePath }">
-                    		</c:forEach>  
-                    		<%--
-                    		<div class="img2"><img id="img2" src="${list[0].filePath }"></div>
-                    		<input type="hidden" name="fileNo" value="${ list[0].fileNo }">
-                    		<input type="hidden" name="filePath" value="${ list[0].filePath }">--%>
-                    		
-                    	    <div class="img2"><img id="img3"></div>
-                    		<div class="img2"><img id="img4"></div>
-                    		<div class="img2"><img id="img5"></div>
-                    	</c:when>
-                    	<c:when test="${ fn:length(list) == 2 }">
-                    	<c:forEach var="att" items="${ list }" varStatus="status">
-                    		<div class="img2"><img id="img${ status.count+1 }" src="${ att.filePath }"></div>
-                    		<input type="hidden" name="fileNo" value="${ att.fileNo }">
-                    		<input type="hidden" name="filePath" value="${ att.filePath }">
-                    	</c:forEach>
-                    	    <div class="img2"><img id="img4"></div>
-                    		<div class="img2"><img id="img5"></div>
-                    	</c:when>
-                    	<c:when test="${ fn:length(list) == 3}">
-                    	<c:forEach var="att" items="${ list }">
-                    		<div class="img2"><img id="img${ status.count+1 }" src="${ att.filePath }"></div>
-                    		<input type="hidden" name="fileNo" value="${ fileNo }">
-                    		<input type="hidden" name="filePath" value="${ filePath }">
-                    	</c:forEach>
-                    		<div class="img2"><img id="img5"></div>
-                    	</c:when>
-                    	<c:when test="${fn:length(list) == 4}">
-                    	<c:forEach var="att" items="${ list }">
-                    		<div class="img2"><img id="img${ status.count+1 }" src="${ att.filePath }"></div>
-                    		<input type="hidden" name="fileNo" value="${ fileNo }">
-                    		<input type="hidden" name="filePath" value="${ filePath }">
-                    	</c:forEach>
-                    	</c:when>
-                    </c:choose>
-                    
-                    <%-- 
-                        <div class="img2"><img src="resources/images/result-2.jpg"></div>
-                        <div class="img2"><img src="resources/images/result-3.jpg"></div>
-                        <div class="img2"><img src="resources/images/DEDICATED_DESK_01.jpg"></div>
-                        <div class="img2"><img src="resources/images/desc-3.jpg" ></div>
-                    --%>
+
+						<c:forEach var="i" begin="0" end="3">
+							<c:choose>
+						      <c:when test="${ i<fn:length(list) }">
+						         <div class="img2">
+						            <img id="img${i+2}" src="${ list[i].filePath }">
+						         </div>
+						         <input type="hidden" name="atlist[${i}].fileNo" value="${ list[i].fileNo }">
+						         <input type="hidden" name="atlist[${i}].filePath" value="${ list[i].filePath }">
+						         <input type="hidden" name="atlist[${i}].status" value="${ list[i].status }">
+						      </c:when>
+						      <c:otherwise>
+						         <div class="img2">
+						            <img id="img${i+2}"><input type="hidden" name="atlist[${i}].filePath" value="0">
+						            <input type="hidden" name="atlist[${i}].fileNo" value="0">
+						         </div>
+						      </c:otherwise>
+						    </c:choose>        
+						 </c:forEach>
                     </div>    
                 </div>
 
                	<div id="file-area">
-                	<input type="file" id="file1" name="refile" onchange="loadImg(this, 1);">
+                	<input type="file" id="file1" name="refileTop" onchange="loadImg(this, 1);">
                 	<input type="file" id="file2" name="refile" onchange="loadImg(this, 2);">
                 	<input type="file" id="file3" name="refile" onchange="loadImg(this, 3);">
                 	<input type="file" id="file4" name="refile" onchange="loadImg(this, 4);">
@@ -280,7 +276,6 @@
                         </ul>    
                     </div>
                     <div class="line2">
-                    <%-- 지점 어떻게 해? --%>
                         <ul>
                             <li>지점</li>
                             <li><input type="text" name="branch" value="${ o.branch }"></li>
@@ -351,13 +346,19 @@
                 <hr>
                 <div class="button-box">
                     <button type="submit">수정하기</button>
-                    <button type="button"><a href="deleteOffice.bk?ono=${ o.officeNo }">삭제하기</a></button>
+                    <button type="button" onclick="deleteOf();">삭제하기</button>
                 </div>
             </form>
         </div>
     </div>
 <jsp:include page="../common/footer.jsp"/>
 <script>
+	function deleteOf(){
+		console.log("!!");
+		$("form").attr("action", "deleteOffice.bk").submit();
+		
+	}
+	
 	$(function(){
 		$("#file-area").hide();
 		
@@ -426,6 +427,58 @@
 				}
 			}
 		}
+		
+	    function sample6_execDaumPostcode() {
+	        new daum.Postcode({
+	            oncomplete: function(data) {
+	                // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분.
+
+	                // 각 주소의 노출 규칙에 따라 주소를 조합한다.
+	                // 내려오는 변수가 값이 없는 경우엔 공백('')값을 가지므로, 이를 참고하여 분기 한다.
+	                var addr = ''; // 주소 변수
+	                var extraAddr = ''; // 참고항목 변수
+
+	                //사용자가 선택한 주소 타입에 따라 해당 주소 값을 가져온다.
+	                if (data.userSelectedType === 'R') { // 사용자가 도로명 주소를 선택했을 경우
+	                    addr = data.roadAddress;
+	                } else { // 사용자가 지번 주소를 선택했을 경우(J)
+	                    addr = data.roadAddress;//그래도 도로명으로 넣자
+	                }
+	                
+	                // 사용자가 선택한 주소가 도로명 타입일때 참고항목을 조합한다.
+	                if(data.userSelectedType === 'R'){
+	                    // 법정동명이 있을 경우 추가한다. (법정리는 제외)
+	                    // 법정동의 경우 마지막 문자가 "동/로/가"로 끝난다.
+	                    if(data.bname !== '' && /[동|로|가]$/g.test(data.bname)){
+	                        extraAddr += data.bname;
+	                    }
+	                    // 건물명이 있고, 공동주택일 경우 추가한다.
+	                    if(data.buildingName !== '' && data.apartment === 'Y'){
+	                        extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
+	                    }
+	                    // 표시할 참고항목이 있을 경우, 괄호까지 추가한 최종 문자열을 만든다.
+	                    if(extraAddr !== ''){
+	                        extraAddr  = extraAddr;
+	                    }
+	                    // 조합된 참고항목을 해당 필드에 넣는다.
+	                    document.getElementById("sample6_extraAddress").value = extraAddr;
+	                
+	                } else {
+	                    document.getElementById("sample6_extraAddress").value = '';
+	                }
+
+	                // 우편번호와 주소 정보를 해당 필드에 넣는다.
+	                document.getElementById('sample6_postcode').value = data.zonecode;
+	                document.getElementById("sample6_address").value = addr;
+	                // 커서를 상세주소 필드로 이동한다.
+	                document.getElementById("sample6_detailAddress").focus();
+	            }
+	        }).open();
+	    }
+	      document.querySelector('.backto').addEventListener('click', () => {
+	    	  console.log("back");
+	    	  location.href="list.bk"
+	    	});
 </script>
 </body>
 </html>

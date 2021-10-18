@@ -91,8 +91,8 @@
 <body>
 
 	<jsp:include page="../common/header.jsp"/>
-	
 	<div class="innerOuter">
+	<c:if test="${ !empty loginUser && (loginUser.userStatus == 'Y') }">
 		
 		<div class="aside-title">
 	
@@ -176,38 +176,34 @@
 		<br><br><br>
 		
 		<ul class="pagination justify-content-center">
-               	<c:choose>
-               		<c:when test="${ pi.currentPage eq 1 }">
-                    	<li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>
-                    </c:when>
-                    <c:otherwise>
-                    			<li class="page-item"><a class="page-link" href="donaDetailTwo.ad?currentPage=${pi.currentPage -1 }&smemNo=${calMem.memNo}">&laquo;</a></li>
-                    </c:otherwise>
-              		</c:choose>
+          	<c:choose>
+          		<c:when test="${ pi.currentPage eq 1 }">
+               	<li class="page-item disabled"><a class="page-link" href="#">&laquo;</a></li>
+               </c:when>
+               <c:otherwise>
+               			<li class="page-item"><a class="page-link" href="donaDetailTwo.ad?currentPage=${pi.currentPage -1 }&smemNo=${calMem.memNo}">&laquo;</a></li>
+               </c:otherwise>
+         		</c:choose>
+          
+           <c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage }">
+           			<li class="page-item"><a class="page-link" href="donaDetailTwo.ad?currentPage=${ p }&smemNo=${calMem.memNo}">${ p }</a></li>
+           </c:forEach>
                
-                <c:forEach var="p" begin="${pi.startPage}" end="${pi.endPage }">
-                			<li class="page-item"><a class="page-link" href="donaDetailTwo.ad?currentPage=${ p }&smemNo=${calMem.memNo}">${ p }</a></li>
-                </c:forEach>
-                    
-                    	
-                <c:choose>
-                   	<c:when test="${ pi.currentPage eq pi.maxPage }">
-                    	<li class="page-item disabled"><a class="page-link">&raquo;</a></li>
-                    </c:when>
-                    <c:otherwise>
-	                    		<li class="page-item"><a class="page-link" href="donaDetailTwo.ad?currentPage=${ pi.currentPage+1 }&smemNo=${calMem.memNo}">&raquo;</a></li>
-	                </c:otherwise>
-                   </c:choose>
-               </ul>
+               	
+           <c:choose>
+              	<c:when test="${ pi.currentPage eq pi.maxPage }">
+               	<li class="page-item disabled"><a class="page-link">&raquo;</a></li>
+               </c:when>
+               <c:otherwise>
+                		<li class="page-item"><a class="page-link" href="donaDetailTwo.ad?currentPage=${ pi.currentPage+1 }&smemNo=${calMem.memNo}">&raquo;</a></li>
+            </c:otherwise>
+              </c:choose>
+          </ul>
 	    
 	    </article>
-	
-	    
-	    
-	   
 		
 	    <br><br>
-	
+	</c:if>
 	</div>
 	
 </body>

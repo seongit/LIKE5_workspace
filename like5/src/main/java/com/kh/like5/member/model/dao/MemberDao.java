@@ -1,14 +1,17 @@
 package com.kh.like5.member.model.dao;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.ibatis.session.RowBounds;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
 import com.kh.like5.admin.model.vo.Calculate;
 import com.kh.like5.board.model.vo.Board;
 import com.kh.like5.board.model.vo.Reply;
-import com.kh.like5.booking.model.vo.Booking;
+import com.kh.like5.common.model.vo.PageInfo;
 import com.kh.like5.member.model.vo.Customer;
 import com.kh.like5.member.model.vo.Member;
 import com.kh.like5.member.model.vo.Sponsorship;
@@ -58,7 +61,35 @@ public class MemberDao {
 		return (ArrayList)sqlSession.selectList("memberMapper.Calculate", memNo);
 		
 	}
+	
+	public int tempSaveListCount(SqlSessionTemplate sqlSession, int memNo) {
+		
+		return sqlSession.selectOne("memberMapper.tempSaveListCount", memNo);
+	}
+	
+	public ArrayList<Board> tempSaveListDeatil(SqlSessionTemplate sqlSession, PageInfo pi, int memNo) {
+		
+		int offset = (pi.getCurrentPage()-1)*pi.getBoardLimit();
+		RowBounds rowBounds = new RowBounds(offset, pi.getBoardLimit());
+		
+		return (ArrayList)sqlSession.selectList("memberMapper.tempSaveListDeatil", memNo, rowBounds);
+		
+	}
+	
+	public int memPostListDetailCount(SqlSessionTemplate sqlSession, int memNo) {
+		
+		return sqlSession.selectOne("memberMapper.memPostListDetailCount", memNo);
 
+	}
+
+	public ArrayList<Board> memPostListDetail(SqlSessionTemplate sqlSession, PageInfo pi, int memNo) {
+
+		int offset = (pi.getCurrentPage()-1)*pi.getBoardLimit();
+		RowBounds rowBounds = new RowBounds(offset, pi.getBoardLimit());
+		
+		return (ArrayList)sqlSession.selectList("memberMapper.memPostListDetail", memNo, rowBounds);
+		
+	}
 
 	public int updateMember(SqlSessionTemplate sqlSession, Member m) {
 		
@@ -73,6 +104,64 @@ public class MemberDao {
 
 	}
 	
+	public ArrayList<Customer> inquiry(SqlSessionTemplate sqlSession, PageInfo pi, int memNo) {
+		
+		int offset = (pi.getCurrentPage()-1)*pi.getBoardLimit();
+		RowBounds rowBounds = new RowBounds(offset, pi.getBoardLimit());
+		
+		return (ArrayList)sqlSession.selectList("memberMapper.inquiryList", memNo, rowBounds);
+		
+	}
+
+	public ArrayList<Sponsorship> donate(SqlSessionTemplate sqlSession, PageInfo pi, int memNo) {
+
+		int offset = (pi.getCurrentPage()-1)*pi.getBoardLimit();
+		RowBounds rowBounds = new RowBounds(offset, pi.getBoardLimit());
+		
+		return (ArrayList)sqlSession.selectList("memberMapper.donateList", memNo, rowBounds);
+		
+	}
+
+	public int donateCount(SqlSessionTemplate sqlSession, int memNo) {
+
+		return sqlSession.selectOne("memberMapper.donateCount", memNo);
+		
+	}
+
+	public int inquiryCount(SqlSessionTemplate sqlSession, int memNo) {
+		
+		return sqlSession.selectOne("memberMapper.inquiryCount", memNo);
+		
+	}
+	
+	public ArrayList<Board> ansListDetail(SqlSessionTemplate sqlSession, PageInfo pi, int memNo) {
+		
+		int offset = (pi.getCurrentPage()-1)*pi.getBoardLimit();
+		RowBounds rowBounds = new RowBounds(offset, pi.getBoardLimit());
+		
+		return (ArrayList)sqlSession.selectList("memberMapper.ansListDetail", memNo, rowBounds);
+		
+	}
+
+	public int ansListCount(SqlSessionTemplate sqlSession, int memNo) {
+
+		return sqlSession.selectOne("memberMapper.ansListCount", memNo);
+		
+	}
+	
+	public int insertcalculate(SqlSessionTemplate sqlSession, Calculate c) {
+		
+		return sqlSession.insert("memberMapper.insertcalculate", c);
+		
+	}
+	
+	public Member memberInfor(SqlSessionTemplate sqlSession, int memNo) {
+		
+		return sqlSession.selectOne("memberMapper.memberInfor", memNo);
+		
+	}
+	
+	
 	/**
 	 * [1:1문의] 작성
 	 * @author seong
@@ -83,7 +172,14 @@ public class MemberDao {
 	}
 	
 	
-	
+	/**
+	 * [QnA, 칼럼] - QnA, 칼럼 후원 insert
+	 * @author Hansol
+	 */
+	public int sponInsert(SqlSessionTemplate sqlSession, Sponsorship s) {
+		return sqlSession.insert("sponsorshipMapper.sponInsert", s);
+	}
+
 	
 	/*신원 최근 공간 예약 리스트 조회
 	public ArrayList<Booking> myRecentBookList(SqlSessionTemplate sqlSession, int memNo){

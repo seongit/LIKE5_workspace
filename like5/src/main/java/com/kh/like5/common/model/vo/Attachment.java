@@ -1,6 +1,7 @@
 package com.kh.like5.common.model.vo;
 
 import java.sql.Date;
+import java.util.ArrayList;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,4 +18,6 @@ public class Attachment {
 	private Date uploadDate;
 	private String status;
 	private String filePath;
+	
+	private ArrayList<Attachment> atlist;
 }

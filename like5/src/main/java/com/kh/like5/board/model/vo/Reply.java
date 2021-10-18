@@ -22,5 +22,6 @@ public class Reply {
 	private int refRepNo;
 	private int refLevel;
 	private String nickname; // 닉네임
-	
+	private String category; // 카테고리 추가
+    private String memProfile; // 프로필 이미지
 }

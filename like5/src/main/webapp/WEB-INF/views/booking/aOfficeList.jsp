@@ -53,12 +53,13 @@
 	  display: flex;
 	  align-self: center;
 	  flex-direction: column;
-	  border: 1px solid black;
+	  margin:0 0 100px 0;
 	  min-width: 80%;
 	  margin-top:60px;
 	}
 	.button-box {
 	  float: right;
+	  margin-bottom:10px;
 	}
 	table {
 	  margin: 32px 0;
@@ -95,12 +96,13 @@
             <div class="admin-title">
                 <h1>공간관리</h1>
             </div>
+            <form action="deleteOffices.bk" method="post">
             <div class="admin-content">
                 <div class="button-box">
                     <button class="btn btn-primary btn-sm" type="button"><a href="insertForm.bk">추가하기</a></button>
-                    <button class="btn btn-warning btn-sm" type="button">삭제하기</button>
+                    <button class="btn btn-warning btn-sm" type="button" id="deleteOffice">삭제하기</button>
                 </div>
-                <table id="officeList" border="1">
+                <table class="table table-hover" id="officeList">
                 	<thead>
                 	<tr>
                         <th>#</th>
@@ -113,7 +115,7 @@
 					<tbody>
 					<c:forEach var="o" items="${ list }">
 					<tr>
-                        <td><input type="checkbox" name="" id=""></td>
+                        <td><input type="checkbox" name="officeNos" value="${ o.officeNo }"></td>
                         <td class="ono">${ o.officeNo }</td>
                         <td>${ o.typeName }</td>
                         <td>${ o.address }</td>
@@ -187,6 +189,8 @@
                     </nav>
                 </div>
             </div>
+            </form>
+
         </div>
     </div>
 
@@ -194,6 +198,27 @@
 	$(function(){
 		$("#officeList tbody tr").click(function(){
 			location.href="detail.bk?ono=" + $(this).children().eq(1).text();
+		})
+		
+		//eventBubbling
+		$("input:checkbox").click(function(event,error){
+    		event.stopPropagation();
+   		});
+		
+		var checked = [];
+		//check된것의 officeNo들 다 모으기
+		$("input:checkbox").click(function(){
+			checked.push($(this).parent().next().text());
+			console.log(checked);
+		});
+		//삭제하기 버튼 이벤트
+		$("#deleteOffice").click(function(){
+			var result = confirm("are you sure??");
+			if(result){
+				$("form").submit();
+			} else {
+				location.reload();
+			}
 		})
 	})
 </script>

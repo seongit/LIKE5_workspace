@@ -42,6 +42,7 @@
         <result column="ref_rep_no" property="refRepNo" />
         <result column="ref_level" property="refLevel" />
         <result column="nickname" property="nickname" />
+        <result column="mem_profile" property="memProfile" />
     </resultMap>
 
     <!-- [재환] 관리자단 게시글 개수 조회 -->
@@ -51,11 +52,7 @@
 
     <!-- [재환] 관리자단 게시글 리스트 조회 -->
     <select id="getBoardList" resultMap="board">
-        select BOA_NO
-             , BOA_CATEGORY
-             , BOA_TITLE
-             , NICKNAME
-             , BOA_ENROLL_DATE
+        select *
         from board
         join member using(mem_no)
         where boa_status = 'Y'
@@ -117,7 +114,10 @@
 
     <!-- [재환] 관리자단 신고내역 개수 조회 -->
     <select id="getReportCount" resultType="_int">
-        select count(*) from report
+        select count(*)
+        from report
+        join board on(REF_NO = BOA_NO)
+        where boa_status = 'Y'
     </select>
 
     <!-- [재환] 관리자단 신고내역 리스트 조회 -->
@@ -131,6 +131,7 @@
           from report
           join member using(MEM_NO)
           join board on(REF_NO = BOA_NO)
+         where boa_status = 'Y'
          order by REPORT_UNIQUE desc
     </select>
 
@@ -153,6 +154,7 @@
             </otherwise>
         </choose>
         like '%' || #{keyword} || '%'
+        and boa_status = 'Y'
     </select>
 
     <!-- [재환] 관리자단 검색된 신고내역 리스트 조회 -->
@@ -179,9 +181,17 @@
             </otherwise>
         </choose>
         like '%' || #{keyword} || '%'
+        and boa_status = 'Y'
         order
         by REPORT_UNIQUE desc
     </select>
+
+    <!-- [재환] 관리자단 신고내역 삭제 기능 -->
+    <update id="deleteReport">
+        update board
+           set boa_status = 'N'
+         where boa_no = #{rno}
+    </update>
 
     <!-- [재환] 관리자단 태그별 게시글 개수 조회 -->
     <select id="getTagCount" resultType="_int">
@@ -370,10 +380,10 @@
           and boa_status='Y'
      	<choose>
 	    	<when test="orderBy=='views'">
-	    		 order by boa_count desc,boa_enroll_date desc
+	    		 order by boa_count desc,boa_enroll_date 
 	    	</when>
 	    	<when test="orderBy=='reply'">
-	    		order by reply  desc,boa_enroll_date desc
+	    		order by reply  desc,boa_enroll_date 
     		</when>
     		<otherwise>
    			   order by boa_enroll_date desc
@@ -400,7 +410,10 @@
                  join member using (mem_no)
         where boa_no = #{bno}
           and boa_status='Y'
+          and regexp_like (boa_category,'칼럼|일상|스터디모집')
 	</select>
+	
+
 	
 	<!-- [공통] 게시글 상세보기시 조회수 증가 -->
 	<update id="increaseCount">
@@ -415,40 +428,50 @@
 	
 	<!-- 댓글 | 대댓글 전체 조회 -->
 	<select id="replyList" resultMap="reply">
-		 select 
-	            rep_no
-	            ,boa_no
-	            ,nickname
-	            ,rep_content
-	            ,rep_enroll_date
-	            ,rep_adoption
-	            ,rep_status
-	            ,ref_rep_no
-	            ,ref_level
-	        from reply
-	        join member using(mem_no)
-	        where boa_no = #{bno}
-         	start with ref_rep_no = 0 
-            connect by prior rep_no = ref_rep_no
-	        order siblings by rep_enroll_date desc
+		select 
+     		   rep_no
+     		   , boa_no
+     		   , mem_no
+     		   , nickname
+     		   , rep_content
+     		   , rep_enroll_date
+     		   , rep_adoption
+     		   , rep_status
+     		   , ref_rep_no
+     		   , ref_level
+     		   , (select boa_category
+     		   		from board b
+     		   	   where r.boa_no = b.boa_no) category
+     		   ,mem_profile
+		  from reply r
+		  join member using(mem_no)
+		 where boa_no = #{bno}
+		 start with ref_rep_no = 0 
+	   connect by prior rep_no = ref_rep_no
+		 order siblings by rep_enroll_date desc
 	</select>
 	
 	<!-- 댓글 작성하기 -->
 	<insert id="insertReply">
 		insert into 
 			reply
-			    (rep_no
-			    ,boa_no
-			    ,mem_no
-			    ,rep_content
-			    ,rep_enroll_date
+			    ( rep_no
+			    , boa_no
+			    , mem_no
+			    , rep_content
+			    , rep_enroll_date
+			    , boa_category
 			    )
-	    	values
-			    (seq_rno.nextval
-			    ,#{boaNo}
-			    ,#{memNo}
-			    ,#{repContent}
-			    ,sysdate
+	       values
+			    ( seq_rno.nextval
+			    , #{boaNo}
+			    , #{memNo}
+			    , #{repContent}
+			    , sysdate
+			    , (select boa_category
+			    	 from board
+			    	where boa_no in (select #{boaNo}
+			    					   from reply))
 			    )
 	</insert>
 	
@@ -458,29 +481,32 @@
 		insert into 
 		   reply
 		    (
-			    rep_no
-			    ,boa_no
-			    ,mem_no
-			    ,rep_content
-			    ,rep_enroll_date
-			    ,ref_rep_no
-			    ,ref_level
-			    )
+			  rep_no
+			, boa_no
+			, mem_no
+			, rep_content
+			, rep_enroll_date
+			, ref_rep_no
+			, ref_level
+			, boa_category
+			)
 		    values
 		    (
-			    seq_rno.nextval
-			    ,#{boaNo}
-			    ,#{memNo}
-			    ,#{repContent}
-			    ,sysdate
-			    ,#{refRepNo}
-			    ,2
+			  seq_rno.nextval
+			 , #{boaNo}
+			 , #{memNo}
+			 , #{repContent}
+			 , sysdate
+			 , #{refRepNo}
+			 , 2
+			 , (select boa_category
+			    	 from board
+			    	where boa_no in (select #{boaNo}
+			    					   from reply))
 		    )
 	</insert>
 	
-	<!-- 커뮤니티 게시글 작성하기 -->
-	<!-- 칼럼 insert도 같이 해보기 -->
-	<!-- 성공 시 id이름 변경 -->
+	<!-- [커뮤니티 | 칼럼] - 게시글 작성 -->
 	<insert id="insertComAndCol">
 		insert into 
 			board
@@ -505,8 +531,8 @@
 			    )
 	</insert>
 	
-	<!-- 커뮤니티 게시글 삭제하기 -->
-	<update id="deleteCommunity">
+	<!-- [커뮤니티 | 칼럼] - 게시글 삭제 -->
+	<update id="deleteComAndCol">
 		update 
 			board
 		set 
@@ -515,8 +541,8 @@
 			boa_no = #{bno}
 	</update>
 	
-	<!-- 커뮤니티 게시글 수정하기 -->
-	<update id="updateCommunity">
+	<!-- [커뮤니티 | 칼럼] - 게시글 수정 -->
+	<update id="updateComAndCol">
 	update 
 		board
 		set 
@@ -525,12 +551,13 @@
 		    , boa_content=#{content}
 		    , boa_img_path =#{imgPath}
 		    , boa_update_date = sysdate
+		    , boa_status = 'Y'
 		where 
 			boa_no = #{bno}
-		and boa_status = 'Y'
+		and boa_status = 'Y' or boa_status='F'
 	</update>
 
-	<!-- 커뮤니티 게시글 신고하기 -->
+	<!-- [커뮤니티, QnA] - 게시글 신고 -->
 	<insert id="reportCommunity">
 		insert into 
 		report
@@ -578,6 +605,7 @@
 	                 join member using (mem_no)
 	        where regexp_like (boa_category,'칼럼')
 	          and boa_status='Y'
+	         order by boa_enroll_date desc
 	</select>
 	
 	<!-- 최신 | 조회수 | 댓글수 기준으로 조회 -->	
@@ -598,10 +626,10 @@
 	          and boa_status='Y'
      	<choose>
 	    	<when test="orderBy=='views'">
-	    		 order by boa_count desc,boa_enroll_date desc
+	    		 order by boa_count desc,boa_enroll_date 
 	    	</when>
 	    	<when test="orderBy=='likes'">
-	    		order by boa_like desc,boa_enroll_date desc
+	    		order by boa_like desc,boa_enroll_date 
     		</when>
     		<otherwise>
    			   order by boa_enroll_date desc
@@ -631,6 +659,18 @@
 			mem_no = #{mno}
 		and 
 			boa_no = #{bno}
+    </select>
+    
+    <!-- 게시글 상세 조회 시 로그인한 회원의  후원 여부  -->
+    <select id="sponsorCount" resultType="_int">
+    	 select 
+    		count(*)
+		from 
+			sponsorship
+		where 
+			mem_no = #{mno}
+		and 
+			ref_boa_no = #{bno}
     </select>
     
     <!--[ 스크랩 | 좋아요 ]  등록 -->
@@ -666,6 +706,23 @@
 		    )
     </insert>
     
+    <!--[ 스크랩 | 좋아요 ] count 증가 -->
+    <update id="increaseCounts">
+	    update 
+	    	board
+	    <choose>
+	    	<when test="condition=='like'">
+				set boa_like = boa_like + 1
+	    	</when>
+	    	<when test="condition=='scrap'">
+	    		set boa_scrap = boa_scrap +1
+	    	</when>
+	    </choose>
+		where 
+			boa_no = #{bno}
+    </update>
+    
+    <!--[ 스크랩 | 좋아요 ]  해제 -->
 	<delete id="UnlikeAndUnScrap">
 		delete 
 			<choose>
@@ -682,6 +739,79 @@
 		 	boa_no = #{bno}
 	</delete>
 	
+	<!-- [ 스크랩 | 좋아요 ] count 감소 -->
+    <update id="decreaseCounts">
+	    update 
+	    	board
+	    <choose>
+	    	<when test="condition=='like'">
+				set boa_like = boa_like -1
+	    	</when>
+	    	<when test="condition=='scrap'">
+	    		set boa_scrap = boa_scrap -1
+	    	</when>
+	    </choose>
+		where 
+			boa_no = #{bno}
+    </update>
+	
+	<!-- [ 칼럼 ] 관심 칼럼 조회 -->
+	<select id="topBoardList" resultMap="board">
+		select rownum, b.*
+		from (select boa_no, boa_title, boa_img_path
+		        from board
+		        where boa_status='Y'
+		        and regexp_like (boa_category,'칼럼')
+		        order by boa_like desc) b
+		where rownum between 1 and 4
+		
+	</select>
+	
+	
+	<!-- [ 칼럼 ] 임시저장 등록 -->
+	<insert id="colStorageInsert">
+		insert into 
+			board
+			    (
+		    	boa_no
+			    ,mem_no
+			    ,boa_category
+			    ,boa_title
+			    ,boa_content
+			    ,boa_enroll_date
+			    ,boa_img_path
+			    ,boa_status
+			    )
+		    values
+	    		(
+			    seq_bno.nextval
+			    ,#{mno}
+			    ,#{category}
+			    ,#{title}
+			    ,#{content}
+			    ,sysdate
+			    ,#{imgPath}
+			    ,'F'
+			    )
+	</insert>
+	
+	<!-- [ 칼럼 ]  임시저장 글 조회  -->
+	<select id="selectTemSave" resultMap="board">
+	  select
+            boa_no
+            ,mem_no
+             ,nickname
+             ,boa_category
+             ,boa_title
+             ,boa_content
+             ,boa_enroll_date
+             ,boa_img_path
+             ,boa_count
+        from board b
+                 join member using (mem_no)
+        where boa_no = #{bno}
+          and boa_status='F'
+	</select>
 	
 	
 	<!-- ********** 한솔 ********** -->
@@ -793,6 +923,7 @@
 		select
 			   boa_no
 			 , mem_no
+			 , boa_category
 			 , boa_title
 			 , tag_name
 			 , boa_like
@@ -802,13 +933,197 @@
 			 	 where r.boa_no = b.boa_no) reply
 			 , nickname
 			 , boa_enroll_date
+			 , boa_content
+			 , boa_status
 		  from board b
 		  join member using(mem_no)
 		 where
 		 	   boa_no = #{bno}
-		 	   and boa_category like 'QNA'
+		 	   and boa_category = 'QNA'
 	</select>
 	
+	<!-- [QnA] - QnaDetailView 게시글 delete -->
+	<!-- 임시저장 또는 등록된 게시글 중 채택된 댓글이 없을 경우만 delete 가능 -->
+	<update id="qnaDelete">
+		update board
+		   set boa_status = 'N'
+		 where boa_no in (select #{bno}
+		                    from board b
+		                    join reply r using (boa_no)
+		                   where (b.boa_status = 'Y' or b.boa_status = 'F')
+		                         and r.rep_adoption = 'N')
+	</update>
+	
+	<!-- [QnA] - QnaUpdateForm 게시글 update -->
+	<update id="qnaUpdate">
+		update board
+		   set
+		   	   boa_title = #{title}
+		   	 , tag_name = #{tag}
+		   	 , boa_content = #{content}
+		   	 , boa_status = 'Y'
+		   	 , boa_update_date = sysdate
+		 where boa_no = #{bno}
+	</update>
+	
+	<!-- [QnA] - QnaDetailView 답변(댓글) 채택 -->
+	<update id="adoptionReply">
+		update reply
+		   set rep_adoption = 'Y'
+		 where rep_no = #{repNo}
+	</update>
+	
+	
+	
+	<!--            동규                             -->
 
-
+	<select id="itNewsSearchCount" resultType="_int">
+		
+		select
+			   count(*)
+		  from board
+		 where 
+		 <choose>
+			<when test="condition == 'itT'">
+		 	   boa_category = 'IT트렌드'
+		 	</when>
+		 	<when test="condition == 'cun'">
+		 	   boa_category = '컨퍼런스'
+		 	</when>
+		 	<otherwise>
+		 		boa_category = 'IT트렌드' or boa_category = '컨퍼런스'
+		 	</otherwise>
+		 	</choose> 
+		 	   and boa_status = 'Y'
+		
+	</select>
+	
+	<select id="itNewsCount" resultType="_int">
+		
+		select
+			   count(*)
+		  from board
+		 where 
+		 	   boa_category = 'IT트렌드' or boa_category = '컨퍼런스'
+		 	   and boa_status = 'Y'
+		
+	</select>
+	
+	<select id="itNewsSearch" resultMap="board">
+	SELECT * FROM (
+			select
+		             boa_no
+				   , mem_no
+				   , boa_category
+				   , boa_status
+				   , boa_title
+				   , boa_content
+				   , boa_enroll_date
+				   , boa_update_date
+				   , boa_count
+				   , boa_like
+				   , boa_scrap
+				   , tag_name
+				   , boa_img_path
+		        from board b
+		       order by boa_No desc
+		      )where  
+		      <choose>
+					<when test="condition == 'itT'">
+				 	   boa_category = 'IT트렌드'
+				 	</when>
+				 	<when test="condition == 'cun'">
+				 	   boa_category = '컨퍼런스'
+				 	</when>
+				 	<otherwise>
+				 		boa_category = 'IT트렌드' or boa_category = '컨퍼런스'
+				 	</otherwise>
+			  </choose> 
+			 	 and boa_status = 'Y'
+	</select>
+	
+	<select id="itNews" resultMap="board">
+	SELECT * FROM (
+			select
+		             boa_no
+				   , mem_no
+				   , boa_category
+				   , boa_status
+				   , boa_title
+				   , boa_content
+				   , boa_enroll_date
+				   , boa_update_date
+				   , boa_count
+				   , boa_like
+				   , boa_scrap
+				   , tag_name
+				   , boa_img_path
+		        from board b
+		       order by boa_No desc
+		      )where (boa_category = 'IT트렌드' or boa_category = '컨퍼런스')
+			 	 and boa_status = 'Y'
+	</select>
+	
+	<select id="itNewsDetail" resultMap="board">
+		select
+	             boa_no
+			   , mem_no
+			   , boa_category
+			   , boa_status
+			   , boa_title
+			   , boa_content
+			   , boa_enroll_date
+			   , boa_update_date
+			   , boa_count
+			   , boa_like
+			   , boa_scrap
+			   , tag_name
+			   , boa_img_path
+	        from board 
+	                 where boa_no = #{bno}
+	</select>
+	
+	<insert id="insertItNews">
+		insert
+		  into board
+		  	 (
+		  	   boa_no
+		  	 , mem_no
+		  	 , boa_category
+		  	 , boa_title
+		  	 , boa_content
+		  	 , boa_enroll_date
+		  	 )
+		 	 values
+		 	 (
+		 	   seq_bno.nextval
+		 	 , #{mno}
+		 	 , #{category}
+		 	 , #{title}
+		 	 , #{content}
+		 	 , sysdate
+		 	 )
+	</insert>
+	
+	<update id="deleteItnews">
+		update board
+		   set
+		   	   boa_status = 'N'
+		   	 , boa_update_date = sysdate
+		 where boa_no = #{bno}
+	</update>
+	
+	<update id="upadateItNews">
+		update board
+		   set
+		   	   boa_title = #{title}
+		   	 , boa_category = #{category}
+		   	 , boa_content = #{content}
+		   	 , boa_status = 'Y'
+		   	 , boa_update_date = sysdate
+		 where boa_no = #{bno}
+	</update>
+	
+	
+	
 </mapper>

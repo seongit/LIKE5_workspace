@@ -28,18 +28,12 @@
 
    <!--메뉴바-->
     <jsp:include page="../../common/header.jsp" />   
- 
-
 
     <div class="innerOuter" style="margin-top:50px; padding-left:50px">
         <div class="flex-box">
             <h2><b>칼럼</b></h2>
             <hr>
         </div>
-        
-     
-         
-         
             <!--카테고리 시작-->
             <!--작성자 아이디, 제목, 내용, 첨부파일-->
             <br>
@@ -54,19 +48,15 @@
             <div class="content-body">
                 <div class="form-group">
                     <label for="comment"><b>내용</b></label>
-                    <!-- TOAST UI Editor가 들어갈 div 태그 -->
+                    <!-- TOAST UI Editor -->
                     <div id="editor"></div>
-                    <!-- TOAST UI 에디터 내용을 받을 div 태그 -->
+                    <!-- TOAST UI 에디터 내용 -->
                     <div id="editorContents"></div>
-                    <div id="tui-color-picker-conatiner"></div>
                 </div>
             </div>
             
 		    <!--토스트 UI-->
 		    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
-		    
-	        <!--🔥토스트 UI 컬러피커 작업중🔥-->
-            <script src="https://uicdn.toast.com/tui-color-picker/latest/tui-color-picker.js"></script>
 
             <div class="content-footer">
                 <div class="container-fluid" style="background-color: rgba(224, 224, 224, 0.3);">
@@ -77,14 +67,15 @@
             </div>
                 
             <br><br>
-
+			
+			<!-- 임시저장 및 등록 버튼 -->
             <div style="display: flex; justify-content: space-between;  margin-bottom:50px;margin-bottom:50px">
                 <div>
                     <button type="reset" class="btn btn-outline-danger">취소</button>
                 </div>
-                <div class="submit-btn">
-                    <button type="button" onclick="submit(2);" class="btn btn-outline-danger">임시저장</button>
-                    <a data-toggle="modal" data-target="#thumbnail-modal"><button class="btn btn-danger">등록</button></a>
+                <div id="colEnrollbtn" class="submit-btn">
+                    <button  type="button" onclick="submit(2);" class="btn btn-outline-danger" disabled>임시저장</button>
+                   <button class="btn btn-danger" disabled> <a data-toggle="modal" data-target="#thumbnail-modal">등록</a></button>
                 </div>
             </div>
 
@@ -92,56 +83,52 @@
             <!-- The Modal -->
             <div class="modal fade" id="thumbnail-modal" >
                 <div class="modal-dialog modal-dialog-centered modal-sm">
-                <div class="modal-content">
-            
-                    <!-- Modal Header -->
-                    <div class="modal-header">
-                    <h6 class="modal-title"><b>포스트 미리보기</b></h6>
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-            
-                    <!-- Modal body -->
-                    <div class="modal-body" style="text-align: center;">
-                        <a id="thumbnail-tooltip" data-toggle="tooltip" title="썸네일을 등록해주세요😊">
-                            <img id="thumbnail" width="150px" height="150px">
-                        </a>
-
-                        <div class="input-type" id="file-area">
-                       		<form id="insertColumn" action="" method="post" style="margin-top: 0px;" enctype="multipart/form-data"> 
-				             	<input type="hidden" name="mno" value="${loginUser.memNo}" >
-					           	<input type="hidden" name="category" value="칼럼">
-					           	<input type="hidden" name="title" value="">
-					           	<input type="hidden" name="content" value="">
-			                    <input type="file" id="thumbnail1" name=upfile onchange="loadImg(this,1)" class="form-control-file border" required>
-				         	</form>  
-		                </div>
-
-                        <p style="font-size: 12px; margin-top: 15px; font-weight: bold;">
-                            <!--🔥 사용자가 입력한 제목 보여지게끔 출력할 것 🔥-->
-                      			      🔥 제목입니다 🔥
-                        </p>
-                    </div>
-
-            
-                    <!-- Modal footer -->
-                    <div class="modal-footer"  style="justify-content: center;">
-                        <button onclick="submit(1);" class="btn btn-danger btn-block">OK</button>
-                    </div>
-            	
-                </div>
+	                <div class="modal-content">
+	                    <!-- Modal Header -->
+	                    <div class="modal-header">
+	                    <h6 class="modal-title"><b>포스트 미리보기</b></h6>
+	                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+	                    </div>
+	            
+	                    <!-- Modal body -->
+	                    <div class="modal-body" style="text-align: center;">
+	                        <a id="thumbnail-tooltip" data-toggle="tooltip" title="썸네일을 등록해주세요😊">
+	                            <img id="thumbnail" width="150px" height="150px">
+	                        </a>
+	
+	                        <div class="input-type" id="file-area">
+	                       		<form id="insertColumn" action="" method="post" style="margin-top: 0px;" enctype="multipart/form-data"> 
+					             	<input type="hidden" name="mno" value="${loginUser.memNo}" >
+						           	<input type="hidden" name="category" value="칼럼">
+						           	<input type="hidden" name="title" value="">
+						           	<input type="hidden" name="content" value="">
+				                    <input type="file" id="thumbnail1" name=upfile onchange="loadImg(this,1)" class="form-control-file border" required>
+					         	</form>  
+			                </div>
+	
+	                        <p style="font-size: 12px; margin-top: 15px; font-weight: bold;">
+	                      			썸네일 미리보기
+	                        </p>
+	                    </div>
+	            
+	                    <!-- Modal footer -->
+	                    <div class="modal-footer"  style="justify-content: center;">
+	                        <button onclick="submit(1);" class="btn btn-danger btn-block">OK</button>
+	                    </div>
+	                </div>
                 </div>
             </div>
             
             <script>
-            
 	            /*토스트 UI 에디터 insert하기 */
 	            function submit(num){
 	            	
+	            	let $title = $("#content-title").val()
+            		let content = editor.getHTML();
+	            	
 	            	// 등록하기
-	            	if(num=1){
+	            	if(num==1){
 	            		// 제목과 내용 변수에 담아서 form에 담기
-	            		var $title = $("#content-title").val()
-	            		var content = editor.getHTML();
 		            	$("#insertColumn").children().eq(2).attr("value",$title);
 		            	$("#insertColumn").children().eq(3).attr("value",content);
 
@@ -149,17 +136,12 @@
 	            		$("#insertColumn").attr("action","insert.bo").submit();
 	            	}else{
 	            		//임시저장
-	            		
-	            		
+            			$("#insertColumn").children().eq(2).attr("value",$title);
+		            	$("#insertColumn").children().eq(3).attr("value",content);
+	            		$("#insertColumn").attr("action","colTemSave.bo").submit();
 	            	}
-	            	
-	            	
 	            }
-            
             </script>
-            
-            
-       
     </div>
 
 
@@ -172,15 +154,10 @@
             el: document.querySelector('#editor'),
             height: '600px',
             previewStyle: 'vertical',
-            initialValue: '📝당신의 한 줄이 개발자들의 영감이 됩니다.',
+            initialValue: '📝당신의 문장이 개발자들의 영감이 됩니다.',
             language: 'ko',
         });
-   
         
-     	
-     	
-        
-
         /*첨부파일-div 영역 클릭시 첨부파일 등록*/
         $(function(){
             $("#file-area").hide();
@@ -193,7 +170,7 @@
         function loadImg(inputFile,num){
             
             if(inputFile.files.length == 1){
-                var reader = new FileReader();
+                let reader = new FileReader();
                 reader.readAsDataURL(inputFile.files[0]);
                
                 reader.onload = function(e){
@@ -214,32 +191,38 @@
             $('[data-toggle="tooltip"]').tooltip();
         });
 
+        
+        // 제목 글자수 제한 (5글자 이상에만 작성 버튼 활성화)
+        $(function(){
+        	
+        	let $titleInput = $("#content-title");
+        	
+        	$titleInput.keyup(function(){
+        		if($titleInput.val().length>=5){
+        			$("#colEnrollbtn").children().attr("disabled",false);
+        		}
+        	})
+        	
+        });
+        
 
         /*칼럼-제목-글자수 실시간 카운팅*/
         $('#content-title').keyup(function(e){
-            var title = $(this).val();
-
-            
+            let title = $(this).val();
             if(title.trim() != 0){
                 $('#counting-title').html(title.length+" / 49");  
             }else{
-                alert("공백이 입력되었어요 😊 다시 입력해주세요 ");
+            	alertify.alert("공백이 입력되었어요 😊 다시 입력해주세요 ");
                 $('#counting-title').html(''); 
             }
             
             if (title.length > 49){
-                alert("최대 49자까지 입력 가능합니다.");
+            	alertify.alert("최대 49자까지 입력 가능합니다.");
                 $(this).val(title.substring(0, 49));
                 $('#counting-title').html("49 / 49");
             }
         });
-        
-        /*임시저장 alert*/
-        function temSave(){
-            alert("성공적으로 임시저장 되었습니다👍");
-            /*커뮤니티-전체보기 페이지로 이동*/
-            location.href="colList.bo";
-        }
+     
 
 
     </script>

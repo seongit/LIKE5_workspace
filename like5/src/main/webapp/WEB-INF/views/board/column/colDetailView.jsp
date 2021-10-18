@@ -12,6 +12,13 @@
   	<!-- colDetailView.css -->
 	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/colDetailView.css" />   
   
+ 	<!--토스트 UI-->
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.css" />
+    
+    <!-- i'mport library -->
+	<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+	<script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.8.js"></script>
+  
 </head>
 <body>
 
@@ -40,9 +47,41 @@
         <div class="column-conetent"  style="width: 900px; height: 800px; ">
             <div style="height: 100%;width: 100%;">
                 <div>
-                	${b.content}
+                	<div id="editor" style="display:none;">${b.content}</div>
+                	<div id="viewer"></div>
                 </div>
             </div>
+            
+             <!--토스트 UI-->
+		    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+		    
+		    <script>
+		    
+			    $(function(){
+		        	ToView();
+		        })
+		        
+		        /*토스트 UI */
+	    		const content = [].join('\n');
+	    	    const editor = new toastui.Editor({
+		               el: document.querySelector('#editor'),
+		           });
+	    	    /*토스트 UI 뷰어 */	
+		        const viewer = toastui.Editor.factory({
+		            el: document.querySelector('#viewer'),
+		            viewer: true,
+		            height: '500px',
+		            initialValue: content
+		        });
+
+		        function ToView()
+		        {
+		            viewer.setMarkdown(editor.getHTML());
+		        };
+		    
+		    </script>
+		    
+		    
             <!--좋아요 스크랩 후원하기-->
             <!-- 로그인한 사용자만 버튼 요소 보여지게하기 -->
             <c:choose>
@@ -83,15 +122,32 @@
 	                    </div>
 	                    <div class="sponsorship"> 
 	                        <!--기본으로 보여지는 아이콘-->
-	                        <a data-toggle="modal" data-target="#sponsorship-modal"><i id="sponsorship" class="far fa-heart fa-2x"></i></a>
 	                        <!--후원하기 클릭시 변경되는 아이콘-->
-	                        <i id="selected-sponsorship" class="fas fa-heart fa-2x" style="display: none;"></i>
+	                        <c:choose>
+		                        <c:when test="${!empty sponsor}">
+			                        <i id="selected-sponsorship" class="fas fa-heart fa-2x" disabled onclick="alertSponsor();"></i>
+			                        <a data-toggle="modal" data-target="#sponsorship-modal"><i id="sponsorship" class="far fa-heart fa-2x" style="display:none;"></i></a>
+		                        </c:when>
+		                        <c:when test="${empty sponsor}">
+		                        	<i id="selected-sponsorship" class="fas fa-heart fa-2x" style="display:none;"></i>
+			                        <a data-toggle="modal" data-target="#sponsorship-modal"><i id="sponsorship" class="far fa-heart fa-2x"></i></a>
+		                        </c:when>
+	                        </c:choose>
 	                        <div>후원하기</div>
 	                    </div>
 	               	</div>
             	</div><br><hr>
             	</c:when>
             </c:choose>
+            
+            <script>
+            
+            //중복 후원 방지를 위한 alert
+            function alertSponsor(){
+            	alertify.alert("😉 이미 후원한 게시글입니다.");
+            }
+            
+            </script>
             
             <!--후원하기 모달창-->
             <!-- The Modal -->
@@ -118,82 +174,70 @@
                         </div>
                         <!-- Modal footer -->
                         <div class="modal-footer"  style="justify-content: center;">
-                            <button type="submit" class="btn btn-danger btn-block">OK</button>
+                            <button type="button" id="payment" class="btn btn-danger btn-block">OK</button>
                         </div>
                     </div>
                     </div>
                 </div>
             </form>
-                        
+            
+            <!-- 후원하기 insert 시 넘겨줄 값 -->
+			<form id="sponForm" action="sponInsert.me" method="post">
+	            <input type="hidden" name="memNo" value="${ loginUser.memNo }">
+	            <input type="hidden" name="smemNo" value="${ b.mno }">
+	            <input type="hidden" name="sponCategory" value="2">
+	            <input type="hidden" name="refBoaNo" value="${ b.bno }">
+			</form>       
 
 
             <script>
+	    	    // 아임포트 결제 js
+	    		$("#payment").click(function(){
+	    	        var IMP = window.IMP;
+	    	        IMP.init('imp33726702');
+	    	        
+	    	        IMP.request_pay({
+	    	            pg : 'html5_inicis',
+	    	            pay_method : 'card',
+	    	            merchant_uid : 'merchant_' + new Date().getTime(),
+	    	            name : '칼럼 게시글 후원하기',
+	    	            amount : 100,
+	    	            buyer_email : '${ loginUser.email }',
+	    	            buyer_name : '${ loginUser.memName }',
+	    	            buyer_tel : '010-1234-5678'
+	    	        }, function (rsp) {
+	           			console.log(rsp);       			
+	    	    		if ( rsp.success ) {
+	    	    	    	jQuery.ajax({
+	    	    	    		url: "/payments/complete",
+	    	    	    		type: 'POST',
+	    	    	    		dataType: 'json',
+	    	    	    		data: {
+	    	    		    		imp_uid : rsp.imp_uid
+	    	    	    		}
+	    	                }).done(function(data) {
+	    	                    if ( everythings_fine ) {
+	    	                    	console.log(data);
+	    	                    } else {
+	    	                        alert(' 결제가 진행되지 않았습니다. 다시 시도해주세요. ');
+	    	                    }
+	    	                });
+	                		$("#sponForm").submit();
+	    	            } else {
+	    	                var msg = ' 결제에 실패하였습니다. ';
+	    	                msg += ' \n 에러 원인 : ' + rsp.error_msg;
+	    	
+	    	                alert(msg);
+	    	            }
+	            	});
+	    		});
 
-                /*좋아요 아이콘 클릭시 변경되는 JS
-                $('.like').click(function(){
-                    
-                    if($('#selected-like').css('display')=='none'){
-                        $('#selected-like').css('display','block');
-                        $('#like').css('display','none');
-                    }else{
-                        $('#selected-like').css('display','none');
-                        $('#like').css('display','block');
-                    }
-
-                })
-                */
-
-                /*스크랩 아이콘 클릭시 변경되는 JS
-                $('.scrap').click(function(){
-
-                    if($('#selected-scrap').css('display')=='none'){
-                        $('#selected-scrap').css('display','block');
-                        $('#scrap').css('display','none');
-                    }else{
-                        $('#selected-scrap').css('display','none');
-                        $('#scrap').css('display','block');
-                    }
-
-                })
-                */
-                
-                $("#selected-like").click(function(){
-                	
-                })
-                
-
-                /* 후원 아이콘 클릭시 변경되는 JS*/
-                /*후원의 경우 DB에 insert된다면 변경되게끔 구현하기*/
-                $('.sponsorship').click(function(){
-
-                if($('#selected-sponsorship').css('display')=='none'){
-                    $('#selected-sponsorship').css('display','block');
-                    $('#sponsorship').css('display','none');
-                }else{
-                    $('#selected-sponsorship').css('display','none');
-                    $('#sponsorship').css('display','block');
-                }
-
-                })
-                
-                /* 좋아요 | 스크랩 공통 모듈 [백업용]
-                function likeAndScrap(num){
-                	if(num == 1 ){
-                		$("#insertForm").children().eq(2).attr("value","like");
-                		$("#insertForm").attr("action","likeAndScrap.bo").submit();
-                	}else{
-                		$("#insertForm").children().eq(2).attr("value","scrap");
-                		$("#insertForm").attr("action","likeAndScrap.bo").submit();
-                	}
-                }
-                
-                */
 
                 // 1 = 좋아요 | 2 = 스크랩
                 function likeAndScrap(num){
                 	if(num == 1){
                 		$("#like").click(function(){
-                			// 좋아요 버튼 클릭 시 
+                			// 좋아요 활성화 버튼 클릭시 like 테이블에 insert 
                     		$.ajax({
                     			url:"likeAndScrap.bo"
                     			,data:{bno:${b.bno}
@@ -210,7 +254,7 @@
                     		})
                 		})
                 		
-                		// 좋아요 해제
+                		// 좋아요 비활성화 버튼시 like 테이블에 delete
                 		$("#selected-like").click(function(){
                 			$.ajax({
                     			url:"UnlikeAndUnScrap.bo"
@@ -230,12 +274,10 @@
                 		})
                 	}
                 	
-                	
-                	
                 	if(num == 2){
-                		
+                		// 스크랩 활성화 버튼 클릭시 scrap 테이블에 insert 
                 		$("#scrap").click(function(){
-	                		// 스크랩 버튼 클릭 시 
+	                		
 	                		$.ajax({
 	                			url:"likeAndScrap.bo"
 	                			,data:{bno:${b.bno}
@@ -251,7 +293,7 @@
 	                			}
 	                		})
                 		})
-                		
+                		// 스크랩 비활성화 버튼시 scrap 테이블에 delete
                 		$("#selected-scrap").click(function(){
                 			$.ajax({
 	                			url:"UnlikeAndUnScrap.bo"
@@ -268,12 +310,8 @@
 	                			}
 	                		})
                 		})
-                		
                 	}
                 }
-                
-                
-                
             </script>
             
             <!-- 좋아요와 스크랩  -->
@@ -307,97 +345,125 @@
                 	</c:when>
                 </c:choose>
 
-                <!--수정 삭제-->
-             
-
-                <!--삭제시 필요한 키값 숨겨서 보내기--> 
-                <form id="test" action="" method="post">
-                    <input type="hidden" name="" value="">
-                    <input type="hidden" name="" value="">
-                </form>
-
-                <!--선택된 요소에 액션값 부여하고, 바로 submit 시키기-->     
-                <script>
-                function postFormSubmit(num){
-                    if(num==1){ // 수정하기
-                        $("#").attr("action","url주소").submit();
-                    }else{ // 삭제하기
-                        $("#").attr("action","url주소").submit();
-                    }
-                }
-                </script>
-
                 <!--삭제하기 모달창-->
                 <!-- The Modal -->
-                <form  id="" action="" method="post" style="margin-top: 0px;" >
-                    <!--ex.아이디랑 글 번호 넘겨서 삭제 (sql문에 따라 보내는 값을 달라질 수 있음)-->
-                    <input type="hidden" id="" name="" value="${loginUser}" >
-                    <input type="hidden" id="" name="" value="${loginUser}" >
-
+               
                     <div class="modal fade" id="delete-modal">
                         <div class="modal-dialog modal-dialog-centered modal-sm">
                         <div class="modal-content">
-                            <!-- Modal Header -->
-                            <div class="modal-header">
-                            <h4 class="modal-title"><b>게시글 삭제</b></h4>
-                            <button type="button" class="close" data-dismiss="modal">&times;</button>
-                            </div>
-                            <!-- Modal body -->
-                            <div class="modal-body" style="line-height: 100%;">
-                                삭제시, 복구가 불가능합니다. <br>
-                                삭제하시겠습니까?
-                            </div>
-                            <!-- Modal footer -->
-                            <div class="modal-footer" style="display: flex; justify-content: space-between;" >
-                                <button type="reset" class="btn btn-outline-secondary" data-dismiss="modal">취소</button>
-                                <button type="submit" class="btn btn-danger"  onclick="postFormSubmit(2)">삭제</button>
-                            </div>
+                         	<!-- Modal Header -->
+                               <div class="modal-header" style="background-color: rgba(224, 224, 224, 0.24);">
+                                   <h4 class="modal-title">🧺삭제하기</h4>
+                                   <button type="button" class="close" data-dismiss="modal">&times;</button>
+                               </div>
+                               
+                               <!-- Modal body -->
+                               <div class="modal-body">
+                                  		<p align="center"><b>${b.nickname}</b>님 안녕하세요!</p>
+                                   <div class="modal-content" style="border:1px solid grey; width: 100%; height:40px ;border-radius: 5px;">
+                                       <div >
+                                           <div align="center" style="line-height:100%; margin-top:5px;">
+                                           	삭제 후에는 복구가 불가능합니다.<br>
+                                           	정말로 삭제하시겠어요? 🙃
+                                           </div>
+                                       </div>
+                                   </div>
+                               </div>
+                               <!-- Modal footer -->
+                               <div class="modal-footer" style="justify-content: center;">
+                                   <div>
+                                       <button type="button" class="btn btn-danger btn-sm" onclick="postFormSubmit(2)">삭제하기</button>
+                                       <button type="button" class="btn btn-outline-secondary btn-sm" data-dismiss="modal">취소</button>
+                                   </div>
+                               </div>
                         </div>
                         </div>
                     </div>
-                </form>
-            </div>
+           	 </div>
         </div>         
-
-
-        <!--관심 있을 만한 컬럼-->
-        <div class="column-footer" style="margin-top: 300px; margin-bottom:50px">
-            <div style="margin-left: 10px; margin-bottom: 30px;">
-                <h4><b>관심 있을 만한 칼럼</b></h4>
-            </div>
-            <!--좋아요 수 TOP 4 썸네일 조회하기-->
-            <!--반복문 생성하는 구간-->
-            <div class="thumbnail">
-                <div>
-                    <img src="" style="width:400px; height: 300px;">
-                    <div style="margin-top: 10px;"><b>당근 면접 후기 및 회고</b></div>
-                </div>
-            </div>
-            <!--반복문 생성하는 구간-->
-            <div class="thumbnail">
-                <div>
-                    <img src="" style="width:400px; height: 300px;">
-                    <div style="margin-top: 10px;"><b>당근 면접 후기 및 회고</b></div>
-                </div>
-            </div>
-            <!--반복문 생성하는 구간-->
-            <div class="thumbnail">
-                <div>
-                    <img src="" style="width:400px; height: 300px;">
-                    <div style="margin-top: 10px;"><b>당근 면접 후기 및 회고</b></div>
-                </div>
-            </div>
-            <!--반복문 생성하는 구간-->
-            <!--반복문 생성하는 구간-->
-            <div class="thumbnail">
-                <div>
-                    <img src="" style="width:400px; height: 300px;">
-                    <div style="margin-top: 10px;"><b>당근 면접 후기 및 회고</b></div>
-                </div>
-            </div>
-            <!--반복문 생성하는 구간-->
-        </div>   
+      
+      
+      
+             <!-- 필요한 키값 숨겨서 보내기--> 
+            <form id="postFormSubmit" action="" method="post">
+                <input type="hidden" name="bno" value="${b.bno}">
+				<input type="hidden" name="imgPath" value="${b.imgPath}">
+				<input type="hidden" name="category" value="칼럼">
+            </form>
+      		<!--선택된 요소에 액션값 부여하고, 바로 submit 시키기-->     
+              <script>
+	               function postFormSubmit(num){
+	                   if(num==1){ // 수정하기
+	                       $("#postFormSubmit").attr("action","updateForm.bo").submit();
+	                   }else{ // 삭제하기
+	                       $("#postFormSubmit").attr("action","delete.bo").submit();
+	                   }
+	               }
+              </script>
+	
+	        <!--관심 있을 만한 컬럼-->
+	        <div class="column-footer" style="margin-top: 300px; margin-bottom:50px">
+	            <div style="margin-left: 10px; margin-bottom: 30px;">
+	                <h4><b>관심 있을 만한 칼럼</b></h4>
+	            </div>
+	            <div id="likeCountTop4"></div>
+	            <!--좋아요 수 TOP 4 썸네일 조회하기-->
+	        </div>   
     </div>
+    
+    <script>
+    
+ 		// 좋아요 가장 많은 Top4 게시글 조회로 이동
+	   $(function(){
+			topBoardList();
+	
+			$(document).on("click",".thumbnail",function(){
+				location.href="colDetail.bo?bno="+$(this).children(".col-bno").val()+"&mno="+$(this).children(".mno").val();
+			})
+	
+		})	
+    	
+    	// 좋아요 가장 많은 Top4 게시글 조회
+    	function topBoardList(){
+    		$.ajax({
+    			url:"columnTop4.bo",
+    			success:function(list){
+    				let value=""
+    				// 비회원이 게시글 클릭했을 경우 변수에 담아서 mno=0으로 보내기
+   					let nUser = ${empty loginUser};
+					
+   					for(let i in list){
+    					value+=
+							'<div class="thumbnail">'
+						   +   '<input type="hidden" class="mno" value="';
+							if(nUser == true){
+								value+= '0">';
+							}else{
+								value+= '${loginUser.memNo}">';
+							}
+						   value+=
+						    	'<input type="hidden" class="col-bno" value="'+list[i].bno+'">'
+		    	           +     '<div>'
+		    	           +         '<img src="';
+		    	           
+		    	           if(list[i].imgPath == null){
+		    	        	   value+="${pageContext.request.contextPath}/resources/images/common/default-img.jpg";
+		    	           }else{
+		    	        	   value+= list[i].imgPath;
+		    	           }
+		    	           value+= 
+		    	           '" style="width:400px; height: 300px;">'
+		    	           +         '<div style="margin-top: 10px;">'+'<b>'+ list[i].title + '</b>'+'</div>'
+		    	           +     '</div>'
+		    	           + '</div>';
+    				}
+    				$("#likeCountTop4").html(value);
+    			}, error:function(){
+    				console.log("AJAX 통신 실패");
+    			}
+    		})
+    	}
+    </script>
 
 	<!--푸터바-->
 	<jsp:include page="../../common/footer.jsp" />

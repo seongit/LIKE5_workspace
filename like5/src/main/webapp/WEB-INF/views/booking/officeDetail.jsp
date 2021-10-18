@@ -25,11 +25,11 @@
         margin:auto !important;
         padding:0px 70px 0px 70px;
     }
-    /*메인 이미지*/
+    /*메인 이미지
     .reserveImg{
         width:900px;
         margin-top:-10px;
-    }
+    }*/
 
     /*시설 안내*/
     .facility{
@@ -112,8 +112,20 @@
     background-position: 0 0;
     max-width:80px;
 	}
-	/*스크롤 이동*/
-	html {scroll-behavior: smooth; /* 부드럽게 */}
+	
+	.carousel-item{
+		width: 600px;
+		height: 450px;
+		object-fit: contain !important;
+	};
+	.fit{
+		object-fit: contain !important;
+	}
+	
+	/* 스크롤 이동
+	html {scroll-behavior: smooth; /* 부드럽게 */}  */
+	
+	
 </style>
 </head>
 <body>
@@ -143,20 +155,24 @@
 
            <!-- Indicators -->
            <ul class="carousel-indicators">
-             <li data-target="#demo" data-slide-to="0" class="active"></li>
+           	 <li data-target="#demo" class="active"></li>	
+             <li data-target="#demo" data-slide-to="0"></li>
              <li data-target="#demo" data-slide-to="1"></li>
+             <li data-target="#demo" data-slide-to="2"></li>
+             <li data-target="#demo" data-slide-to="3"></li>
            </ul>
 
            <!-- 슬라이드 부분 -->
 		   <div class="carousel-inner">
 			    <div class="carousel-item active">
-			    	<img src="${o.offImgPath}">
+			    	<img class="d-block w-100" src="${o.offImgPath}">
 			    </div>
-			    <c:forEach var="i" begin="1" end="${ fn:length(at)-1 }">
+			    <c:forEach var="i" begin="0" end="${ fn:length(at)-1 }">
 				    <div class="carousel-item">
-				      <img src="${at.get(i).filePath}">
+				      <img class="d-block w-100" src="${at.get(i).filePath}">
 				    </div>
 				</c:forEach>
+
            </div>
 
            <!-- Left and right controls -->
@@ -234,9 +250,10 @@
 
        <br>
         <!--후기-->
-        <div><h3><b>의견 및 소감</b></h3></div>
+        <div id="section2"><h3><b>의견 및 소감</b></h3></div>
 
         <hr>
+        
 
         <c:forEach var="r" items="${ rv }">
 	        <div class="review">
@@ -321,8 +338,9 @@ $.fn.generateStars = function() {
 $('.star-prototype').generateStars();
 
 <%--스크롤 이동--%>
-$(document).ready(function(){
-    $("a").on('click', function(event) {
+/*
+ $(document).ready(function(){
+    $("#reviewScroll").on('click', function(event) {
       if (this.hash !== "") {
         event.preventDefault();
         var hash = this.hash;
@@ -333,8 +351,8 @@ $(document).ready(function(){
         });
       }
     });
-  });
-
+  }); 
+*/
 <%-- kakao map --%>
 
 var mapContainer = document.getElementById('map'), // 지도를 표시할 div

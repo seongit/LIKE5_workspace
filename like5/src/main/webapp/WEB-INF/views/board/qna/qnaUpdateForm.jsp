@@ -5,10 +5,14 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>[QnA] 질문 수정하기</title>
 
 <!-- qnaDetailView.css -->
-<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/qnaUpdateForm.css" />
+<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/qnaEnrollForm.css" />
+
+<!--토스트 UI-->
+<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.css" />	
+
 	
 </head>
 
@@ -16,7 +20,7 @@
 	<!-- 메뉴바 -->
 	<jsp:include page="../../common/header.jsp" />
 	
-	<!-- [한솔] QnA 게시글 수정 페이지 -->
+	<!-- [한솔] QnA 게시글 상세 페이지 -->
 	<div class="innerOuter">
 		<!-- 전체를 감싸는 div -->
 		<div class="qnaMain">
@@ -27,33 +31,37 @@
 			<div class="qnaBottom">
 				<!-- 좌측 글쓰기 영역 -->
 				<div class="qnaBottomLeft">
-					<!-- 이전에 작성했던 내용 불러오기 -->
-					<form action="" class="qnaWrite" novalidate>
+					<!-- 제목, 태그, 본문 작성 영역
+						 [novalidate] <form>이 유효성검사(검사 후 경고 안내문 출력)를 하지 않도록 지정 -->
+					<form class="qnaWrite"  id="updateForm" method="post" action="qnaUpdate.bo" enctype="multipart/form-data" novalidate>
+						<!-- 작성자, 글번호 -->
+						<input type="hidden" class="form-group" id="qWriter" name="mno" value="${ qnaBoard.mno }"></input>
+						<input type="hidden" class="form-group" id="qBno" name="bno" value="${ qnaBoard.bno }"></input>
+						<input type="hidden" name="content" value="">
 						<!-- 제목 영역 -->
 						<div class="form-group">
 							<label for="qTitle">
 								<button type="button" class="btn btn-secondary" disabled>제목</button>
 								&nbsp;&nbsp;제목은 50자 이내로 입력해주세요!
 							</label>
-							<input type="text" class="form-control" id="qTitle" 
-								placeholder="다른 사람들이 자세히 알 수 있도록 구체적으로 제목을 작성해주세요." name="qTitle" required>
-							<div class="valid-feedback">입력되었습니다.</div>
+							<input type="text" class="form-control" id="qTitle" name="title" value="${ qnaBoard.title }"
+								placeholder="다른 사람들이 자세히 알 수 있도록 구체적으로 제목을 작성해주세요." required>
+							<div class="valid-feedback">제목이 입력되었습니다.</div>
 							<div class="invalid-feedback">제목을 작성해주세요.</div>
-						</div>
-						<!-- 제목 영역 끝 -->
+						</div><!-- 제목 영역 끝 -->
 	
 						<!-- 태그 영역 -->
 						<div class="form-group">
 							<label for="qTag">
 								<button type="button" class="btn btn-secondary" disabled>태그</button>
-								&nbsp;&nbsp;해시태그(#)와 태그 이름을 입력한 후 반점(,)으로 구분해주세요!&nbsp;&nbsp;<i>ex)#JAVA, AWS, ...</i>
+								&nbsp;&nbsp;해시태그(#)와 태그 이름을 입력한 후 띄어쓰기로 구분해주세요!&nbsp;&nbsp;<i>ex)#JAVA #AWS ...</i>
 							</label>
-							<input type="text" class="form-control" id="qTag"
-								placeholder="우측에서 사용 중인 태그를 알아보고 질문과 관련있는 태그를 입력해주세요." name="qTag" required>
-							<div class="valid-feedback">입력되었습니다.</div>
+							<input type="text" class="form-control" id="qTag" value="${ qnaBoard.tag }"
+								placeholder="첨부 가능한 태그 확인 후 관련있는 태그를 입력해주세요. 입력 양식과 일치하지 않을 경우 태그가 보여지지 않아요." name="tag" required>
+							</input>
+							<div class="valid-feedback">태그가 입력되었습니다.</div>
 							<div class="invalid-feedback">태그를 입력해주세요.</div>
-						</div>
-						<!-- 태그 영역 끝 -->
+						</div><!-- 태그 영역 끝 -->
 	
 						<!-- 본문 영역 --> 
 						<div class="form-group">
@@ -61,13 +69,24 @@
 								<button type="button" class="btn btn-secondary" disabled>본문</button>
 								&nbsp;&nbsp;질문하고 싶은 내용을 입력해주세요!
 							</label>
-							<!-- 마크다운 API 들어올 곳  -->
-							<textarea class="form-control" id="qContent" rows="5" name="qContent" required></textarea>
-							<div class="valid-feedback">입력되었습니다.</div>
+							 <div id="editor"  onkeyup="keyevent(this);" class="form-control" >${ qnaBoard.content }</div>
+                   			 <div id="viewer"></div>
+							<textarea class="form-control" id="qContent" rows="5" style="display:none;"></textarea>
+							<div class="valid-feedback">본문이 입력되었습니다.</div>
 							<div class="invalid-feedback">본문을 작성해주세요.</div>
-						</div>
-						<!-- 본문 영역 -->
-	
+						</div><!-- 본문 영역 -->
+						
+						 <!--토스트 UI-->
+    					<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+    					
+    					<script>
+    					  function keyevent(){
+  				        	var content = editor.getHTML();
+  				        	$("#updateForm").children().eq(2).attr("value",content);
+  				        }
+    					</script>
+    					
+						
 						<!-- 작성 주의사항 -->
 						<div class="alert alert-danger alert-dismissible">
 							<button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -79,66 +98,88 @@
 							<label for="agree" class="form-check-label">
 								<input class="form-check-input" type="checkbox" name="agree" id="agree" required>
 									&nbsp;(필수) 상단의 안내사항을 확인하였습니다.
-								<div class="valid-feedback">동의하셨습니다.</div>
+								<div class="valid-feedback">안내사항에 동의하셨습니다.</div>
 								<div class="invalid-feedback">질문을 등록하시려면 안내 확인에 체크해주세요.</div>
 							</label>
-						</div>
-						<!-- 검사 체크 영역 끝 -->
+						</div><!-- 검사 체크 영역 끝 -->
 	
 						<!-- 버튼 영역 -->
 						<div class="w3-container w3-right-align w3-margin-top">
+							<c:choose>
+								<c:when test="${ b.status eq 'F' }">
+									<button type="button" onclick="storage()" class="w3-button w3-white w3-border w3-border-gray w3-round">임시저장</button>
+								</c:when>
+								<c:otherwise>
+									<button type="button" onclick="javascript:history.go(-1)" class="w3-button w3-white w3-border w3-border-gray w3-round">뒤로가기</button>
+								</c:otherwise>
+							</c:choose>
 							<button type="submit" class="btn btn-danger" id="submitButton">수정하기</button>
-						</div>
-						<!-- 버튼 영역 끝 -->
-					</form>
-					<!-- 제목, 태그, 본문 작성 영역 끝 -->
-				</div>
-				<!-- 좌측 글쓰기 영역 끝 -->
+						</div><!-- 버튼 영역 끝 -->
+					</form><!-- 제목, 태그, 본문 작성 영역 끝 -->
+				</div><!-- 좌측 글쓰기 영역 끝 -->
+				
+				<script>
+				// 작성하기 버튼 클릭 시 유효성 검사
+				(function() {
+					'use strict';
+					window.addEventListener('load', function() {
+						var forms = document.getElementsByClassName('qnaWrite');
+						var validation = Array.prototype.filter.call(forms, function(form) {
+							form.addEventListener('submit', function(event) {
+								if (form.checkValidity() === false) {
+									event.preventDefault();
+									event.stopPropagation();
+								}
+								form.classList.add('was-validated');
+							}, false);
+						});
+					}, false);
+				})();
+				
+				// 임시저장 클릭 시 qnaStorageInsert.bo로 값 제출
+				function storage(){
+					$("#enrollForm").attr("action", "qnaStorageInsert.bo").submit();
+				}
+				
+			    /*토스트 UI */
+		        const content = [].join('\n');
+    		  	const Editor = toastui.Editor;
+		        const editor = new Editor({
+		            el: document.querySelector('#editor'),
+		            height: '600px',
+		            previewStyle: 'vertical',
+		            language: 'ko',
+		        });
+	            
+		        /*토스트 UI 뷰어 */	
+		        const viewer = toastui.Editor.factory({
+		            el: document.querySelector('#viewer'),
+		            viewer: true,
+		            height: '500px',
+		            initialValue: content
+		        });
+	
+
+				// 사용자가 입력한 태그 데이터 검사
+				</script>
 	
 				<!-- 우측 설명 영역 & 팁 아코디언 -->
 				<div class="qnaBottomRight">
 					<!-- 태그 검색 -->
 					<div class="tagList" style="width:100%; height:150px; overflow:auto">
 						<div class="tipName">
-							<b>⭐ LIKE5에서 사용되는 태그 검색 ⭐</b>
+							<b>⭐ 첨부 가능한 태그 보기 ⭐</b>
 						</div>
-						<input class="tagInput" type="text" placeholder="영어로 태그를 검색해보세요 (대/소문자 구분 없음)"
-							id="tagInput" onkeyup="tagSearch()">
-						<!-- 리스트를 DB에서 가져오면 좋을텐데..! -->
+						<!-- tag DB에 등록된 리스트 정렬 -->
 						<table class="w3-table w3-striped w3-bordered w3-centered" id="tagTable">
-							<tr><td>JAVA</td></tr>
-							<tr><td>JavaScript</td></tr>
-							<tr><td>C</td></tr>
-							<tr><td>Python</td></tr>
-							<tr><td>Spring</td></tr>
-							<tr><td>Html</td></tr>
-							<tr><td>Android</td></tr>
-							<tr><td>React.js</td></tr>
-							<tr><td>Linux</td></tr>
-							<tr><td>MySQL</td></tr>
-							<tr><td>Node.js</td></tr>
-							<tr><td>C++</td></tr>
-							<tr><td>CSS</td></tr>
-							<tr><td>AWS</td></tr>
-							<tr><td>PHP</td></tr>
-							<tr><td>Algorithm</td></tr>
-							<tr><td>Git</td></tr>
-							<tr><td>IOS</td></tr>
-							<tr><td>Kotiln</td></tr>
-							<tr><td>DataBase</td></tr>
-							<tr><td>Ajax</td></tr>
-							<tr><td>C_Sharp</td></tr>
-							<tr><td>Django</td></tr>
-							<tr><td>Firebase</td></tr>
-							<tr><td>Event</td></tr>
-							<tr><td>5분코딩</td></tr>
-							<tr><td>Rest</td></tr>
-							<tr><td>Swift</td></tr>
-							<tr><td>Jquery</td></tr>
-							<tr><td>Vue.js</td></tr>
+							<c:forEach var="t" items="${ tagList }">
+								<tr>
+									<td hidden>${ t.tagNo }</td>
+									<td>${ t.tagName }</td>
+								</tr>
+							</c:forEach>
 						</table>
-					</div>
-					<!-- 태그 검색 끝 -->
+					</div><!-- 태그 검색 끝 -->
 					
 					<!-- 팁 아코디언 -->
 					<div class="tipName" style="margin-top:10%;">
@@ -189,73 +230,29 @@
 							관련 내용의 핵심 코드만 올려주세요.
 						</p>
 					</div>
-					<hr class="tipLine">
-					<!-- 팁 아코디언 끝-->
-				</div>
-				<!-- 우측 설명 영역 끝 -->
-			</div>
-			<!-- 본문 하단 영역 끝 -->
-		</div>
-		<!-- 전체를 감싸는 div 끝 -->
-	</div>
-	<!-- 본문 끝 -->
+					<hr class="tipLine"><!-- 팁 아코디언 끝-->
+					
+					<script>
+					// 팁 아코디언
+					function explanation(id) {
+						var x = document.getElementById(id);
+						if (x.className.indexOf("w3-show") == -1) {
+							x.className += " w3-show";
+							x.previousElementSibling.className = 
+							x.previousElementSibling.className.replace("w3-white", "w3-red");
+						} else { 
+							x.className = x.className.replace(" w3-show", "");
+							x.previousElementSibling.className = 
+							x.previousElementSibling.className.replace("w3-red", "w3-white");
+						}
+					}
+					</script>
+					
+				</div><!-- 우측 설명 영역 끝 -->
+			</div><!-- 본문 하단 영역 끝 -->
+		</div><!-- 전체를 감싸는 div 끝 -->
+	</div><!-- 본문 끝 -->
 
-	<!-- JS -->
-	<script>
-		// 우측 설명 영역
-		function explanation(id) {
-			var x = document.getElementById(id);
-			if (x.className.indexOf("w3-show") == -1) {
-				x.className += " w3-show";
-				x.previousElementSibling.className = 
-				x.previousElementSibling.className.replace("w3-white", "w3-red");
-			} else { 
-				x.className = x.className.replace(" w3-show", "");
-				x.previousElementSibling.className = 
-				x.previousElementSibling.className.replace("w3-red", "w3-white");
-			}
-		}
-
-		
-		// 양식 제출 관련 유효성 검사
-		(function() {
-		'use strict';
-		window.addEventListener('load', function() {
-			var forms = document.getElementsByClassName('qnaWrite');
-			var validation = Array.prototype.filter.call(forms, function(form) {
-			form.addEventListener('submit', function(event) {
-				if (form.checkValidity() === false) {
-				event.preventDefault();
-				event.stopPropagation();
-				}
-				form.classList.add('was-validated');
-			}, false);
-			});
-		}, false);
-		})();
-
-		
-		// 테이블 내 일치하는 필드값 검색
-		function tagSearch() {
-		var input, filter, table, tr, td, i;
-		input = document.getElementById("tagInput");
-		filter = input.value.toUpperCase();
-		table = document.getElementById("tagTable");
-		tr = table.getElementsByTagName("tr");
-		for (i = 0; i < tr.length; i++) {
-			td = tr[i].getElementsByTagName("td")[0];
-			if (td) {
-			txtValue = td.textContent || td.innerText;
-			if (txtValue.toUpperCase().indexOf(filter) > -1) {
-				tr[i].style.display = "";
-			} else {
-				tr[i].style.display = "none";
-			}
-			}
-		}
-		}
-	</script>
-	
 	<!-- 푸터바 -->
 	<jsp:include page="../../common/footer.jsp" />
 </body>

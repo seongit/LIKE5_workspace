@@ -45,7 +45,8 @@
         position: relative;
         background: linear-gradient(rgba(255,255,255, 0.5), rgba(255, 255, 255, 0.5)), url(resources/images/bg-1.jpg) center/cover no-repeat fixed;
         z-index: 0.8;
-        height: 100vh;
+        height: 90vh;
+        background-attachment:scroll;
     }
     /* .innerbox{
         position: absolute;
@@ -55,7 +56,6 @@
     } */
 
     form{
-    	border:1px solid pink;
         max-width: 850px;
         margin: 0 auto;
         display: block;
@@ -177,7 +177,7 @@
         
     }
     .desc-img-1 img, .desc-img-3 img{
-        max-width:600px;
+        max-width:400px;
         max-height:40vw;
     }
 
@@ -234,7 +234,6 @@
     #person-modal{
         display: none;
         position: relative !important;
-        border:1px solid orange;
     }
     .show-modal{
         display: block !important;
@@ -297,9 +296,9 @@
         <div class="desc-wrapper-1">
             <div class="desc-img-1"> <img src="resources/images/desc-1.jpg"></div>
             <div class="desc-1">
-                <h2>소제목</h2>
+                <h2>더 생산성있는 업무 공간</h2>
                 <p>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Iusto dolor repellat earum aut. Ipsum ea numquam maxime facere dolorum, saepe quaerat beatae suscipit accusantium odio similique consectetur impedit, nobis voluptas!
+                   	다양한 개발자들과 만나서 일 할 수 있습니다.
                 </p>
             </div>
         </div>
@@ -307,9 +306,9 @@
         <div class="desc-wrapper-1">
             <div class="desc-img-2"> <img src="resources/images/desc-2.jpg"></div>
             <div class="desc-2">
-                <h2>소제목</h2>
+                <h2>충분한 휴식공간</h2>
                 <p>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Iusto dolor repellat earum aut. Ipsum ea numquam maxime facere dolorum, saepe quaerat beatae suscipit accusantium odio similique consectetur impedit, nobis voluptas!
+                  	충분한 휴식은 최대의 업무 효율을 낼 수 있습니다. like5에서 느껴보세요!
                 </p>
             </div>
         </div>
@@ -317,9 +316,9 @@
         <div class="desc-wrapper-2">
             <div class="desc-img-3"> <img src="resources/images/desc-3.jpg"></div>
             <div class="desc-3">
-                <h2>소제목</h2>
+                <h2>원하는 기간 만큼 자유롭게!</h2>
                 <p>
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Iusto dolor repellat earum aut. Ipsum ea numquam maxime facere dolorum, saepe quaerat beatae suscipit accusantium odio similique consectetur impedit, nobis voluptas!
+                  	디지털 노마드의 꿈을 펼쳐보세요
                 </p>
             </div>
         </div>
@@ -331,6 +330,10 @@ const checkInput = () => {
     const beforeInput = $("#branch").val();
     timer(beforeInput);
 };
+$("#branch").on("keyup", function(){
+	console.log("!!");
+	$(".search-result").removeClass("hide");
+})
 
 const timer = (beforeInput) => {
     setTimeout(() => {
@@ -344,14 +347,8 @@ const timer = (beforeInput) => {
         }
         if ($("#branch").val() === "") {
             $(".search-result").addClass("hide");
-        } else {
-        	$(".search-result").removeClass("hide");
         }
-        
-        $(".search-result li").on("click", function(){
-        	$(this).parent().addClass("hide");
-        })//선택하고 모달 닫기 하고 싶은데 안됨 ㅜㅜ
-    }, 1000); //1초 기준 데이터 로드
+    }, 500);
 };
 
 const loadData = (input) =>{
@@ -372,7 +369,7 @@ const loadData = (input) =>{
     			};
     			$(".pop_keywords").html(result);
     		} else {
-    			$(".pop_keywords").text("검색결과가없습니다");
+    			$(".pop_keywords").html("<li>" + "검색결과가없습니다" + "</li>");
     		}
     		
     		<%-- 지역 선택 --%>

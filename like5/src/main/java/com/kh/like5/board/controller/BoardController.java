@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,7 +88,7 @@ public class BoardController {
 	 * [한솔] QnaEnrollForm 게시글 임시저장 insert
 	 */
 	@RequestMapping("qnaStorageInsert.bo")
-	public String qnaStorageInsert(Board b, MultipartFile upfile, HttpSession session, Model model) {
+	public String qnaStorageInsert(Board b, HttpSession session, Model model) {
 		int result = bService.qnaStorageInsert(b);
 		
 		if(result > 0) {
@@ -103,7 +104,7 @@ public class BoardController {
 	 * [한솔] QnaDetailView 게시글 상세 페이지
 	 */
 	@RequestMapping("qnaDetail.bo")
-	public ModelAndView qnaDetail(int bno, ModelAndView mv)  {
+	public ModelAndView qnaDetail(int bno, ModelAndView mv) {
 		// 조회수 증가
 		int result = bService.increaseCount(bno);
 		
@@ -122,7 +123,72 @@ public class BoardController {
 		return mv;
 	}
 	
-
+	/** 
+	 * [한솔] QnaDetailView 게시글 delete
+	 */
+	@RequestMapping("qnaDelete.bo")
+	public String qnaDelete(int bno, Model model, HttpSession session) {
+		int result = bService.qnaDelete(bno);
+		
+		if(result > 0) {
+			session.setAttribute("alertMsg", " 게시글이 삭제되었습니다. ");
+			return "redirect:qnaList.bo";
+		}else {
+			model.addAttribute("errorMsg", " 게시글 삭제에 실패하였습니다. ");
+			return "common/errorPage";
+		}
+	}
+	
+	/** 
+	 * [한솔] QnaDatailView 게시글 수정하기 페이지 호출
+	 */
+	@RequestMapping("qnaUpdateForm.bo")
+	public ModelAndView qnaUpdateForm(Board b, int bno, ModelAndView mv) {	
+		Board qnaBoard = bService.qnaDetail(bno = b.getBno());
+		String qnaStatus = b.getStatus();
+		ArrayList<Tag> tagList = bService.tagList();
+		
+		mv.addObject("bno", bno)
+		  .addObject("status", qnaStatus)
+		  .addObject("tagList", tagList)
+		  .addObject("qnaBoard", qnaBoard)
+		  .setViewName("board/qna/qnaUpdateForm");
+		
+		return mv;
+	}
+	
+	/** 
+	 * [한솔] QnaUpdateForm 게시글 Update
+	 */
+	@RequestMapping("qnaUpdate.bo")
+	public String qnaUpdate(Board b, HttpSession session, Model model) {
+		int result = bService.qnaUpdate(b);
+		
+		if(result > 0) {
+			session.setAttribute("alertMsg", " 게시글이 성공적으로 수정되었습니다. ");
+			return "redirect:qnaList.bo";
+		}else {
+			model.addAttribute("errorMsg", " 게시글 수정에 실패하였습니다. ");
+			return "common/errorPage";
+		}
+	}
+	
+	/** 
+	 * [한솔] QnaDetailView 답변(댓글) 채택
+	 */
+	@RequestMapping("adoptionReply.bo")
+	public String adoptionReply(int repNo, Model model, HttpSession session, HttpServletRequest request) {
+		int result = bService.adoptionReply(repNo);
+		String referer = (String)request.getHeader("referer");
+		
+		if(result > 0) {
+			session.setAttribute("alertMsg", " 답변이 채택되었습니다. ");
+			return "redirect:" + referer;
+		}else {
+			model.addAttribute("errorMsg", " 답변 채택에 실패하였습니다. ");
+			return "common/errorPage";
+		}
+	}
 	
 
 	/* -------- 푸터 -------- */
@@ -163,26 +229,132 @@ public class BoardController {
 	
 	//-------------------동규-------------------------
 	
+	@RequestMapping("itNews.bo")
+	public ModelAndView itNews(ModelAndView mv, @RequestParam(value="currentPage", defaultValue="1") int currentPage) {
+		int listCount = bService.itNewsCount();
+		
+		PageInfo pi = Pagination.getPageInfo(listCount, currentPage, 10, 10);
+		ArrayList<Board> itNews = bService.itNews(pi);
+		
+		
+		mv.addObject("pi", pi)
+		  .addObject("itNews", itNews)
+		  .setViewName("board/itNews/itNewsList");
+		
+		
+		return mv;
+				
+	}
 	
 	
+	@RequestMapping("itNewsDetail.bo")
+	public ModelAndView itNewsDetail(int bno, ModelAndView mv) {
+		
+		int result = bService.increaseCount(bno);
+		
+		if(result > 0) {
+			Board b = bService.itNewsDetail(bno);
+			
+			mv.addObject("b", b)
+			  .setViewName("board/itNews/itNewsDetail");
+		}else {
+			// 상세조회 실패 시
+			mv.addObject("errMsg", " 게시글 상세조회에 실패하였습니다. ")
+			  .setViewName("common/errorPage");
+		}
+		
+		return mv;
+	
+	}
+	
+	@RequestMapping("itNewsSearch.bo")
+	public ModelAndView itNewsSearch(ModelAndView mv, @RequestParam(value="currentPage", defaultValue="1") int currentPage, String condition) {
+		
+		HashMap<String,String>map = new HashMap<>();
+		map.put("condition", condition);
+		
+		int listCount = bService.itNewsSearchCount(map);
+		
+		PageInfo pi = Pagination.getPageInfo(listCount, currentPage, 10, 10);
+		ArrayList<Board> itNews = bService.itNewsSearch(pi,map);
+		
+		
+		mv.addObject("pi", pi)
+		  .addObject("itNews", itNews)
+		  .addObject("condition",condition)
+		  .setViewName("board/itNews/itNewsList");
+		
+		
+		return mv;
+				
+	}
 	
 	
+	@RequestMapping("insertItNewsForm.bo")
+	public String insertItNewsForm() {
+		
+		return "board/itNews/itNewsForm";
+		
+	}
+	
+	@RequestMapping("insertItNews.bo")
+	public String insertItNews(Board b, HttpSession session, Model model) {
+		
+		int result = bService.insertItNews(b);
+		
+		if(result > 0) {
+			session.setAttribute("alertMsg", " 게시글이 성공적으로 등록되었습니다. ");
+			return "redirect:itNews.bo";
+		}else {
+			model.addAttribute("errorMsg", " 게시글 등록에 실패하였습니다. ");
+			return "common/errorPage";
+		}
+	}
+	
+	@RequestMapping("upadateItNews.bo")
+	public String upadateItNews(Board b, HttpSession session, Model model) {
+		
+		int result = bService.upadateItNews(b);
+		
+		if(result > 0) {
+			session.setAttribute("alertMsg", " 게시글이 성공적으로 수정되었습니다. ");
+			return "redirect:itNews.bo";
+		}else {
+			model.addAttribute("errorMsg", " 게시글 수정에 실패하였습니다. ");
+			return "common/errorPage";
+		}
+	}
 	
 	
+	@RequestMapping("upadateFormItNews.bo")
+	public ModelAndView upadateformItNews(int bno, ModelAndView mv) {
+		
+		
+		Board b = bService.itNewsDetail(bno);
+			
+		mv.addObject("b", b)
+		  .setViewName("board/itNews/upadateformItNews");
+		
+		
+		return mv;
+	
+	}
 	
 	
+	@RequestMapping("deleteItnews.bo")
+	public String deleteItnews(int bno, HttpSession session, Model model) {
+			
+		int result = bService.deleteItnews(bno);
+		
+		if(result > 0) {
+			session.setAttribute("alertMsg", " 게시글이 성공적으로 삭제되었습니다. ");
+			return "redirect:itNews.bo";
+		}else {
+			model.addAttribute("errorMsg", " 게시글 삭제에 실패하였습니다. ");
+			return "common/errorPage";
+		}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	}
 	
 	
 	
@@ -267,8 +439,8 @@ public class BoardController {
 	 */
 	@RequestMapping("comOrderByCount.bo")
 	public ModelAndView comOrderByCount(ModelAndView mv,@RequestParam(value="currentPage",defaultValue="1")
-										int currentPage, String condition) {
-			
+										int currentPage, String condition,String flag) {
+		
 		int listCount = bService.comListCount();
 		PageInfo pi = Pagination.getPageInfo(listCount, currentPage, 5, 5);
 		ArrayList<Board>comList = bService.comOrderByCount(pi, condition);
@@ -277,6 +449,7 @@ public class BoardController {
 		.addObject("comList",comList)
 		.addObject("condition",condition)
 		.addObject("listCount",listCount)
+		.addObject("flag",flag)
 		.setViewName("board/community/comListView");
 		return mv;
 	}
@@ -370,7 +543,7 @@ public class BoardController {
 			if(category.equals("칼럼")) {
 				mv.setViewName("redirect:colList.bo");
 			}else {
-				//카테고리가 커뮤니티(일상|칼럼)일 경우 칼럼 전체 리스트 페이지로 이동	
+				//카테고리가 커뮤니티(일상|칼럼)일 경우 커뮤니티 전체 리스트 페이지로 이동	
 				mv.setViewName("redirect:comList.bo");
 			}
 		}
@@ -379,25 +552,38 @@ public class BoardController {
 	
 	
 	/**
-	 * [커뮤니티] - 글 수정 Form
+	 * [커뮤니티 | 칼럼] - 글 수정 Form
 	 * @author seong
 	 */
 	
-	@RequestMapping("comUpdateForm.bo")
+	@RequestMapping("updateForm.bo")
 	public ModelAndView comUpdateForm(Board b,ModelAndView mv) {
-		int bno = b.getBno();
-		mv.addObject("b",bService.boardDetail(bno))
-		   .setViewName("board/community/comUpdateForm");
 		
+		String category = b.getCategory();
+		int bno = b.getBno();
+		
+		if(category!=null && category.equals("커뮤니티")) {
+			mv.addObject("b",bService.boardDetail(bno))
+			.setViewName("board/community/comUpdateForm");
+		}else {
+			mv.addObject("b",bService.boardDetail(bno))
+			.setViewName("board/column/colUpdateForm");
+		}
 		return mv;
 	}
 	
+	
+	
+	
+	
 	/**
-	 * [커뮤니티] - 게시글 수정하기
+	 * [커뮤니티 | 칼럼] - 게시글 수정하기
 	 * @author seong
 	 */
-	@RequestMapping("comUpdate.bo")
+	@RequestMapping("update.bo")
 	public ModelAndView updateCommunity(Board b, MultipartFile reupfile, ModelAndView mv,HttpSession session) {
+		
+		String category = b.getCategory();
 		
 		// 새로온 첨부파일이 있었을 때
 		if(!reupfile.getOriginalFilename().equals("")) {
@@ -408,25 +594,36 @@ public class BoardController {
 			b.setImgPath("resources/images/board/"+changeName);
 		}
 		
-		int result = bService.updateCommunity(b);
+		int result = bService.updateComAndCol(b);
 		
 		if(result>0) {
-			session.setAttribute("alertMsg", "성공적으로 수정되었습니다!");
-			mv.setViewName("redirect:comList.bo?bno="+b.getBno());
+			if(category.equals("칼럼")) {
+				session.setAttribute("alertMsg", "성공적으로 수정되었습니다!");
+				mv.setViewName("redirect:colList.bo?bno="+b.getBno());
+			}else {
+				session.setAttribute("alertMsg", "성공적으로 수정되었습니다!");
+				mv.setViewName("redirect:comList.bo?bno="+b.getBno());
+			}
+			
 		}
 		return mv;
 	}
 		
 	
 	/**
-	 * [커뮤니티] 게시글 삭제하기
+	 * [커뮤니티 | 칼럼] 게시글 삭제하기
 	 * @author seong
 	 */
 	
-	@RequestMapping("comDelete.bo")
-	public String deleteCommunity(int bno,String imgPath, HttpSession session){
+	@RequestMapping("delete.bo")
+	public String deleteComAndCol(Board b,HttpSession session){
 		
-		int result = bService.deleteCommunity(bno);
+		int bno = b.getBno();
+		String imgPath = b.getImgPath();
+		String cagetory = b.getCategory();
+		
+		int result = bService.deleteComAndCol(bno);
+		
 		if(result>0) {
 			//게시글 삭제시첨부파일도 지우기
 			if(!imgPath.equals("")) {
@@ -435,7 +632,14 @@ public class BoardController {
 			}
 			session.setAttribute("alertMsg", "성공적으로 삭제되었습니다!");
 		}
-		return "redirect:comList.bo";
+		
+		if(!cagetory.equals("칼럼")) {
+			return "redirect:comList.bo";
+		}else {
+			return "redirect:colList.bo";
+		}
+		
+	
 	}
 	
 	/**
@@ -444,8 +648,6 @@ public class BoardController {
 	 */
 	@RequestMapping("report.bo")
 	public ModelAndView reportCommunity(Board b, Report r,ModelAndView mv,HttpSession session) {
-		
-		System.out.println(r);
 		
 		int result = bService.reportCommunity(r);
 		int bno = b.getBno();
@@ -486,7 +688,7 @@ public class BoardController {
 	
 	@RequestMapping("colOrderByCount.bo")
 	public ModelAndView colOrderByCount(ModelAndView mv,@RequestParam(value="currentPage",defaultValue="1")
-										int currentPage, String condition) {
+										int currentPage, String condition,String flag) {
 		
 	int listCount = bService.colListCount();
 	PageInfo pi = Pagination.getPageInfo(listCount, currentPage, 5, 9);
@@ -497,6 +699,7 @@ public class BoardController {
 		.addObject("colList",colList)
 		.addObject("condition",condition)
 		.addObject("listCount",listCount)
+		.addObject("flag",flag)
 		.setViewName("board/column/colListView");
 	  return mv;
 	}
@@ -523,8 +726,6 @@ public class BoardController {
 	public ModelAndView colDetail(ModelAndView mv,Board board) {
 		
 		int bno = board.getBno();
-		int mno = board.getMno();
-		
 		
 		// 게시글 조회수 증가 
 		int result = bService.increaseCount(bno);
@@ -533,19 +734,26 @@ public class BoardController {
 		if(result>0) {
 			Board b = bService.boardDetail(bno);
 			
-			// 게시글 상세 조회 시 로그인한 회원이 해당 게시글에 좋아요와 스크랩을 확인하기
+			// 게시글 상세 조회 시 로그인한 회원이 해당 게시글 (좋아요,스크랩,후원)여부 확인
 			int likesCount = bService.likesCount(board);
 			int scrapCount = bService.scrapCount(board);
+			int sponsorCount = bService.sponsorCount(board);
 			
+			// 좋아요 여부
 			if(likesCount!=0) {
 				mv.addObject("likes",likesCount);
 			} 
 			
+			// 스크랩 여부
 			if(scrapCount !=0) {
 				mv.addObject("scrap",scrapCount);
 			}
 			
-			// 둘 다 0일 때 보여지는 화면
+			// 후원 여부
+			if(sponsorCount!=0) {
+				mv.addObject("sponsor",sponsorCount);
+			}
+			
 			mv.addObject("b",b).setViewName("board/column/colDetailView");
 			
 		}else {
@@ -570,7 +778,14 @@ public class BoardController {
 		map.put("bno", bno);
 		map.put("mno",mno);
 		
+		// 좋아요 | 스크랩 insert 
 		int result = bService.likeAndScrap(map);
+		
+		// 성공적으로 insert가 되면 해당 컬럼에 count + 1
+		if(result>0) {
+			int increaseCounts = bService.increaseCounts(map);
+		}
+		
 		return result>0? "success" : "fail";
 	}
 	
@@ -590,7 +805,58 @@ public class BoardController {
 		
 		int result = bService.UnlikeAndUnScrap(map);
 		
+		if(result>0) {
+			int decreaseCounts = bService.decreaseCounts(map);
+		}
+		
 		return result>0? "success" : "fail";
+	}
+	
+	
+	/**
+	 * Ajax [ 칼럼 ] 관심 칼럼 조회
+	 * @author seong
+	 */
+	
+	@ResponseBody
+	@RequestMapping(value="columnTop4.bo",produces="application/json; charset=utf-8")
+	public String topBoardList() {
+		ArrayList<Board>list = bService.topBoardList();
+		return new Gson().toJson(list);
+	}
+	
+	/**
+	 * [ 칼럼 ] 임시저장 등록
+	 * @author seong
+	 */
+	@RequestMapping("colTemSave.bo")
+	public ModelAndView colStorageInsert(Board b,ModelAndView mv,HttpSession session) {
+		
+		int result = bService.colStorageInsert(b);
+		
+		if(result>0) {
+			session.setAttribute("alertMsg", "임시 저장 성공!");
+			mv.setViewName("redirect:colList.bo");
+		}else {
+			session.setAttribute("alertMsg", "임시 저장 실패 😅");
+		}
+		
+		return mv;
+		
+	}
+	
+	/**
+	 * [ 칼럼 ] 임시저장 글 조회  -->
+	 * @author seong
+	 */
+	
+	@RequestMapping("selectTemSave.bo")
+	public ModelAndView selectTemSave(int bno,ModelAndView mv) {
+		
+		mv.addObject("b",bService.selectTemSave(bno))
+			.setViewName("board/column/colUpdateForm");;
+		
+		return mv;
 	}
 	
 	

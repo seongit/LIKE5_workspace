@@ -5,9 +5,6 @@ import java.util.HashMap;
 
 import javax.servlet.http.HttpSession;
 
-import com.kh.like5.admin.model.vo.Calculate;
-import com.kh.like5.admin.model.vo.Faq;
-import com.kh.like5.board.model.vo.Report;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,7 +13,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.kh.like5.admin.model.service.AdminService;
+import com.kh.like5.admin.model.vo.Calculate;
+import com.kh.like5.admin.model.vo.Faq;
 import com.kh.like5.board.model.vo.Board;
+import com.kh.like5.board.model.vo.Report;
+import com.kh.like5.board.model.vo.Tag;
 import com.kh.like5.common.model.vo.PageInfo;
 import com.kh.like5.common.template.Pagination;
 import com.kh.like5.member.model.vo.Customer;
@@ -94,8 +95,6 @@ public class AdminController {
 			model.addAttribute("errorMsg", "게시글 삭제 실패");
 			return "common/errorPage";
 		}
-
-
 	}
 	
 	// 1:1문의 메인페이지 불러오기&리스트 조회
@@ -270,11 +269,57 @@ public class AdminController {
 		return "admin/tagMain";
 	}
 
-	// tag 관리자 페이지
+	// tag 관리자 페이지-기본
 	@RequestMapping("tagAdmin.ad")
-	public String tagAdmin() {
-		return "admin/tagAdmin";
+	public ModelAndView tagAdmin(ModelAndView mv, @RequestParam(value="currentPage", defaultValue="1") int currentPage) {
+		// 페이징처리
+		int listCount = adService.selectTagsCount();
+		
+		// 리스트 조회
+		PageInfo pi = Pagination.getPageInfo(listCount, currentPage, 5, 10);
+    	ArrayList<Tag> list = adService.selectAllTags(pi);
+    	mv.addObject("pi", pi)
+		  .addObject("list", list)
+		  .setViewName("admin/tagAdmin");
+  	
+      return mv;
+    	
 	}
+	
+	// tag관리자 페이지 -추가하기 (redirect로 tagAdmin.ad불러오기)& 추가되면 알림창 뜨고 나서 불러오기
+	@RequestMapping("addTag.ad")
+	public String addTag(String tagName, HttpSession session) {
+		// 사용자가 입력한 tag값을 가져옴
+		// db에 insert해줌
+		int result = adService.addTag(tagName);
+		
+		// 성공적으로 insert시에는 alert창으로 성공적으로 되었다는 알림이 뜨게 만들어줌&다시 관리 페이지 redirect
+		if(result>0) {
+			
+			session.setAttribute("alertMsg", "입력하신 태그가 성공적으로 추가되었습니다.");
+			return "redirect:tagAdmin.ad";
+		}else {// 아닌 경우는 에러가 뜨게 해야겠지
+			session.setAttribute("errorMsg", "관리자님 태그 등록에 실패했습니다.");
+			return "common/errorPage";
+		}
+	}
+	// tag관리자 페이지 -수정하기(redirect로 tagAdmin.ad불러오기)& 수정되면 수정되었다고 알람뜨기
+	@RequestMapping("updateTag.ad")
+	public String udpateTag(String tagName,int tagNo, HttpSession session) {
+		
+		Tag tag = new Tag(tagNo, tagName);
+		
+		int result = adService.updateTag(tag);
+		
+		if(result>0) {
+			session.setAttribute("alertMsg", "태그명이 성공적으로 수정됐습니다.");
+			return "redirect:tagAdmin.ad";
+		}else {
+			session.setAttribute("errorMsg", "관리자님 태그 수정에 실패했습니다.");
+			return "common/errorPage";
+		}
+	}
+		
 		
 
 	// tag 게시글 끌어오는 페이지
@@ -399,6 +444,23 @@ public class AdminController {
 				.setViewName("admin/csReport");
 
 		return mv;
+
+	}
+
+	// 신고내역 삭제 기능
+	@RequestMapping("deleteReport.ad")
+	public String deleteReport(int rno, Model model, HttpSession session) {
+
+		int result= adService.deleteReport(rno);
+		System.out.println(rno);
+
+		if(result>0) { //제대로 삭제된 경우
+			session.setAttribute("alertMsg", "게시글 삭제 성공!");
+			return "redirect:customer.ad";
+		}else {
+			model.addAttribute("errorMsg", "게시글 삭제 실패");
+			return "common/errorPage";
+		}
 
 	}
 

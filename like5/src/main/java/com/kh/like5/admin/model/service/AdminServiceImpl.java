@@ -163,7 +163,27 @@ public class AdminServiceImpl implements AdminService{
 	public ArrayList<Calculate> selectCalList(PageInfo pi, int smemNo) {
 		return adDao.selectCalList(sqlSession, pi, smemNo);
 	}
-
+	
+	// tag관리자페이지-페이징
+	@Override
+	public int selectTagsCount() {
+		return adDao.selectTagsCount(sqlSession);
+	}
+	// tag관리자페이지-리스트 조회
+	@Override
+	public ArrayList<Tag> selectAllTags(PageInfo pi) {
+		return adDao.selectAllTags(sqlSession, pi);
+	}
+	// tag관리자 페이지 - 태그 추가 insert
+	@Override
+	public int addTag(String tagName) {
+		return adDao.addTag(sqlSession, tagName);
+	}
+	// tag관리자페이지 - 태그 update
+	@Override
+	public int updateTag(Tag tag) {
+		return adDao.updateTag(sqlSession,tag);
+	}
 
 	@Override
 	public ArrayList<Tag> tagList() {
@@ -202,6 +222,11 @@ public class AdminServiceImpl implements AdminService{
 	}
 
 	@Override
+	public int deleteReport(int rno) {
+		return adDao.deleteReport(sqlSession, rno);
+	}
+
+	@Override
 	public ArrayList<Faq> getFaqList() {
 		return adDao.getFaqList(sqlSession);
 	}
@@ -225,6 +250,11 @@ public class AdminServiceImpl implements AdminService{
 	public int deleteFaq(int fno) {
 		return adDao.deleteFaq(sqlSession, fno);
 	}
+
+	
+
+	
+	
 
 	
 	

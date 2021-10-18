@@ -14,18 +14,46 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://npmcdn.com/flatpickr/dist/l10n/ko.js"></script>
 <style>
+	.hide{
+		display:none !important;
+	}
+	.search-result{
+		display:flex;
+		position:abolute;
+		margin-top:12px;
+		box-shadow: rgb(0 0 0 / 20%) 0px 6px 20px !important;
+        padding: 20px 22px;
+		justify-content: space-around;
+		border-radius: 32px;
+        background-color: #ffff;
+        border:1px solid rgb(221,221,221);
+        width: 300px;
+	}
+	
+	.pop_keywords{
+		position: relative;
+		list-style: none;
+		width:100%;
+		margin: 0 -32px -8px !important;
+        padding:8px 0;
+	}
+	.pop_keywords > li {
+		display:flex;
+		line-height:40px;
+		margin:5px;
+		cursor:pointer;
+	}
+	
 	.innerOuter{
 		display:flex;
 		margin-top:0 !important;
 		padding-top:0;
-        border:1px solid red;
 	}
     .outcontainer{
-        box-sizing: border-box;
         margin:0 60px;
         width: 100%;
         display: flex;
-        border:1px solid blue;
+        z-index:0.05 !important;
     }
     .search-container{
         width: 100%;
@@ -49,7 +77,6 @@
     .input-container, .person{
         display: flex;
         height: 100%;
-
         border-radius: 32px;
 
     }
@@ -79,15 +106,14 @@
     .box{
         display: flex;
         justify-content: space-between;
-        position: absolute !important;
+        position: absolute;
         box-shadow: rgb(0 0 0 / 20%) 0px 6px 20px !important;
         padding: 16px 32px;
         border-radius: 32px;
         background-color: rgb(255, 255, 255);
-        z-index: 1;
-        margin:12px 0 0 -153px;
         width: 330px;
-        right: 0;
+        top:15%;
+		right:0;
     }
     .text{
         font-size: 14px;
@@ -137,11 +163,10 @@
     #map{
         position: sticky !important;
         top:60px;
-        z-index:1;
         height:calc(100vh - 48px);
         width: 100%;
         margin-left: 30px;
-        overflow: hidden;
+        z-index:0.1;
     }
     .result-list{
         padding-top:40px;
@@ -220,9 +245,25 @@
     #branch-modal{
         display: none;
     }
+
     #person-modal{
         display: none;
-        position:relative !important;
+        position: fixed;
+ 		z-index:2;
+ 		max-width:1050px;
+ 		margin: 0 auto;
+ 		background-color:rgba(0, 0, 0, 0.5);
+ 		top:80px;
+ 		left:0px;
+ 		right:0px;
+ 		bottom:0;
+ 		
+    }
+    .wrapper{
+    	box-sizing: border-box;
+		position:relative !important;
+		max-width:100%;
+		margin: 0 auto;
     }
     .show-modal{
         display: block !important;
@@ -231,9 +272,9 @@
 </head>
 <body>
 <jsp:include page="../common/header.jsp"/>
- 
+ <div class="wrapper">
+ 	<form class="research" action="research.bk" method="post">
         <div class="search-container">
-        <form class="research" action="research.bk" method="post">
             <div class="search-bar-container">
             <%-- 추가: 재검색 기능 --%>
                 <div class="input-container">
@@ -242,37 +283,19 @@
                     <input class="fcheckOut" type="text" name="endDate" value="${ b.endDate }">
                 </div>
                 <div class="person">
-                    <input type="text" name="stp" id="pnum" value="${ b.person }">
+                    <input type="text" name="person" id="pnum" value="${ b.person }">
                 </div>
                 <div class="sicon">
                     <button type="submit"><i class="fas fa-search"></i></button>
                 </div>
             </div>
-         </form>
         </div>
 
-        <div id="branch-modal">
-            <div class="branch-select">
-                <ul>
-                    <li>
-                        <div class="marker"><i class="fas fa-map-marker-alt"></i></div>
-                        <div class="region">강남</div>
-                    </li>
-                    <li>
-                        <div class="marker"><i class="fas fa-map-marker-alt"></i></div>
-                        <div class="region">마포</div> 
-                    </li>
-                    <li>
-                        <div class="marker"><i class="fas fa-map-marker-alt"></i></div>
-                        <div class="region">합정</div>
-                    </li>
-                    <li>
-                        <div class="marker"><i class="fas fa-map-marker-alt"></i></div>
-                        <div class="region">관악</div>
-                    </li>
-                </ul>
-            </div>
-        </div>
+        <!-- 지역 선택 박스 -->
+       <div class="search-result">
+       	<ul class="pop_keywords"></ul>
+       </div>
+        <!-- 인원수 체크 박스 -->
         <div id="person-modal">
             <div class="box">
                 <div class="text">
@@ -284,7 +307,7 @@
                         <span>-</span>
                     </button>
                     <div id="pp2" class="howmany">
-                        <input type="text" id="num1" value="0">
+                        <input type="text" id="num1" value="${ b.person }">
                     </div>
                     <button type="button" class="circle" onclick="plus();">
                         <span>+</span>
@@ -292,6 +315,7 @@
                 </div>
             </div>
         </div>
+        </form>
         <div class="outcontainer">
             <div class="result-container">
                 <span>${ list.size() }개의 결과</span>
@@ -311,8 +335,70 @@
                 <div id="map"></div>
             </div>
         </div>
+</div>
 <jsp:include page="../common/footer.jsp"/>
 <script>
+<%-- 자동완성검색 --%>
+const checkInput = () => {
+    const beforeInput = $("#branch").val();
+    timer(beforeInput);
+};
+$("#branch").on("keyup", function(){
+	console.log("!!");
+	$(".search-result").removeClass("hide");
+})
+
+const timer = (beforeInput) => {
+    setTimeout(() => {
+        if ($("#branch").val() === beforeInput) {
+            console.log("잠깐멈춤??");
+            loadData($("#branch").val());
+            checkInput();
+        } else {
+            console.log("다시입력시작");
+            checkInput();
+        }
+        if ($("#branch").val() === "") {
+            $(".search-result").addClass("hide");
+        }
+    }, 500); //1초 기준 데이터 로드
+};
+
+const loadData = (input) =>{
+    $.ajax({
+    	url:"autoBranch.bk",
+    	data: {searchKeyword: input},
+    	type: "GET",
+    	success:function(list){
+    		console.log(list);
+    		var result = "";
+    		if(list!=null){
+    			for(var i=0; i<list.length; i++){
+    			result += 
+                    "<li>"
+                    +    "<div class='marker'><i class='fas fa-map-marker-alt'></i></div>"
+                    +    "<div class='region'>"+ list[i].branch + "</div>"
+                   +"</li>"
+    			};
+    			$(".pop_keywords").html(result);
+    		} else {
+    			$(".pop_keywords").html("<li>" + "검색결과가없습니다" + "</li>");
+    		}
+    		
+    		<%-- 지역 선택 --%>
+    		for(let i=0; i<regions.length; i++){
+    		    regions[i].addEventListener('click', function(){
+    		        branch.value = regions[i].innerHTML
+    		    })
+    		}
+    		
+    	}, error:function(){
+    		console.log("ajax실패");
+    	}
+    })
+};
+
+checkInput();
 <%-- 날짜 가져오기 --%>
 $.when($.ready).then(function(){
 	localStorage.setItem("startDate",$("input[name=startDate]").val());
@@ -320,22 +406,25 @@ $.when($.ready).then(function(){
 })
 
 <%-- 모달 닫기 --%>
-    const outcontainer = document.querySelector(".outcontainer");
+    const out = document.querySelector(".wrapper");
 	const pmodal = document.querySelector("#person-modal");//인원수 모달
     let branch = document.querySelector("#branch"); //지점 선택 input
-    const bmodal = document.querySelector("#branch-modal"); //지점 모달
+    const bmodal = document.querySelector(".search-result"); //지점 모달
     let pp = document.querySelector("#pnum");//인원수 input
     let pp2 = document.querySelector("#num1");
     let regions = document.getElementsByClassName("region");
-
+<%--
     branch.onclick = () => {
         bmodal.classList.add('show-modal');
+    } --%>
+    bmodal.onclick = () =>{
+    	bmodal.classList.add('hide');
     }
     pp.onclick = () => {
         pmodal.classList.add('show-modal');
     }
-window.onclick = (e) => {
-        e.target === bmodal ? bmodal.classList.remove('show-modal') : false
+    window.onclick = (e) => {
+        e.target === out ? bmodal.classList.remove('show-modal') : false
         e.target === pmodal ? pmodal.classList.remove('show-modal') : false
     }
     

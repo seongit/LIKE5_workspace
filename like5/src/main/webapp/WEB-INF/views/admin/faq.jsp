@@ -127,7 +127,7 @@
                 A ${f.answer}
                 <c:if test="${loginUser.userStatus == 'Y'}">
                     <a href="updateForm.faq?fno=${f.fno}">수정</a>
-                    <a href="deleteFaq.ad?fno=${f.fno}">삭제</a>
+                    <a href="#" onclick="deleteFaq(${f.fno});">삭제</a>
                 </c:if>
             </p>
         </c:forEach>
@@ -144,6 +144,21 @@
                     }
                 })
             })
+        </script>
+
+        <script>
+            var fno="";
+            $(document).ready(function(){
+
+            })
+            function deleteFaq(fno){
+
+                if(!confirm("해당 게시글을 정말로 삭제 하시겠습니까?")){
+                    alert("취소하셨습니다.");
+                }else{
+                    location.href="deleteFaq.ad?fno="+fno;
+                }
+            }
         </script>
 
     </div>

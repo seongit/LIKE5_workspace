@@ -70,11 +70,13 @@ public interface AdminService {
 	// tag 조회 페이지 select문-페이징처리
 	int getTagCount(String tagName);
 	ArrayList<Board> tagDetailList(PageInfo pi, String tagName);
-
-	// tag 조회 페이지 select문-게시글불러오기
 	// tag 수정페이지(관리자용) select문
+	int selectTagsCount();
+	ArrayList<Tag> selectAllTags(PageInfo pi);
+	// tag 수정페이지 insert문
+	int addTag(String tagName);
 	// tag 수정페이지 Modal update문
-
+	int updateTag(Tag tag);
 	// 게시글 리스트 조회
 	int getBoardCount();
 	ArrayList<Board> getBoardList(PageInfo pi);
@@ -93,6 +95,9 @@ public interface AdminService {
 	// 신고내역 검색 리스트 조회
 	int getSearchReportCount(HashMap<String, String> map);
 	ArrayList<Report> getSearchReportList(PageInfo pi, HashMap<String, String> map);
+
+	// 신고내역 삭제 기능
+	int deleteReport(int rno);
 
 	// FAQ 리스트 조회
 	ArrayList<Faq> getFaqList();

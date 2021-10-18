@@ -80,25 +80,25 @@
       <div id="sidebar">
         <div id="profile">
         <c:choose>
-	        <c:when test="${ empty loginUser.memProfile }">
+	        <c:when test="${ empty memberInfor.memProfile }">
 	         	 <img src="https://i.imgur.com/pO4OGIl.jpg" alt="">
 	         </c:when>
 	         <c:otherwise>
-	         	<img src="${ loginUser.memProfile }" alt="">
+	         	<img src="${ memberInfor.memProfile }" alt="">
 	         </c:otherwise>
 	    </c:choose>
           <div>
-            	${loginUser.nickName} 님
+            	${memberInfor.nickName} 님
           </div>
         </div>
         <div id="sidmenu">  
           <div id="" onclick="location.href='myPage.me?memNo=${ loginUser.memNo }'" style="color:white; background-color:rgb(220, 53, 69);">
                   	게시글
           </div>
-          <div id="" onclick="location.href='inquiry.me?memNo=${ loginUser.memNo }'">
+          <div id="" onclick="location.href='donate.me?memNo=${ loginUser.memNo }'">
                   	후원
           </div>
-          <div id="" onclick="location.href='donate.me?memNo=${ loginUser.memNo }'">
+          <div id="" onclick="location.href='inquiry.me?memNo=${ loginUser.memNo }'">
                   	1:1문의
           </div>
           <%-- 신원 수정 --%>
@@ -113,14 +113,14 @@
                 <div id="meminfo">
                     <div>
                         <div>
-                            	${loginUser.memName} 님
+                            	${memberInfor.memName} 님
                             <button id="change" type="button" onclick="location.href='correctInfor.me'">정보수정</button>
                         </div>
                         <div>
-                            	이메일 : ${loginUser.email}
+                            	이메일 : ${memberInfor.email}
                         </div>
                         <div>
-                            	닉네임 : ${loginUser.nickName}
+                            	닉네임 : ${memberInfor.nickName}
                         </div>
                     </div>
                 </div>
@@ -129,7 +129,7 @@
                         <div>
                             	총 후원받은 금액 : <fmt:formatNumber value="${ price }" pattern="#,###,###"/>
                             	<c:if test="${ settleable > 9999 }">
-                            		<button id="calculate" type="button" data-toggle="modal" data-target="#myModal">정산받기</button>
+                            		<button id="calculate" type="button" data-toggle="modal" data-target="#MyModal">정산받기</button>
                             	</c:if>
                             	
                         </div>
@@ -137,7 +137,7 @@
                             	정산 가능한 금액 : <fmt:formatNumber value="${ settleable }" pattern="#,###,###"/>
                         </div>
                         <div>
-                            	정산 계좌 : ${ loginUser.bank } ${ loginUser.accountNum }
+                            	정산 계좌 : ${ memberInfor.bank } ${ memberInfor.accountNum }
                         </div>
                     </div>
                 </div>
@@ -146,8 +146,8 @@
                 <div>
                   <div style="float: left;">
                     <div>
-                        	최근 등록 답변
-                        <button onclick="location.href='newlyListDetail.me?${loginUser.memNo}'" style="float: right; margin-right: 300px;">
+                        	최근 등록 게시물
+                        <button onclick="location.href='memPostListDetail.me?memNo=${loginUser.memNo}'" style="float: right; margin-right: 300px;">
                         	전체보기
                       </button>
                     </div>
@@ -162,11 +162,29 @@
                     </thead>
                     <tbody>
                     	<c:forEach var="newlyList" items="${ newlyList }">
-	                      <tr>
-	                        <td><fmt:formatDate pattern="yy/MM/dd" value="${ newlyList.enrollDate }"/></td>
-	                        <td>${ newlyList.title }</td>
-	                        <td>${ newlyList.category }</td>
-	                      </tr>
+	                    	<c:choose>
+	                    		<c:when test="${ newlyList.category eq '일상' || newlyList.category eq '스터디모집'}">
+	                    			<tr onclick="location.href='comDetail.bo?bno=${ newlyList.bno }'">
+		                    			<td><fmt:formatDate pattern="yy/MM/dd" value="${ newlyList.enrollDate }"/></td>
+						                <td>${ newlyList.title }</td>
+						                <td>${ newlyList.category }</td>
+					          		</tr>
+	                    		</c:when>
+	                    		<c:when test="${ newlyList.category eq 'QNA' }">
+	                    			<tr onclick="location.href='qnaDetail.bo?bno=${ newlyList.bno }'">
+		                    			<td><fmt:formatDate pattern="yy/MM/dd" value="${ newlyList.enrollDate }"/></td>
+						                <td>${ newlyList.title }</td>
+						                <td>${ newlyList.category }</td>
+						          	</tr>
+	                    		</c:when>
+	                    		<c:when test="${ newlyList.category eq '칼럼' }">
+	                    			<tr onclick="location.href='colDetail.bo?bno=${ newlyList.bno }&mno=${ loginUser.memNo }'">
+		                    			<td><fmt:formatDate pattern="yy/MM/dd" value="${ newlyList.enrollDate }"/></td>
+						                <td>${ newlyList.title }</td>
+						                <td>${ newlyList.category }</td>
+						          	</tr>
+	                    		</c:when>
+	                    	</c:choose>
                       </c:forEach>
                     </tbody>
                   </table>
@@ -175,7 +193,7 @@
                   <div style="float: left;">
                     <div>
                       	최근 임시 저장글
-                      <button onclick="location.href='tempSaveListDetail.me?${loginUser.memNo}'" style="float: right; margin-right: 300px;">
+                      <button onclick="location.href='tempSaveListDetail.me?memNo=${loginUser.memNo}'" style="float: right; margin-right: 300px;">
                      	 전체보기
                       </button>
                     </div>
@@ -189,21 +207,32 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <c:forEach var="tempSaveList" items="${ tempSaveList }">
-	                      <tr>
-	                        <td><fmt:formatDate pattern="yy/MM/dd" value="${ tempSaveList.enrollDate }"></fmt:formatDate></td>
-	                        <td>${ tempSaveList.title }</td>
-	                        <td>${ tempSaveList.category }</td>
-	                      </tr>
-                      </c:forEach>
+	                  	<c:forEach var="tempSaveList" items="${ tempSaveList }">
+	                  		<c:choose>
+		                  		<c:when test="${ tempSaveList.category eq 'QNA' }">
+			                      <tr onclick="location.href='qnaUpdateForm.bo?bno=${ tempSaveList.bno }'">
+			                        <td><fmt:formatDate pattern="yy/MM/dd" value="${ tempSaveList.enrollDate }"></fmt:formatDate></td>
+			                        <td>${ tempSaveList.title }</td>
+			                        <td>${ tempSaveList.category }</td>
+			                      </tr>
+			                  	</c:when>
+			                  	<c:when test="${ tempSaveList.category eq '칼럼' }">
+			                  		<tr onclick="location.href='selectTemSave.bo?bno=${ tempSaveList.bno }'">
+			                        	<td><fmt:formatDate pattern="yy/MM/dd" value="${ tempSaveList.enrollDate }"></fmt:formatDate></td>
+			                        	<td>${ tempSaveList.title }</td>
+			                        	<td>${ tempSaveList.category }</td>
+			                      	</tr>
+			                  	</c:when>
+		                	</c:choose>
+	                	</c:forEach>
                     </tbody>
                   </table>
                 </div>
                 <div>
                     <div style="float: left;">
                       <div>
-                         	 최근 등록 답변
-                          <button onclick="location.href='ansListDetail.me?${loginUser.memNo}'" style="float: right; margin-right: 300px;">
+                         	 최근 등록 댓글
+                          <button onclick="location.href='ansListDetail.me?memNo=${loginUser.memNo}'" style="float: right; margin-right: 300px;">
                           	전체보기
                         </button>
                       </div>
@@ -218,16 +247,28 @@
                         </thead>
                         <tbody>
                           <c:forEach var="ansList" items="${ ansList }">
-		                      <tr>
-		                        <td><fmt:formatDate pattern="yy/MM/dd" value="${ ansList.reply.repEnrollDate }"></fmt:formatDate></td>
-		                        <td>${ ansList.reply.repContent }</td>
-		                        <td>${ ansList.board.category }</td>
-		                      </tr>
+	                          <c:choose>
+			                  		<c:when test="${ ansList.board.category eq 'QNA' }">
+				                      <tr onclick="location.href='qnaDetail.bo?bno=${ ansList.reply.boaNo }'">
+				                        <td><fmt:formatDate pattern="yy/MM/dd" value="${ ansList.reply.repEnrollDate }"></fmt:formatDate></td>
+				                        <td>${ ansList.reply.repContent }</td>
+				                        <td>${ ansList.board.category }</td>
+				                      </tr>
+				                    </c:when>
+				                    <c:when test="${ ansList.board.category eq '일상' || ansList.board.category eq '스터디모집' }">
+				                      <tr onclick="location.href='comDetail.bo?bno=${ ansList.reply.boaNo }'">
+				                        <td><fmt:formatDate pattern="yy/MM/dd" value="${ ansList.reply.repEnrollDate }"></fmt:formatDate></td>
+				                        <td>${ ansList.reply.repContent }</td>
+				                        <td>${ ansList.board.category }</td>
+				                      </tr>
+				                    </c:when>
+				          	</c:choose>
                       	  </c:forEach>
                         </tbody>
                       </table>
                     </div>
             </div>
+        </div>
             
             <%-- 신원 공간 추가 
             <div class="bookingSection">
@@ -255,7 +296,8 @@
         </div>
         --%>
         <!-- The Modal -->
-        <div class="modal fade" id="myModal">
+        <div class="modal fade" id="MyModal">
+        	
             <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
             
@@ -264,25 +306,30 @@
                 <h4 class="modal-title">정산받기</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
-                
+                <form action="insertcalculate.me" method="post">
                 <!-- Modal body -->
                 <div class="modal-body" style="border: 2px solid lightgrey;">
                   <div  style="margin-left:80px;">
 			                  안내 <br>
 			                  1만원 이상부터 출금가능<br>
 			                  출금시 총 신청금액에서 수수료 5% 제하고 입금<br><br>
-                  <input type="text" placeholder="금액을 입력해주세요" style="width:70%; height:30px;">
+                  <input id="calPrice" name="calPrice" type="text" placeholder="금액을 입력해주세요" style="width:70%; height:30px;">
+                  <input id="memNo" name="memNo"  type="hidden" value="${ loginUser.memNo }">
+                  <input id="memName" name="memName"  type="hidden" value="${ loginUser.memName }">
+                  <input id="calBank" name="calBank"  type="hidden" value="${ loginUser.bank }">
+                  <input id="calAccount"name="calAccount"  type="hidden" value="${ loginUser.accountNum }">
                   </div>
                 </div>
                 
                 <!-- Modal footer -->
                 <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" style="border: 2px solid rgb(220, 53, 69); background-color: white; color: rgb(220, 53, 69);">취소</button>
-                <button type="submit" class="btn btn-secondary" data-dismiss="modal" style="background-color: rgb(220, 53, 69); color: white;">정산받기</button>
+                <button type="submit" class="btn btn-secondary" style="background-color: rgb(220, 53, 69); color: white;">정산받기</button>
                 </div>
-                
+                </form>
             </div>
             </div>
+            
         </div>
 
     </div>

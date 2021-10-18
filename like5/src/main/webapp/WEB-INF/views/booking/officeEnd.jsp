@@ -87,7 +87,7 @@
         </div>
         <br><br>
         <div align="center">
-            <button type="button" class="btn btn-danger">메인 페이지로</button>
+        	<a type="button" href="bMain.bk" class="btn btn-danger">공간 대여 페이지로</a>
         </div>
         
     </div>

@@ -11,6 +11,7 @@
 		<typeAlias type="com.kh.like5.member.model.vo.Sponsorship" alias="Sponsorship"/>
 		<typeAlias type="com.kh.like5.board.model.vo.Reply" alias="Reply"/>
 		<typeAlias type="com.kh.like5.member.model.vo.Merger" alias="Merger"/>
+		<typeAlias type="com.kh.like5.member.model.vo.MergerMemSpon" alias="MergerMemSpon"/>
 		<typeAlias type="com.kh.like5.booking.model.vo.Booking" alias="Booking"/>
 		<typeAlias type="com.kh.like5.booking.model.vo.Office" alias="Office" />
 		<typeAlias type="com.kh.like5.board.model.vo.Board" alias="Board" />
@@ -28,9 +29,9 @@
 		<mapper resource="/mappers/member-mapper.xml"/>
 		<mapper resource="/mappers/admin-mapper.xml"/>
 		<mapper resource="/mappers/board-mapper.xml"/>
+		<mapper resource="/mappers/calculate-mapper.xml"/>
 		<mapper resource="/mappers/sponsorship-mapper.xml"/>
 		<mapper resource="/mappers/customer-mapper.xml"/>
 		<mapper resource="/mappers/tag-mapper.xml"/>
-		<mapper resource="/mappers/calculate-mapper.xml"/>
 	</mappers>
 </configuration>

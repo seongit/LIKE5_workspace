@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -83,10 +84,10 @@ public class BookingController {
 		//attachment에도 접근해서 list로 가져와서 화면에 뿌려줘야함...
 		Office o = bService.selectOffice(officeNo);
 		ArrayList<Attachment> list = bService.selectOfficeAtt(officeNo);
-		//System.out.println(list);
+		System.out.println(list);
 		if(o != null) {
-			session.setAttribute("ott", o);
-			session.setAttribute("alist", list);
+			//session.setAttribute("ott", o);
+			//session.setAttribute("alist", list);
 			mv.addObject("o", o).setViewName("booking/aOfficeDetailView");
 			mv.addObject("list", list).setViewName("booking/aOfficeDetailView");
 		} else {
@@ -125,8 +126,7 @@ public class BookingController {
 				}
 			}
 		}
-		//System.out.println(o);
-		//System.out.println(list);
+
 		int result = bService.insertOffice(o, list);
 		
 		if(result > 0) {
@@ -159,7 +159,7 @@ public class BookingController {
 	}
 	
 	@RequestMapping("updateOf.bk")
-	public String updateOffice(Office o, Attachment att, HttpServletRequest request, HttpSession session, MultipartFile[] refile, Model model) {
+	public String updateOffice(Office o, Attachment att, HttpServletRequest request, HttpSession session, MultipartFile refileTop, MultipartFile[] refile, Model model) {
 		//facility 부분 가져오기
 		String[] facilityArr = request.getParameterValues("facility");
 		String facility ="";
@@ -167,36 +167,44 @@ public class BookingController {
 			facility = String.join(",", facilityArr);
 		}
 		o.setFacility(facility);
-		ArrayList<Attachment> list = new ArrayList<>();
-		
-		/*
-		if(o.getOffImgPath() != null) {
+		//오피스부분
+		if(!refileTop.getOriginalFilename().equals("")) {
 			System.out.println(o.getOffImgPath());
 			new File(session.getServletContext().getRealPath(o.getOffImgPath())).delete();
-			String changeName = saveFile(file, session);
+			String changeName = saveFile(refileTop, session);
 			o.setOffImgPath("resources/images/" + changeName);
 		}
-		*/
 		
-		//새 첨부파일
+		ArrayList<Attachment> atlist = att.getAtlist();
+		/*
+		String[] path = request.getParameterValues("filePath");
+		String[] num = request.getParameterValues("fileNo");
+		
+		int[] fnum = new int[num.length];
+		for(int i=0; i<num.length; i++) {
+			if(!num[i].equals("")) {
+			fnum[i] = Integer.parseInt(num[i]);
+			System.out.println("arr: " + fnum[i]);
+			}
+		}
+*/
+		ArrayList<Attachment> list = new ArrayList<>();
+		
 		for(int i=0; i<refile.length; i++) {
+			//새 첨부파일
 			if(!refile[i].getOriginalFilename().equals("")) {
-				att = new Attachment();
-				if( i==0 ) {
-					//대표이미지 기존것  삭제 후 새로 저장
-					new File(session.getServletContext().getRealPath(o.getOffImgPath())).delete();
-					String changeName = saveFile(refile[i], session);
-					o.setOffImgPath("resources/images/" + changeName);
-				} else if(att.getFileNo() != 0) {//기존파일이 존재할경우
-					//System.out.println(att.getFilePath());//왜 두개가 찍히니--> 배열로 안 가져오니까
-					String filePath[] = att.getFilePath().split(",");
-					//기존 것 삭제
-					new File(session.getServletContext().getRealPath(filePath[0])).delete();
+				//Attachment att = new Attachment();
+
+				//기존 파일이 존재
+				if(!atlist.isEmpty() && atlist.get(i).getFileNo()!=0) {
+					//System.out.println("p: " + path[i]);
+					//System.out.println("fnum: "+fnum[i]);
+					new File(session.getServletContext().getRealPath(atlist.get(i).getFilePath())).delete();
 					String changeName = saveFile(refile[i], session);
 					//att에 저장
 					att.setFilePath("resources/images/" + changeName);
 					att.setRefFno(o.getOfficeNo());
-					att.setFileNo(att.getFileNo());
+					att.setFileNo(atlist.get(i).getFileNo());
 				} else {
 					//기존 변경 없이 새파일을가져왔을경우
 					String changeName = saveFile(refile[i], session);
@@ -218,11 +226,45 @@ public class BookingController {
 			return "common/errorPage";
 		}
 	}
-	
-	
+	@RequestMapping("deleteOffice.bk")
+	public String deleteOffice(Office o, Attachment att, HttpSession session , HttpServletRequest request, Model model) {
+		ArrayList<Attachment> atlist = att.getAtlist();
+		//오피스 단독만 삭제
+		if(!atlist.isEmpty()) {
+			int result = bService.deleteOffice(o.getOfficeNo());
+			
+			if(result > 0) {
+				
+				new File(session.getServletContext().getRealPath(o.getOffImgPath())).delete();
+				session.setAttribute("alertMsg", "삭제 성공");
+				return "redirect:/list.bk";
+				
+			} else {
+				session.setAttribute("errorMsg", "삭제 실패");
+				return "common/errorPage";
+			}
+			//첨부파일이 있을경우에 같이 삭제
+		} else {
+			int result = bService.deleteOfficeWithAtt(o.getOfficeNo());
+			
+			if(result > 0) {
+				new File(session.getServletContext().getRealPath(o.getOffImgPath())).delete();
+				for(int i=0; i<atlist.size(); i++) {
+					new File(session.getServletContext().getRealPath(atlist.get(i).getFilePath())).delete();
+				}
+				session.setAttribute("alertMsg", "삭제 성공");
+				return "redirect:/list.bk";
+			} else {
+				session.setAttribute("errorMsg", "삭제 실패");
+				return "common/errorPage";
+			}
+		}
+		
+	}
+	/*
 	@RequestMapping("deleteOffice.bk")
 	public String deleteOffice(int ono, HttpSession session , HttpServletRequest request, Model model) {
-		int memNo = ((Member)request.getSession().getAttribute("loginUser")).getMemNo();
+		//int memNo = ((Member)request.getSession().getAttribute("loginUser")).getMemNo();
 		String offImgPath = ((Office)request.getSession().getAttribute("ott")).getOffImgPath();
 		ArrayList<Attachment> list = ((ArrayList)request.getSession().getAttribute("alist"));
 		System.out.println(list);
@@ -257,6 +299,56 @@ public class BookingController {
 			}
 		}
 		
+	}
+*/
+	@RequestMapping("deleteOffices.bk")
+	public String deleteOffices(HttpSession session , HttpServletRequest request, Model model,@RequestParam(value="currentPage", defaultValue="1") int currentPage) {
+		//officeNos 부분 가져오기
+		String[] officeArr = request.getParameterValues("officeNos");
+		//System.out.println("arr: " + officeArr.toString());
+		//parsing
+		int[] officeNo = new int[officeArr.length];
+		for(int i=0; i<officeArr.length; i++) {
+			officeNo[i] = Integer.parseInt(officeArr[i]);
+		}
+		//System.out.println("officeNos: "+officeNo);
+		if(officeArr != null) {
+			
+			//오피스 번호로 삭제전에 offImgPath 조회하기
+			String[] offImgPaths = bService.selectOffImgPaths(officeNo);
+			
+			//오피스 번호로 첨부파일들 filePath조회
+			ArrayList<Attachment> filePaths = bService.selectFilePaths(officeNo);
+			
+			int result = bService.deleteOffices(officeNo);
+			//삭제성공시 물리적 루트에서 사진 삭제
+			if(result > 0) {
+				for(int i=0; i<offImgPaths.length; i++) {
+					//System.out.println(i + " : " + offImgPaths[i]); 
+					new File(session.getServletContext().getRealPath(offImgPaths[i])).delete();
+				}
+				
+				for(int i=0; i<filePaths.size(); i++) {
+					//System.out.println(filePaths.get(i).getFilePath());
+					new File(session.getServletContext().getRealPath(filePaths.get(i).getFilePath())).delete();
+				}
+			} else {
+				session.setAttribute("errorMsg", "삭제 실패");
+				return "common/errorPage";
+			}
+		}
+		
+		//다시 삭제된 리스트조회하기
+		int listCount = bService.selectListCount();
+		
+		PageInfo pi = Pagination.getPageInfo(listCount, currentPage, 10, 5);
+		
+		ArrayList<Office> list = bService.selectListAll(pi);
+		
+		model.addAttribute("list", list);
+		model.addAttribute("pi", pi);
+		
+		return "booking/aOfficeList";
 	}
 	
 	/**
@@ -307,6 +399,7 @@ public class BookingController {
 	
 	@RequestMapping("research.bk")
 	public String research(Booking b, Model model) {
+		System.out.println("re: "+b);
 		ArrayList<Office> list = bService.selectOfficeList(b);
 
 		model.addAttribute("list",list);
@@ -405,8 +498,7 @@ public class BookingController {
 	
 	/*공간 예약관리 조회*/
 	@RequestMapping("space.bo")
-	public String selectSpace(HttpServletRequest request, HttpSession session, @RequestParam(value="currentPage", defaultValue="1") int currentPage, Model model) {
-		//int memNo = ((Member)request.getSession().getAttribute("loginUser")).getMemNo();
+	public String selectSpace(@RequestParam(value="currentPage", defaultValue="1") int currentPage, Model model) {
 		
 		int listCount = bService.selectSpaceCount();
 		PageInfo pi = Pagination.getPageInfo(listCount, currentPage, 10, 5);
@@ -428,6 +520,19 @@ public class BookingController {
         for(int i=0; i<size; i++) {
         	bService.delete(ajaxMsg[i]);
         }
-        return "redirect:list";
+        return "redirect:space.bo";
     }
+	
+	/*예약관리 리스트 상세조회*/
+	@RequestMapping("Space2.bo")
+	public ModelAndView selectOfficeSpace(int bno, ModelAndView mv) {
+		int bookingNo = bno;
+		
+		Booking bi = bService.selectOfficeSpace(bookingNo);
+		
+		mv.addObject("bi", bi).setViewName("booking/officeSpace");
+		System.out.println(bi);
+		return mv;
+	}
+	
 }

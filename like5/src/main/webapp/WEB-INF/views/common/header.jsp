@@ -41,9 +41,9 @@
 div{box-sizing:border-box;}
 
 /* 헤더 배열 */
-.header{width:70%; margin:auto; display:flex; border-bottom:2px solid #DEDEDE;}
+.header{width:70%; margin:auto; display:flex; border-bottom:2px solid #DEDEDE; z-dex:5; position:relative;}
 .header>div{width:100%; float:left; margin-bottom:-2px;}
-#header_logo{width:10%;}
+#header_logo{width:150px;}
 #header_navi{width:75%;}
 #header_user{width:15%; height:73px;}
 
@@ -51,11 +51,11 @@ div{box-sizing:border-box;}
 #menu{display:flex; list-style-type:none; margin:0; padding:0; height:50px;}
 #menu>li{float:left; width:100%; height:100%; text-align:center;}
 
-/* a태그 스타일 */
-#menu a{text-decoration:none; font-size:1.1rem; font-weight:900; height:100%; width:100%; display:block; line-height:50px;}
-#header_user a{text-decoration:none;}
-#header_user a:hover{color:rgb(220, 53, 69);}
-#menu>li a:hover{color:rgb(220, 53, 69); border-bottom:5px solid rgb(220, 53, 69);}
+@media(max-width:1000px){ #faq{display:none;} }
+@media(max-width:900px){ #it{display:none;} }
+@media(max-width:750px){ #com{display:none;} }
+@media(max-width:510px){ #col{display:none;} }
+@media(max-width:380px){ #menu{display:none;} }
 
 /* 로고 이미지 */
 .headerImg{width:85px; height:50px;}
@@ -65,17 +65,23 @@ div{box-sizing:border-box;}
 #before_login{font-size:13px; margin-top:35px; text-align:center;}
 #after_login{font-size:13px; margin-top:30px; text-align:center;}
 
-/*
-방문하지 않은 링크
-#menu a:link{color:#424242;}
-링크를 활성화 할 때
-#menu>a:active{color:rgb(220, 53, 69);} */
+/* a태그 스타일 */
+#menu a{text-decoration:none; font-size:1.1rem; font-weight:900; height:100%; width:100%; display:block; line-height:50px;}
+#header_user a{text-decoration:none;}
+#header_user a:hover{color:rgb(220, 53, 69);}
+#menu>li a:hover{color:rgb(220, 53, 69); border-bottom:5px solid rgb(220, 53, 69);}
+
+/* 닉네임 버튼 배경색 조정 */
+.w3-dropdown-hover{background: transparent !important;}
 
 /* 바로가기버튼 마진 */
 #explanation{margin:7% 0% 10% 0%;}
 
 /* to the top */
 #toTheTop{display:scroll; position:fixed; bottom:1.5rem; right:2rem; color:grey;}
+
+/*div{border:1px solid red !important;}
+tr, td{border:1px solid blue !important;}*/
 </style>
 </head>
 
@@ -92,18 +98,18 @@ div{box-sizing:border-box;}
 	<div class="header" id="header">
 		<!-- 로고 -->
 		<div id="header_logo" align=center>
-			<br><a href="index.jsp"><img src="https://i.imgur.com/vhEZ5DJ.png" class="headerImg"></a>
+			<br><a href="${ pageContext.request.contextPath }"><img src="https://i.imgur.com/vhEZ5DJ.png" class="headerImg"></a>
 		</div>
 
 		<!-- 메뉴 -->
-		<div id="header_navi">
-			<br><ul id="menu">
-				<li><a href="about.ad">LIKE5?</a></li>
+		<div id="header_navi"><br>
+			<ul id="menu">
+				<li id="faq"><a href="about.ad">LIKE5?</a></li>
 				<li><a href="qnaList.bo">QnA</a></li>
 				<li><a href="bMain.bk">공간대여</a></li>
-				<li><a href="comList.bo">커뮤니티</a></li>
-				<li><a href="colList.bo">칼럼</a></li>
-				<li><a href="">IT뉴스</a></li>
+				<li id="com"><a href="comList.bo">커뮤니티</a></li>
+				<li id="col"><a href="colList.bo">칼럼</a></li>
+				<li id="it"><a href="itNews.bo">IT뉴스</a></li>
 			</ul>
 		</div>
 
@@ -122,12 +128,12 @@ div{box-sizing:border-box;}
 						<c:when test="${ loginUser.userStatus eq 'N' }">
 							<div id="after_login">
 								<div class="w3-dropdown-hover w3-center">
-									<button class="w3-button w3-white">${ loginUser.memName }</button>
+									<button class="w3-button">${ loginUser.nickName }</button>
 									<div class="w3-dropdown-content w3-bar-block w3-border">
-										<a href="myPage.me?memNo=${ loginUser.memNo }" class="w3-bar-item w3-button">마이페이지</a>
-										<a href="" class="w3-bar-item w3-button">내 프로필 보기</a>
-										<a href="inqEnrollForm.me" class="w3-bar-item w3-button">1:1문의</a>
-										<a href="logout.me" class="w3-bar-item w3-button">로그아웃</a>
+										<p><br><b>${ loginUser.memName }</b>님 환영합니다</p><hr>
+										<a class="dropdown" href="myPage.me?memNo=${ loginUser.memNo }" class="w3-bar-item w3-button"><b>마이페이지</b></a><br><br>
+										<a class="dropdown" href="inqEnrollForm.me" class="w3-bar-item w3-button"><b>1:1문의</b></a><br><br>
+										<a class="dropdown" href="logout.me" class="w3-bar-item w3-button"><b>로그아웃</b></a><br><br>
 									</div>
 								</div>
 							</div>
@@ -136,10 +142,11 @@ div{box-sizing:border-box;}
 							<!-- 관리자 로그인 후 -->
 							<div id="after_login">
 								<div class="w3-dropdown-hover w3-center">
-									<button class="w3-button w3-white">${ loginUser.memName }</button>
+									<button class="w3-button">${ loginUser.memName }</button>
 									<div class="w3-dropdown-content w3-bar-block w3-border">
-										<a href="member.ad" class="w3-bar-item w3-button">통합관리</a>
-										<a href="logout.me" class="w3-bar-item w3-button">로그아웃</a>
+										<p><br><b>${ loginUser.memName }</b>님 환영합니다</p><hr>
+										<a class="dropdown" href="member.ad" class="w3-bar-item w3-button"><b>통합관리</b></a><br><br>
+										<a class="dropdown" href="logout.me" class="w3-bar-item w3-button"><b>로그아웃</b></a><br><br>
 									</div>
 								</div>
 							</div>
@@ -148,8 +155,7 @@ div{box-sizing:border-box;}
 				</c:otherwise>
 			</c:choose>
 		</div>
-	</div>
-	<!-- 메뉴바 끝 -->
+	</div><!-- 메뉴바 끝 -->
 
 
 	<!-- [동규] 로그인 모달  -->
@@ -168,12 +174,6 @@ div{box-sizing:border-box;}
 						<div style="margin-left: 80px;">
 							이메일 : <input type="email" id="email" name="email" style="margin-left: 17px;"><br>
 							비밀번호 : <input type="password" id="memPwd" name="memPwd" style="margin-left: 3px;">
-							<button type="button" style="border: 0px solid white; background-color: white;">
-								<img src="https://i.imgur.com/CsKaQmk.png" alt="">
-							</button>
-							<button type="button" style="border: 0px solid white; background-color: white;">
-								<img src="https://i.imgur.com/X4fyiID.png" alt="">
-							</button>
 						</div>
 					</div>
 

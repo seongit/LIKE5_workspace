@@ -162,4 +162,31 @@
   </select>
   
   
+  <!-- [한솔] - QnA, 칼럼 후원 insert -->
+  <!-- memNo : 후원한 회원번호 / smemNo : 후원받은 회원번호 -->
+  <insert id="sponInsert">
+  	insert
+  	  into sponsorship
+  	     (
+  	       spon_no
+  	     , mem_no
+		 , smem_no
+		 , spon_fee
+		 , spon_date
+		 , spon_category
+		 , ref_boa_no
+  	     )
+  	     values
+  	     (
+  	       seq_sno.nextval
+  	     , #{memNo}
+  	     , #{smemNo}
+  	     , 1000
+  	     , sysdate
+  	     , #{sponCategory}
+  	     , #{refBoaNo}
+  	     )
+  </insert>
+  
+  
 </mapper>

@@ -53,33 +53,34 @@
       </div>
         
       <div id="content">
-      	<form id="enrollForm" action="update.me?memNo=${ loginUser.memNo }" method="post" enctype="multipart/form-data">
+      	<form id="enrollForm" action="update.me?memNo=${ memberInfor.memNo }" method="post" enctype="multipart/form-data">
 	        <div>
 	          <div style="margin-left:250px">
 	            <div >
 	              <c:choose>
-			        <c:when test="${ empty loginUser.memProfile }">
+			        <c:when test="${ empty memberInfor.memProfile }">
 			         	 <img src="https://i.imgur.com/pO4OGIl.jpg" alt="">
 			         </c:when>
 			         <c:otherwise>
-			         	<img src="${ loginUser.memProfile }" alt="">
+			         	<img src="${ memberInfor.memProfile }" alt="">
+			         	<input type="hidden" name="memProfile" value="${ memberInfor.memProfile }">
 			         </c:otherwise>
 			    </c:choose>
 	            </div>
-	            <div><input id="upfile" name="upfile" type="file"></div>
+	            <div><input id="reupfile" name="reupfile" type="file" value="${ memberInfor.memProfile }"></div>
 	            <div>이름 : </div>
-	            <input id="memName" name="memName" value="${ loginUser.memName}" type="text" required>
+	            <input id="memName" name="memName" value="${ memberInfor.memName}" type="text" required>
 	            <div>닉네임 : </div>
-	            <input id="nickName" name="nickName" value="${ loginUser.nickName}" type="text" required>
+	            <input id="nickName" name="nickName" value="${ memberInfor.nickName}" type="text" required>
 	            <div>이메일 : </div>
-	            <input value="${ loginUser.email}" type="email" readonly>
+	            <input value="${ memberInfor.email}" type="email" readonly>
 	            <div>비밀번호 : </div>
 	            <input id="memPwd" name="memPwd" type="password">
 	            <div>비밀번호 확인 : </div>
 	            <input type="password">
 	            <div>은행 : </div>
 	            <c:choose>
-	            	<c:when test="${ empty loginUser.bank}">
+	            	<c:when test="${ empty memberInfor.bank}">
 			            <select name="bankName" id="bankName">
 			              <option value="kb">국민은행</option>
 			              <option value="shin">신한은행</option>
@@ -88,7 +89,7 @@
 			              <option selected>은행</option>
 			            </select>
 	            	</c:when>
-	            	<c:when test="${ loginUser.bank eq '국민은행'}">
+	            	<c:when test="${ memberInfor.bank eq '국민은행'}">
 			            <select name="bankName" id="bankName">
 			              <option selected value="kb">국민은행</option>
 			              <option value="shin">신한은행</option>
@@ -97,7 +98,7 @@
 			              <option>은행</option>
 			            </select>
 	            	</c:when>
-	            	<c:when test="${ loginUser.bank eq '신한은행'}">
+	            	<c:when test="${ memberInfor.bank eq '신한은행'}">
 			            <select name="bankName" id="bankName">
 			              <option value="kb">국민은행</option>
 			              <option selected value="shin">신한은행</option>
@@ -106,7 +107,7 @@
 			              <option>은행</option>
 			            </select>
 	            	</c:when>
-	            	<c:when test="${ loginUser.bank eq '우리은행'}">
+	            	<c:when test="${ memberInfor.bank eq '우리은행'}">
 			            <select name="bankName" id="bankName">
 			              <option value="kb">국민은행</option>
 			              <option value="shin">신한은행</option>
@@ -115,7 +116,7 @@
 			              <option>은행</option>
 			            </select>
 	            	</c:when>
-	            	<c:when test="${ loginUser.bank eq '카카오뱅크'}">
+	            	<c:when test="${ memberInfor.bank eq '카카오뱅크'}">
 			            <select name="bankName" id="bankName">
 			              <option value="kb">국민은행</option>
 			              <option value="shin">신한은행</option>
@@ -126,7 +127,7 @@
 	            	</c:when>
 	            </c:choose>
 	            <div>계좌번호 :</div>
-	            <input id="accountNum" name="accountNum" type="text" value="${ loginUser.accountNum }">
+	            <input id="accountNum" name="accountNum" type="text" value="${ memberInfor.accountNum }">
 	            <div style="margin-top: 40px;">
 	              <button id="calculate" type="button" data-toggle="modal" data-target="#MyModal" style="border: 2px solid rgb(220, 53, 69); background-color: white; color: rgb(220, 53, 69); border-radius:3px;">탈퇴하기</button>
 	              <button style="border: 2px solid rgb(220, 53, 69); background-color: white; color: rgb(220, 53, 69); border-radius:3px;">취소</button>

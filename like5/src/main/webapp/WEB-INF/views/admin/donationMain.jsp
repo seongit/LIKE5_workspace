@@ -136,7 +136,7 @@
 		        </script>
 		        <br><br>
 		
-		        <table class="table-bordered table-sm" id="donationTable">
+		        <table class="table-bordered table-sm" id="donationTable" width="850px">
 		            <thead>
 		                <tr class="table-danger">
 		                    <th >회원번호</th>

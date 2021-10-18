@@ -25,7 +25,7 @@
             <hr>
         </div>
 
-        <form action="comUpdate.bo" method="post" enctype="multipart/form-data">
+        <form action="update.bo" method="post" enctype="multipart/form-data">
         	<input type="hidden" value="${b.bno}" name="bno">
             <!--카테고리 시작-->
             <!--작성자 아이디, 카테고리, 제목, 내용, 첨부파일-->
@@ -57,7 +57,6 @@
                 </div>
             </div>
             <div class="file-upload" style="padding: 0px;">
-                <!--<button class="file-upload-btn" type="button" onclick="$('.file-upload-input').trigger( 'click' )">첨부파일 등록하기</button>-->
             
                 <div class="image-upload-wrap">
                 <input class="file-upload-input"  name="reupfile" type='file' onchange="readURL(this);" accept="image/*" />
@@ -67,12 +66,18 @@
                 </div>
 
                 <div class="file-upload-content">
-                <img class="file-upload-image" src="#" alt="your image" />
-                <div class="image-title-wrap">
-                    <button type="button" onclick="removeUpload()" class="remove-image"><span class="image-title"></span>를 수정하시겠어요?</button>
+	                <c:choose>
+	                	<c:when test="${!empty b.imgPath}">
+	                		<img class="file-upload-image" src="${b.imgPath}" alt="your image" />
+	                	</c:when>
+	                	<c:otherwise>
+			                <img class="file-upload-image" src="#" alt="your image" />
+	                	</c:otherwise>
+	                </c:choose>
+	                <div class="image-title-wrap">
+	                    <button type="button" onclick="removeUpload()" class="remove-image"><span class="image-title"></span>를 수정하시겠어요?</button>
+	                </div>
                 </div>
-                </div>
-                
             </div>
 
             <div class="content-footer">
@@ -95,18 +100,17 @@
 
             /*커뮤니티-제목-글자수 실시간 카운팅*/
             $('#content-title').keyup(function(e){
-                var title = $(this).val();
+                let title = $(this).val();
 
                 //공백제거
                 if(title.trim() != 0){
                     $('#counting-title').html(title.length+" / 49");    //글자수 실시간 카운팅
                 }else{
-                    alert("공백이 입력되었어요 😊 다시 입력해주세요 ");
+                	alertify.alert("공백이 입력되었어요 😊 다시 입력해주세요 ");
                     $('#counting-title').html(''); 
                 }
-                
                 if (title.length > 49){
-                    alert("최대 49자까지 입력 가능합니다.");
+                	alertify.alert("최대 49자까지 입력 가능합니다.");
                     $(this).val(title.substring(0, 49));
                     $('#counting-title').html("49 / 49");
                 }
@@ -115,14 +119,12 @@
             // 제목 글자수 제한 (5글자 이상에만 작성 버튼 활성화)
             $(function(){
             	
-            	var $titleInput = $("#content-title");
+            	let $titleInput = $("#content-title");
             	
             	$titleInput.keyup(function(){
-            		
             		if($titleInput.val().length>=5){
             			$("#comEnrollbtn :submit").attr("disabled",false);
             		}
-            		
             	})
             	
             });
@@ -130,32 +132,31 @@
 
             // 첨부파일 업로드
             function readURL(input) {
-            if (input.files && input.files[0]) {
-
-                var reader = new FileReader();
-
-                reader.onload = function(e) {
-                $('.image-upload-wrap').hide();
-
-                $('.file-upload-image').attr('src', e.target.result);
-                $('.file-upload-content').show();
-
-                $('.image-title').html(input.files[0].name);
-                };
-
-                reader.readAsDataURL(input.files[0]);
-
-            } else {
-                removeUpload();
-            }
+	            if (input.files && input.files[0]) {
+	
+	                let reader = new FileReader();
+	
+	                reader.onload = function(e) {
+	                $('.image-upload-wrap').hide();
+	
+	                $('.file-upload-image').attr('src', e.target.result);
+	                $('.file-upload-content').show();
+	
+	                $('.image-title').html(input.files[0].name);
+	                };
+	                reader.readAsDataURL(input.files[0]);
+	            } else {
+	                removeUpload();
+	            }
             }
             
             // 업로드한 파일 수정 = 제거
             function removeUpload() {
-            $('.file-upload-input').replaceWith($('.file-upload-input').clone());
-            $('.file-upload-content').hide();
-            $('.image-upload-wrap').show();
+	            $('.file-upload-input').replaceWith($('.file-upload-input').clone());
+	            $('.file-upload-content').hide();
+	            $('.image-upload-wrap').show();
             }
+            
             $('.image-upload-wrap').bind('dragover', function () {
                     $('.image-upload-wrap').addClass('image-dropping');
                 });
@@ -163,11 +164,24 @@
                     $('.image-upload-wrap').removeClass('image-dropping');
             });
 
-
-
-
+            // 작성 시 입력된 카테고리 표시 (일상 or스터디모집)
+            $(function(){
+          		if("${b.category}" != ""){
+          			$("option[value=${b.category}]").attr("selected",true);
+          		}
+          		
+          		// 기존 첨부파일이 있었을 경우 해당 이미지 표시
+          		if("${b.imgPath}"!=""){
+          			
+          			 $('.image-upload-wrap').hide();
+                 	
+ 	                $('.file-upload-image').attr('src',"${b.imgPath}");
+ 	                $('.file-upload-content').show();
+ 	
+ 	                $('.image-title').html("해당 게시글(을)");
+          		}
+          	})
         </script>
-
     </div>
     
     <!--푸터바-->

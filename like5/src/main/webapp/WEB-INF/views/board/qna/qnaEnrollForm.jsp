@@ -9,7 +9,10 @@
 
 <!-- qnaDetailView.css -->
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/qnaEnrollForm.css" />
-	
+
+<!--토스트 UI-->
+<link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.css" />	
+
 </head>
 
 <body>
@@ -33,7 +36,7 @@
 						<!-- 작성자, 카테고리 -->
 						<input class="form-group" id="qWriter" name="mno" value="${ loginUser.memNo }" hidden></input>
 						<input class="form-group" id="qCategory" name="category" value="QNA" hidden></input>
-						
+						<input type="hidden" name="content" value="">
 						<!-- 제목 영역 -->
 						<div class="form-group">
 							<label for="qTitle">
@@ -66,12 +69,24 @@
 								<button type="button" class="btn btn-secondary" disabled>본문</button>
 								&nbsp;&nbsp;질문하고 싶은 내용을 입력해주세요!
 							</label>
-							<!-- 마크다운 API 들어올 곳  -->
-							<textarea class="form-control" id="qContent" name="content" rows="5" required></textarea>
+							<!-- 토스트 UI-->
+							<div id="editor" onkeyup="keyevent(this);" class="form-control" ></div>
+							<textarea class="form-control" id="qContent" name="content" rows="5"  style="display:none;"></textarea>
 							<div class="valid-feedback">본문이 입력되었습니다.</div>
 							<div class="invalid-feedback">본문을 작성해주세요.</div>
 						</div>
 						<!-- 본문 영역 -->
+						
+						<!--토스트 UI-->
+		  			  	<script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+						
+						<script>
+					 	 //토스트 UI에 작성된 내용을 form태그 안에 있는 name="content"인 요소에 value값으로 지정
+				        function keyevent(){
+				        	var content = editor.getHTML();
+				        	$("#enrollForm").children().eq(2).attr("value",content);
+				        }
+						</script>
 						
 						<!-- 작성 주의사항 -->
 						<div class="alert alert-danger alert-dismissible">
@@ -93,14 +108,15 @@
 						<!-- 버튼 영역 -->
 						<div class="w3-container w3-right-align w3-margin-top">
 							<button type="button" onclick="storage()" class="w3-button w3-white w3-border w3-border-gray w3-round">임시저장</button>
-							<button type="submit" onclick="formTest()" class="btn btn-danger" id="submitButton">작성하기</button>
+							<button type="submit" class="btn btn-danger" id="submitButton">작성하기</button>
 						</div><!-- 버튼 영역 끝 -->
 					</form><!-- 제목, 태그, 본문 작성 영역 끝 -->
 				</div><!-- 좌측 글쓰기 영역 끝 -->
 				
 				<script>
 				// 작성하기 버튼 클릭 시 유효성 검사
-				(function formTest() {
+				(function() {
+					'use strict';
 					window.addEventListener('load', function() {
 						var forms = document.getElementsByClassName('qnaWrite');
 						var validation = Array.prototype.filter.call(forms, function(form) {
@@ -116,9 +132,25 @@
 				})();
 				
 				// 임시저장 클릭 시 qnaStorageInsert.bo로 값 제출
-				function storage(num){
+				function storage(){
 					$("#enrollForm").attr("action", "qnaStorageInsert.bo").submit();
 				}
+
+				// 사용자가 입력한 태그 데이터 검사
+				
+				
+			   //토스트 UI 에디터
+		        const Editor = toastui.Editor;
+		        const editor = new Editor({
+		            el: document.querySelector('#editor'),
+		            height: '600px',
+		            previewStyle: 'vertical',
+		            initialValue: '🙋‍♂️어떻게 질문하는지 궁금하다면? <br> 오른쪽의 ⭐좋은 질문을 작성하는 팁⭐을 이용해주세요.',
+		            language: 'ko',
+		        });
+			       
+			        
+				
 				</script>
 	
 				<!-- 우측 설명 영역 & 팁 아코디언 -->
@@ -206,6 +238,9 @@
 							x.previousElementSibling.className.replace("w3-red", "w3-white");
 						}
 					}
+					
+				 
+					
 					</script>
 					
 				</div>

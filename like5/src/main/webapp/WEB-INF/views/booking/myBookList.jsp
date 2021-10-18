@@ -39,6 +39,7 @@
     }
     .detail-page{
         display: none;
+        padding-bottom:80px;
     }
     .detail-wrapper{
         display: flex;
@@ -268,7 +269,7 @@
                         </div>
                     </div>
                     <div class="refund-alert">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati facilis minima sunt deleniti harum expedita, numquam illum, dolore laudantium accusantium officia aspernatur doloribus saepe dolorum id reprehenderit eaque ut labore?
+                        취소한 금액은 카드사의 사정에 따라 7~15일 정도 소요됩니다.
                     </div>
                     <div class="border"></div>
                     <div class="button-box">
@@ -280,7 +281,6 @@
             </div>
         </div>
     </div>
-    
     <!-- modal receipt -->
     <div class="modal" id="modal-receipt" tabindex="-1">
         <div class="modal-dialog">
@@ -398,14 +398,14 @@
         </div>
     </div>
 </div>
-<jsp:include page="../common/footer.jsp"/>
+
 <script>
 
     $(function(){
         $(".changeb").click(function(){
             $(".detail-page").toggle();
         })
-<%--
+
         $(".cancelBook").on("click", function(){
         	/*
 		    	var bno = result.bookingNo
@@ -414,7 +414,7 @@
 		    */
         	location.href="cancelMyBook.bk?bno=" + $("#tt").val();
 		    	
-		   }) --%>
+		   }) 
     })
     
 
@@ -459,6 +459,7 @@
     			$("#receiptStartDate").text(result.startDate);
     			$("#receiptEndDate").text(result.endDate);
     			$("#receiptBno").text(result.bookingNo);
+    			$("#receiptRequestDay").text(result.requestDate);
     			$("#receiptDayPrice").text("￦ "+result.price);
     			var days = result.endDate.substr(8,10) - result.startDate.substr(8,10)
     			$("#receiptDay").html(days);
@@ -471,7 +472,6 @@
 		    	    locale:"ko",
 		    	    altInput:true,
 		    	    altFormat:"Y\\년 F d\\일",
-		    	    minDate:"today",
 		    	    dateFormat:"Y-m-d",
 		    	    defaultDate: result.startDate
 		    	});
@@ -479,7 +479,6 @@
 		    	    locale:"ko",
 		    	    altInput:true,
 		    	    altFormat:"Y\\년 F d\\일",
-		    	    minDate:"today",
 		    	    dateFormat:"Y-m-d"
 		    	});
 		    	
@@ -497,12 +496,12 @@
     })
     
    
-    $(".cancelBook").on("click", function(){
+    <%--$(".cancelBook").on("click", function(){
 		    	var bno = $("table>tbody>tr").children().eq(0).text();
 		    	console.log("안"+bno);
 		    	location.href="cancelMyBook.bk?bno=" + bno;
 		    	
-		   })
+		   }) --%>
 
 </script>
 </body>

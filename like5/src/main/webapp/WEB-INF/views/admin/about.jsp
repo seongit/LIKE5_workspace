@@ -26,6 +26,14 @@
         .blank{
             width: 180px;
         }
+        img{
+            width: 250px;
+            height: 250px;
+            margin: 15px;
+        }
+        td{
+
+        }
     </style>
 </head>
 <body>
@@ -64,8 +72,40 @@
             </div>
 
         </div>
+        <br><br><br><br><br><br>
+        
+        <div class="image-area" align="center">
+            <table>
+                <tr>
+                    <td>
+                        <a href=""><img src="${pageContext.request.contextPath}/resources/images/about/like5.jpg"></a>
+                    </td>
+                    <td>
+                        <a href="qnaList.bo"><img src="${pageContext.request.contextPath}/resources/images/about/QNA.jpg"></a>
+                    </td>
+                    <td>
+                        <a href="bMain.bk"><img src="${pageContext.request.contextPath}/resources/images/about/place.jpg"></a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="comList.bo"><img src="${pageContext.request.contextPath}/resources/images/about/study.jpg"></a>
+                    </td>
+                    <td>
+                        <a href="colList.bo"><img src="${pageContext.request.contextPath}/resources/images/about/column.jpg"></a>
+                    </td>
+                    <td>
+                        <a href="itNews.bo"><img src="${pageContext.request.contextPath}/resources/images/about/itnews.jpg"></a>
+                    </td>
+                </tr>
+            </table>
+        </div>
 
     </div>
+
+    <br><br><br><br><br><br><br><br><br><br>
+
+    <jsp:include page="../common/footer.jsp" />
 
 </body>
 </html>

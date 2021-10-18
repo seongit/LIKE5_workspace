@@ -154,6 +154,7 @@
                       <th width="100">게시판 이름</th>
                       <th width="180">신고 사유</th>
                       <th>신고 날짜</th>
+                      <th>삭제</th>
                   </tr>
               </thead>
               <tbody>
@@ -165,10 +166,23 @@
                           <td>${r.category}</td>
                           <td>${r.reason}</td>
                           <td>${r.reportDate}</td>
+                          <td><button class="btn btn-outline-danger btn-sm" onclick="deleteReport('${r.rno}')">삭제</button></td>
                       </tr>
                   </c:forEach>
               </tbody>
           </table>
+
+          <script>
+
+              function deleteReport(rno){
+                  if(!confirm("해당 게시글을 삭제하시겠습니까?")){
+                      alert("취소하셨습니다.")
+                  }else{
+                      location.href="deleteReport.ad?rno="+rno;
+                  }
+              }
+          </script>
+
 
 
       </article>

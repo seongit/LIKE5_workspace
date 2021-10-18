@@ -5,9 +5,11 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>LIKE5</title>
 
 <style>
+.header{border-bottom:none !important;}
+/*div{border:1px solid black;}*/
 .mainContent{
 	background:linear-gradient(to bottom, rgba(211, 211, 211, 0.6) 0%,
 			   rgba(211, 211, 211, 0.6) 100%), url("https://bit.ly/3itAEbV");
@@ -15,8 +17,11 @@
 	background-repeat:no-repeat;
 	background-attachment:scroll;
 	background-size:cover;
-	height:100vh;
-	display:flex;
+	height:110vh;
+	display:inline-flex;
+	width:100%;
+	margin-top:-75px;
+	z-index:1;
 }
 
 #bigText{font-size:3rem;}
@@ -26,6 +31,12 @@
 	#bigText{font-size:4.6rem; font-weight:bold;}
 	#smallText{font-size:1.2rem;}
 }
+
+@media(max-width:1380px){ #bigText{font-size:4.2rem; font-weight:bold;} #smallText{font-size:1.2rem;} }
+@media(max-width:1275px){ #bigText{font-size:3.9rem; font-weight:bold;} #smallText{font-size:1.2rem;}}
+@media(max-width:1195px){ #bigText{font-size:3.7rem; font-weight:bold;} #smallText{font-size:1.2rem;} }
+@media(max-width:1145px){ #bigText{font-size:3.5rem; font-weight:bold;} #smallText{font-size:1.2rem;} }
+@media(max-width:1100px){ #bigText{font-size:3rem; font-weight:bold;} #smallText{font-size:1.0rem;} }
 
 .divider{height:0.3rem; max-width:9rem; margin:1.5rem auto; background-color:rgb(220, 53, 69); border:0;}
 

@@ -108,11 +108,9 @@
 .userInfo3{width:10%;}
 .userWrite1{width:100%; height:100%; border-bottom:2px solid lightgray;}
 
-/* 마크다운 API 공간 div 배열 */
-.userWrite1 div{padding:1%;}
-
 /* 답변달기 관련 하단부 배열 */
 .userWrite2{width:100%; display:flex; padding:2% 2% 2% 90%; margin-bottom:5%;}
+#userReply1{width:100% !important; padding:20px !important; margin-top:5px;}
 
 /* a태그 스타일 */
 .btn a, .w3-button a{text-decoration:none !important;}

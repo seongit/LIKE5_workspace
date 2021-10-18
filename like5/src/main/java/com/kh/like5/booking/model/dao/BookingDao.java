@@ -60,6 +60,7 @@ public class BookingDao {
 		}
 		return result;
 	}
+	/*
 	public int insertOfficeReAtt(SqlSessionTemplate sqlSession, ArrayList<Attachment> list) {
 		int result = 0;
 		for(Attachment att : list) {
@@ -67,15 +68,24 @@ public class BookingDao {
 		}
 		return result;
 	}
+	*/
+	
 	public int updateOffice(SqlSessionTemplate sqlSession, Office o) {
 		return sqlSession.update("bookingMapper.updateOffice", o);
 	}
 
 	public int updateOfficeAtt(SqlSessionTemplate sqlSession, ArrayList<Attachment> list) {
 		int result = 0;
+		System.out.println("처음"+list);
 		for(Attachment att : list) {
-			result = sqlSession.update("bookingMapper.updateOfficeAtt", att);
+			if(att.getFileNo()!=0) {
+				result = sqlSession.update("bookingMapper.updateOfficeAtt", att);
+			} else if(att.getRefFno() != 0) {
+				result = sqlSession.insert("bookingMapper.insertOfficeReAtt", att);
+			}
+			
 		}
+		System.out.println("끝" + list);
 		return result;
 	}
 
@@ -87,6 +97,42 @@ public class BookingDao {
 		return sqlSession.delete("bookingMapper.deleteOfficeAtt", ono);
 	}
 	
+	public String[] selectOffImgPaths(SqlSessionTemplate sqlSession, int[] officeNo) {
+		String[] offImgPaths = new String[officeNo.length];
+		for(int i=0; i<officeNo.length; i++) {
+			//System.out.println("for" + officeNo[i]);
+			int ckeck = officeNo[i];
+			offImgPaths[i] = sqlSession.selectOne("bookingMapper.selectOffImgPaths", ckeck);
+		}
+		System.out.println("offImgPaths: " + offImgPaths);
+		return offImgPaths;
+	}
+	
+	public ArrayList<Attachment> selectFilePaths(SqlSessionTemplate sqlSession, int[] officeNo) {
+		ArrayList<Attachment> filePaths= null;
+		for(int check : officeNo) {
+			filePaths = (ArrayList)sqlSession.selectList("bookingMapper.selectFilePaths", check);
+		}
+		return filePaths;
+	}
+	
+	public int deleteOffices(SqlSessionTemplate sqlSession, int[] officeNo) {
+		int result = 0;
+		for(int check : officeNo) {
+			result = sqlSession.delete("bookingMapper.deleteOffices", check);
+		}
+		//System.out.println("result1: " + result);
+		return result;
+	}
+	
+	public int deleteFilePaths(SqlSessionTemplate sqlSession, int[] officeNo) {
+		int result = 0;
+		for(int check:officeNo) {
+			result = sqlSession.delete("bookingMapper.deleteFilePaths", check);
+		}
+		//System.out.println("result2: " + result);
+		return result;
+	}
 	/*추가 - 첨부파일 조회 + 사진*/
 	public ArrayList<Attachment> selectList(SqlSessionTemplate sqlSession, int refFno){
 		/*System.out.println(refFno);*/
@@ -147,5 +193,10 @@ public class BookingDao {
 	/*예약 관리 선택 삭제*/
 	public void delete(SqlSessionTemplate sqlSession, String bookingNo) {
 		sqlSession.delete("bookingMapper.delete", bookingNo);
+	}
+	
+	/*예약 관리 리스트 상세 조회*/
+	public Booking selectOfficeSpace(SqlSessionTemplate sqlSession, int bookingNo) {
+		return sqlSession.selectOne("bookingMapper.selectOfficeSpace", bookingNo);
 	}
 }

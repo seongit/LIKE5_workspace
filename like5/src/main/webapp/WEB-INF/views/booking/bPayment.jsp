@@ -68,7 +68,7 @@
     .date-title {
       font-weight: 800;
     }
-    .date-content button,
+    .date-content a,
     .person-content button {
       border: none;
       background-color: #ffff;
@@ -300,7 +300,7 @@
                 <div class="dateprint" id="dates"></div>
                 <input type="hidden" id="sd" name="startDate">
 				<input type="hidden" id="ed" name="endDate">                
-                <button class="editdate" type="button">수정</button>
+                <a class="editdate">수정</a>
               </div>
             </div>
             <div class="person-section">
@@ -350,7 +350,7 @@
               	<h3>주소</h3>
               		<div class="address1">
 	              		<input type="text" id="sample6_postcode" placeholder="우편번호">
-					    <input type="button" onclick="sample6_execDaumPostcode()" value="우편번호 찾기"><br>
+					    <input type="button" onclick="sample6_execDaumPostcode()" value="우편번호 찾기">
               		</div>
               		<div class="address2">
               			<input type="text" id="sample6_address" placeholder="주소"><br>
@@ -428,13 +428,13 @@
               <div class="tdesc">만 13세 이상</div>
             </div>
             <div class="stp">
-              <button type="button" class="circle" onclick="minus();">
+              <button type="button" id="minus" class="circle" onclick="minus();">
                 <span>-</span>
               </button>
               <div id="pp2" class="howmany">
                 <input type="text" id="num1" value="${ o.person }" />
               </div>
-              <button type="button" class="circle" onclick="plus();">
+              <button type="button" id="plus" class="circle" onclick="plus();">
                 <span>+</span>
               </button>
             </div>
@@ -567,7 +567,7 @@
 	  flatpickr(editdate ,{
           locale: "ko",
           mode: "range",
-          dateFormat: "Y F d\\일",
+          dateFormat: "Y\\년 F d\\일",
           minDate: "today",
           dateFormat: "Y-m-d",
           disable: [
@@ -608,20 +608,6 @@
 	  });
 	  
       $(function(){
-
-    	 <%-- 
-        $(".editdate").flatpickr({
-          locale: "ko",
-          mode: "range",
-          dateFormat: "Y F d\\일",
-          minDate: "today",
-          dateFormat: "Y-m-d",
-          onChange: function (selectedDates, dateStr, instance) {
-            $(".dateprint").text(dateStr);
-          },
-          clickOpens: true
-        });
-    	  --%> 
     	  
         $(".close").on("click", function () {
               $("#person-modal").removeClass("show-modal");
@@ -642,22 +628,25 @@
     	  history.back();
     	});
       
+      var addperson =  30000;
       function minus() {
         if (pp2.value > 0) {
           pp2.value = Number(pp2.value) - 1;
           let result = pp2.value;
           pp.innerHTML = result + " 명";
           $("input[name=person]").val(result);
+          $(".total-price").html("￦" + (${o.price} + (addperson-=30000)))
         }
       }
-      
+     
       function plus(){
         pp2.value = Number(pp2.value) + 1;
         let result = pp2.value;
         pp.innerHTML = result + " 명";
         $("input[name=person]").val(result);
+        $(".total-price").html("￦" + (${o.price} + (addperson+=30000)))
       }
-
+      
       window.onclick = (e) => {
         e.target === pmodal ? pmodal.classList.remove("show-modal") : false;
       };
